@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h3 class="showName">活動名稱: <%= show[0].name %></h3>
+    <h3 class="showName">活動介紹: <%= show[0].introduction %></h3>
+    <h3 class="showName">活動時間: <%= show[0].show_time %></h3>
+    <form action="/ticket?id=<%= show[0].id %>" method="POST">
+      <input type="hidden" name="id" value="<%= show[0].id %>" />
+      <button type="submit">我要買票</button>
+    </form>
+  </body>
+</html>

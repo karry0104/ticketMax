@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>create show</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <form id="form" method="post" enctype="multipart/form-data">
+      <label for="name">showName:</label>
+      <input type="text" name="name" required /><br />
+
+      <label for="startTime">startTime:</label>
+      <input type="date" name="startTime" required /><br />
+
+      <label for="endTime">endTime:</label>
+      <input type="date" name="endTime" required /><br />
+
+      <label for="introduction">introduction:</label>
+      <textarea name="introduction" rows="4" cols="50" required></textarea
+      ><br />
+
+      <label for="image">Image:</label>
+      <input type="file" name="image" accept="image/*" />
+
+      <label for="seatChart">seatChart:</label>
+      <input type="file" name="seatChart" accept="image/*" /><br />
+
+      <label for="showTime">showTime:</label>
+      <input type="datetime-local" name="showTime" required /><br />
+
+      <label for="hall">hall:</label>
+      <select name="hall">
+        <option value="A" selected>A</option>
+        <option value="B">B</option>
+        <option value="C">C</option></select
+      ><br />
+
+      <label for="price">price:</label>
+      <input type="text" name="price" required /><br />
+
+      <button type="submit">Submit</button><br />
+      <p id="message" style="display: none"></p>
+    </form>
+  </body>
+  <script>
+    const form = document.getElementById("form");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      console.log([...formData]);
+
+      try {
+        const res = await axios.post("/admin/show", formData);
+        console.log(res);
+        showSuccessMessage();
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    function showSuccessMessage() {
+      message.textContent = "Show created successfully";
+      message.style.display = "block";
+    }
+  </script>
+</html>

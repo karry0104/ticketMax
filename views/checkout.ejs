@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
+    />
+
+    <title>Connect payment with TapPay</title>
+    <style>
+      body {
+        margin: 100px 0;
+      }
+      .container {
+        max-width: 450px;
+      }
+      form {
+        padding: 20px;
+      }
+      #payment-title {
+        padding-left: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
+        <div id="orders">
+          <h3 class="showName">活動名稱: <%= orderData.orders[0].name %></h3>
+          <h3 class="showTime">
+            活動時間: <%= orderData.orders[0].show_time %>
+          </h3>
+          <h3 class="showSection">
+            地點: <%= orderData.orders[0].hall_name %>
+          </h3>
+          <h3>訂單編號：</h3>
+          <h3 class="orderId"><%= orderData.orders[0].order_id %></h3>
+          <h3>總金額：</h3>
+          <h3 class="total"><%= orderData.totalPrice %></h3>
+          <% orderData.orders.forEach((order) => { %>
+          <p class="seat">
+            座位: <%= order.seat_row %><%= order.seat_number %>
+          </p>
+          <p class="price">NTD: <%= order.price %></p>
+          <p class="section">區域: <%= order.section %></p>
+
+          <% }); %> <% if (Array.isArray(orderData) && orderData.length > 0) {
+          orderData.forEach(function(order) { %>
+          <input type="hidden" name="username" value="<%= order.username %>" />
+          <input type="hidden" name="email" value="<%= order.email %>" />
+          <input type="hidden" name="name" value="<%= order.name %>" />
+          <% }); } else if (typeof orderData === 'object') { %>
+          <input
+            type="hidden"
+            name="username"
+            value="<%= orderData.username %>"
+          />
+          <input type="hidden" name="email" value="<%= orderData.email %>" />
+          <input type="hidden" name="name" value="<%= orderData.name %>" />
+          <% } %>
+        </div>
+
+        <div class="form_field-name">地址</div>
+        <input class="form_field-input" name="address" value />
+        <div class="form_field-name">手機</div>
+        <input class="form_field-input" name="phone" value />
+        <h3 class="payment-title">輸入付款資訊</h3>
+        <div class="form-group card-number-group">
+          <label for="card-number" class="control-label"
+            ><span id="cardtype"></span>卡號</label
+          >
+          <div class="form-control card-number"></div>
+        </div>
+        <div class="form-group expiration-date-group">
+          <label for="expiration-date" class="control-label">卡片到期日</label>
+          <div
+            class="form-control expiration-date"
+            id="tappay-expiration-date"
+          ></div>
+        </div>
+        <div class="form-group ccv-group">
+          <label for="ccv" class="control-label">卡片後三碼</label>
+          <div class="form-control ccv"></div>
+        </div>
+
+        <button type="submit" id="submit-button">Pay</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    const form = document.getElementById("payment-form");
+    const orderId = document.querySelector(".orderId");
+    const orderIdValue = orderId.innerText;
+    const total = document.querySelector(".total");
+    const totalValue = total.innerText;
+
+    TPDirect.setupSDK(
+      11327,
+      "app_whdEWBH8e8Lzy4N6BysVRRMILYORF6UxXbiOFsICkz0J9j1C0JUlCHv1tVJC",
+      "sandbox"
+    );
+
+    TPDirect.card.setup({
+      fields: {
+        number: {
+          element: ".card-number",
+          placeholder: "**** **** **** ****",
+        },
+        expirationDate: {
+          element: ".expiration-date",
+          placeholder: "MM / YY",
+        },
+        ccv: {
+          element: ".ccv",
+          placeholder: "後三碼",
+        },
+      },
+      isMaskCreditCardNumber: true,
+      maskCreditCardNumberRange: {
+        beginIndex: 6,
+        endIndex: 11,
+      },
+    });
+    const submitButton = document.querySelector("#submit-button");
+    const cardViewContainer = document.querySelector("#container");
+
+    function onClick() {
+      const formData = new FormData(form);
+      formData.append("orderId", orderIdValue);
+      formData.append("total", totalValue);
+      const entFormData = Object.fromEntries(formData);
+
+      // const token = document.cookie.replace(
+      //   /(?:(?:^|.*;\s*)jwtoken\s*=\s*([^;]*).*$)|^.*$/,
+      //   "$1"
+      // );
+
+      TPDirect.card.getPrime(async (result) => {
+        if (result.status !== 0) {
+          return;
+        }
+
+        const { prime } = result.card;
+        //console.log(prime);
+
+        try {
+          const data = {
+            prime,
+            //token,
+            order: entFormData,
+          };
+          console.log(data);
+
+          const res = await axios.post("/checkout", data);
+          const orderNumber = res.data.data.orderId;
+
+          window.location.assign(`/order?orderNumber=${orderNumber}`);
+        } catch (err) {
+          console.log(err);
+          // alert("請先登入");
+          // const currentUrl = window.location.href;
+          // document.cookie = `returnUrl=${currentUrl}; path=/`;
+          // window.location.assign("/user");
+        }
+      });
+    }
+  </script>
+</html>

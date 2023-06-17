@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shows</title>
+  </head>
+  <body>
+    <h1>Shows</h1>
+    <form action="/order" method="POST" onsubmit="limitCheckboxSelection()">
+      <% seatData.forEach((seat) => { %> <input type="checkbox" name="seat"
+      value="<%= seat.hallSeat_id %>" <%= seat.status !== 'NotReserved' ?
+      'disabled' : '' %> />
+      <p class="seatRow"><%= seat.seat_row %><%= seat.seat_number %></p>
+      <% }); %>
+      <input type="hidden" name="showId" value="<%= seatData[0].id %>" />
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+  <script>
+    function limitCheckboxSelection() {
+      const checkboxes = document.getElementsByName("seat");
+      const checkedCount = 0;
+
+      checkboxes.forEach(function (checkbox) {
+        if (checkbox.checked) {
+          checkedCount++;
+        }
+      });
+
+      if (checkedCount > 4) {
+        alert("not more than 4");
+        return false;
+      }
+    }
+  </script>
+</html>
