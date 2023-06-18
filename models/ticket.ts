@@ -130,3 +130,10 @@ export async function updateShowSeatStatus(orderId: number) {
     orderId,
   ]);
 }
+
+export async function deleteOrder(id: number) {
+  await pool.query(
+    'UPDATE orders JOIN show_seat ON orders.id = show_seat.order_id SET orders.status = "canceled", show_seat.order_id = NULL, show_seat.status="NotReserved"  WHERE orders.id = ?',
+    [id]
+  );
+}

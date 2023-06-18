@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import axios from "axios";
+import AWS from "aws-sdk";
 import pool from "../models/databasePool.js";
-import { Connection } from "mysql2/promise";
+import * as cache from "../utils/cache.js";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
 
 dotenv.config();
+AWS.config.update({ region: "ap-northeast-1" });
 
 const TAPPAY_PARTNER_KEY = process.env.TAPPAY_PARTNER_KEY;
 const TAPPAY_MERCHANT_ID = process.env.TAPPAY_MERCHANT_ID;
@@ -14,10 +16,29 @@ export async function getShowSeat(req: Request, res: Response) {
   try {
     const id = Number(req.query.id);
 
+    const sqs = new AWS.SQS();
+
+    await sqs
+      .sendMessage({
+        QueueUrl:
+          "https://sqs.ap-northeast-1.amazonaws.com/649086394704/example",
+        MessageBody: JSON.stringify({ id }),
+      })
+      .promise();
+
+    const cachedShowSeat = await cache.get(`showSeat:${id}`);
+
+    if (cachedShowSeat) {
+      const seatData = JSON.parse(cachedShowSeat);
+      return res.render("showSeat", { seatData });
+    }
+
     const seatData = await ticketModel.getShowSeat(id);
 
+    await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
+
     if (seatData.length === 0) {
-      res.redirect("/");
+      return res.redirect("/");
     }
 
     res.render("showSeat", { seatData });
@@ -94,7 +115,7 @@ export async function getPayment(req: Request, res: Response) {
       totalPrice,
       orders,
     };
-
+    //res.json(orderData);
     res.render("checkout", { orderData });
   } catch (error) {
     console.log(error);
@@ -151,7 +172,16 @@ export async function checkout(req: Request, res: Response) {
 }
 
 export async function getAllOrders(req: Request, res: Response) {
-  const { orderNumber } = req.query;
+  const { id } = req.query;
 
-  res.json(orderNumber);
+  res.json(id);
+}
+
+export async function deleteOrder(req: Request, res: Response) {
+  const { id } = req.query;
+  const orderId = Number(id);
+
+  await ticketModel.deleteOrder(orderId);
+
+  res.json(id);
 }

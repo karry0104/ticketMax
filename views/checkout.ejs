@@ -42,6 +42,7 @@
           </h3>
           <h3>訂單編號：</h3>
           <h3 class="orderId"><%= orderData.orders[0].order_id %></h3>
+
           <h3>總金額：</h3>
           <h3 class="total"><%= orderData.totalPrice %></h3>
           <% orderData.orders.forEach((order) => { %>
@@ -92,14 +93,33 @@
 
         <button type="submit" id="submit-button">Pay</button>
       </form>
+      <form id="deleteOrder" onsubmit="click();">
+        <button type="submit">取消訂單</button>
+      </form>
     </div>
   </body>
   <script>
     const form = document.getElementById("payment-form");
+    const orderForm = document.getElementById("deleteOrder");
     const orderId = document.querySelector(".orderId");
     const orderIdValue = orderId.innerText;
     const total = document.querySelector(".total");
     const totalValue = total.innerText;
+
+    orderForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(orderForm);
+
+      try {
+        const orderId = "<%= orderData.orders[0].order_id %>";
+        const res = await axios.delete(`/order?id=${orderId}`, formData);
+        console.log(res);
+        window.location.assign("/");
+      } catch (err) {
+        console.log(err);
+      }
+    });
 
     TPDirect.setupSDK(
       11327,
@@ -159,9 +179,9 @@
           console.log(data);
 
           const res = await axios.post("/checkout", data);
-          const orderNumber = res.data.data.orderId;
+          const id = res.data.data.orderId;
 
-          window.location.assign(`/order?orderNumber=${orderNumber}`);
+          window.location.assign(`/order?id=${id}`);
         } catch (err) {
           console.log(err);
           // alert("請先登入");
