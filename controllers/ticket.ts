@@ -16,35 +16,26 @@ export async function getShowSeat(req: Request, res: Response) {
   try {
     const id = Number(req.query.id);
 
-    const sqs = new AWS.SQS();
-
-    await sqs
-      .sendMessage({
-        QueueUrl:
-          "https://sqs.ap-northeast-1.amazonaws.com/649086394704/example",
-        MessageBody: JSON.stringify({ id }),
-      })
-      .promise();
-
     const cachedShowSeat = await cache.get(`showSeat:${id}`);
-
     if (cachedShowSeat) {
       const seatData = JSON.parse(cachedShowSeat);
       return res.render("showSeat", { seatData });
     }
-
     const seatData = await ticketModel.getShowSeat(id);
-
     await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
-
     if (seatData.length === 0) {
       return res.redirect("/");
     }
-
-    res.render("showSeat", { seatData });
+    res.render("showSeat", { seatData, id });
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function test(req: Request, res: Response) {
+  const id = Number(req.query.id);
+
+  res.render("test", { id });
 }
 
 //not yet to get user info

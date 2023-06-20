@@ -2,7 +2,7 @@ import { Redis } from "ioredis";
 
 export const cache = new Redis({
   port: 6379, // Redis port
-  host: "localhost", // Redis host',
+  host: process.env.REDIS_HOST, // Redis host',
 });
 
 export async function get(key: string) {

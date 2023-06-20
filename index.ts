@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import showRouter from "./routes/show.js";
 import ticketRouter from "./routes/ticket.js";
@@ -19,6 +20,10 @@ router.use(function (req, res, next) {
   next();
 });
 app.use(rateLimiter);
+
+app.use(cors());
+
+app.enable("trust proxy");
 
 app.use(showRouter, ticketRouter);
 
