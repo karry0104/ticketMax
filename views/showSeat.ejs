@@ -2,19 +2,106 @@
 <html>
   <head>
     <title>Shows</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
   <body>
-    <h1>Shows</h1>
-    <form action="/order" method="POST">
-      <% seatData.forEach((seat) => { %> <input type="checkbox" name="seat"
-      value="<%= seat.hallSeat_id %>" <%= seat.status !== 'NotReserved' ?
-      'disabled' : '' %> />
-      <p class="seatRow"><%= seat.seat_row %><%= seat.seat_number %></p>
-      <% }); %>
-      <h3 class="id"><%= id %></h3>
-      <input type="hidden" name="showId" value="<%= seatData[0].id %>" />
+    <h1 id="showName"></h1>
+    <h3 id="response"></h3>
+    <form name="myForm" action="/order" method="POST">
+      <div id="seatDataContainer"></div>
       <button type="submit">Submit</button>
     </form>
   </body>
-  <script></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+
+    function generateRandomString(length) {
+      const charset =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const randomCodeArray = Array.from({ length: length }, () =>
+        charset.charAt(Math.floor(Math.random() * charset.length))
+      );
+      return randomCodeArray.join("");
+    }
+
+    const randomString = generateRandomString(10);
+
+    const data = {
+      data: {
+        id,
+        randomString,
+      },
+    };
+
+    const req = axios
+      .post(
+        "https://y91dhf3vh0.execute-api.ap-northeast-1.amazonaws.com/v1",
+        data
+      )
+      .then((response) => {
+        document.getElementById(
+          "response"
+        ).innerHTML = `Please Wait: ${response.data.SendMessageResponse.ResponseMetadata.RequestId}`;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    try {
+      axios
+        .get(
+          `https://18jihetbil.execute-api.ap-northeast-1.amazonaws.com/prod/seat/${id}`,
+          {
+            headers: {
+              "X-Random-String": data.randomString,
+            },
+          }
+        )
+        .then((response) => {
+          const data = JSON.parse(response.data.showSeat);
+
+          const seatDataContainer =
+            document.getElementById("seatDataContainer");
+          document.getElementById(
+            "showName"
+          ).innerHTML = `Show Name: ${data[0].name}`;
+
+          data.forEach(function (seat) {
+            const seatDiv = document.createElement("div");
+
+            let checkboxInput = "";
+            if (seat.status !== "NotReserved") {
+              checkboxInput = `<input type="checkbox" name="seat" value="${seat.hallSeat_id}" disabled>`;
+            }
+            seatDiv.innerHTML = `
+              <p>座位: ${seat.seat_row}${seat.seat_number}</p>
+              <input type="checkbox" name="seat" value="${seat.hallSeat_id}"
+              ${checkboxInput}
+              <input type="hidden" name="showId" value="${data[0].id}" />
+              `;
+            seatDataContainer.appendChild(seatDiv);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+
+    // function validateForm() {
+    //   let x = document.forms["myForm"]["seat"].value;
+    //   console.log(x);
+    //   if (x == "" || x > 4) {
+    //     alert("not more than 4 seat or seat is empty");
+    //     return false;
+    //   }
+    // }
+  </script>
 </html>

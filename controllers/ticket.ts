@@ -1,71 +1,78 @@
 import { NextFunction, Request, Response } from "express";
 import axios from "axios";
-import AWS from "aws-sdk";
 import pool from "../models/databasePool.js";
 import * as cache from "../utils/cache.js";
+import { Connection } from "mysql2/promise";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
 
 dotenv.config();
-AWS.config.update({ region: "ap-northeast-1" });
 
 const TAPPAY_PARTNER_KEY = process.env.TAPPAY_PARTNER_KEY;
 const TAPPAY_MERCHANT_ID = process.env.TAPPAY_MERCHANT_ID;
+
+const connection = await pool.getConnection();
 
 export async function getShowSeat(req: Request, res: Response) {
   try {
     const id = Number(req.query.id);
 
-    const cachedShowSeat = await cache.get(`showSeat:${id}`);
-    if (cachedShowSeat) {
-      const seatData = JSON.parse(cachedShowSeat);
-      return res.render("showSeat", { seatData });
-    }
+    //res.render("showSeat", { id });
+
+    // const cachedShowSeat = await cache.get(`showSeat:${id}`);
+    // if (cachedShowSeat) {
+    //   const seatData = JSON.parse(cachedShowSeat);
+    //   return res.render("showSeat", { seatData });
+    // }
+
     const seatData = await ticketModel.getShowSeat(id);
-    await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
     if (seatData.length === 0) {
       return res.redirect("/");
     }
-    res.render("showSeat", { seatData, id });
+    return res.render("showSeat", { seatData });
+
+    //await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
   } catch (error) {
+    await connection.rollback();
+    await connection.release();
     console.log(error);
   }
-}
-
-export async function test(req: Request, res: Response) {
-  const id = Number(req.query.id);
-
-  res.render("test", { id });
 }
 
 //not yet to get user info
 export async function createOrders(req: Request, res: Response) {
   try {
+    console.log(req.body);
+
     const seat = req.body.seat;
-    const showId = Number(req.body.showId);
+    console.log(seat);
+    const showId = Number(req.body.showId[0]);
+    console.log(showId);
 
     if (!seat || seat.length > 4) {
       return res.send("not more than 4 seat or seat is empty");
     }
 
-    // 1 = user_id
-    const orderId = await ticketModel.createOrders(showId, 1);
-
-    if (typeof orderId !== "number") {
-      return;
-    }
-
     if (Array.isArray(seat) && seat.length > 0) {
-      const reservedSeats = seat.map((seats) => {
+      const reserved = seat.map((seats) => {
         return {
           seat: seats,
           showId: showId,
         };
       });
+      console.log(reserved);
 
-      //await ticketModel.checkSeat(reservedSeats);
+      //await ticketModel.checkSeat(reserved);
     } else {
       //await ticketModel.checkSeat(seat);
+    }
+
+    await connection.beginTransaction();
+    //1 = user_id
+    const orderId = await ticketModel.createOrders(showId, 1);
+
+    if (typeof orderId !== "number") {
+      return;
     }
 
     if (Array.isArray(seat) && seat.length > 0) {
@@ -87,9 +94,11 @@ export async function createOrders(req: Request, res: Response) {
         },
       ]);
     }
+    connection.query("COMMIT");
 
     res.redirect("/ticket/checkout");
   } catch (error) {
+    connection.query("ROLLBACK");
     console.log(error);
   }
 }
@@ -132,7 +141,6 @@ export async function checkout(req: Request, res: Response) {
     order_number: order.orderId,
   };
 
-  const connection = await pool.getConnection();
   try {
     await ticketModel.createPayment(order.orderId, order.total);
     await connection.query("BEGIN");

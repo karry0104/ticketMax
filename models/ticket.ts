@@ -137,3 +137,5 @@ export async function deleteOrder(id: number) {
     [id]
   );
 }
+
+export async function checkSeat(id: number) {}

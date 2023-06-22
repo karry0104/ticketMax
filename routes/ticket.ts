@@ -7,7 +7,6 @@ import {
   getAllOrders,
   getPayment,
   deleteOrder,
-  test,
 } from "../controllers/ticket.js";
 
 const router = Router();
@@ -15,8 +14,6 @@ const router = Router();
 router.route("/ticket").post(query("id").not().isEmpty().trim(), getShowSeat);
 
 router.route("/ticket").get(query("id").not().isEmpty().trim(), getShowSeat);
-
-router.route("/test").get(query("id"), test);
 
 router.route("/order").post(createOrders);
 
