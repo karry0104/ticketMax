@@ -2,7 +2,6 @@ import { Redis } from "ioredis";
 
 export const cache = new Redis({
   port: 6379, // Redis port
-  host: "ticket-2.f8lhxs.ng.0001.apne1.cache.amazonaws.com", // Redis host',
 });
 
 // export const cache = new Redis({
