@@ -9,34 +9,23 @@ function instanceOfSetHeader(object: any): object is ResultSetHeader {
 const ShowDeatSchema = z.object({
   id: z.number(),
   name: z.string(),
-  seat_chart: z.string(),
   status: z.string(),
   price: z.number(),
-  hallSeat_id: z.number(),
   section: z.string(),
   seat_row: z.string(),
   seat_number: z.number(),
 });
 
-// const ShowInfoSchema = z.object({
-//   name: z.string(),
-//   seat_chart: z.string(),
-// });
-
 export async function getShowSeat(id: number) {
   const results = await pool.query(
-    `SELECT shows.id, shows.name, shows.seat_chart, show_seat.status, show_seat.price, show_seat.hallSeat_id,hall_seat.section, hall_seat.seat_row,hall_seat.seat_number FROM shows JOIN show_seat ON shows.id = show_seat.show_id JOIN hall_seat ON show_seat.hallSeat_id = hall_seat.id WHERE shows.id = ? ORDER BY hall_seat.seat_number ASC`,
+    `SELECT show_seat.id, shows.name,show_seat.status, show_seat.price, hall_seat.section, hall_seat.seat_row,hall_seat.seat_number FROM shows JOIN show_seat ON shows.id = show_seat.show_id JOIN hall_seat ON show_seat.hallSeat_id = hall_seat.id WHERE shows.id = ? ORDER BY hall_seat.seat_number ASC`,
     [id]
   );
   const showSeat = z.array(ShowDeatSchema).parse(results[0]);
   return showSeat;
 }
 
-export async function createOrders(
-  showId: number,
-  userId: number
-  //status: string
-) {
+export async function createOrders(showId: number, userId: number) {
   const orders = await pool.query(
     `INSERT INTO orders (show_id, user_id) VALUES (?, ?)`,
     [showId, userId]

@@ -12,9 +12,8 @@
   <body>
     <h1 id="showName"></h1>
     <h3 id="response"></h3>
-    <form name="myForm" action="/order" method="POST">
+    <form name="myForm" action="/ordertest" method="POST">
       <div id="seatDataContainer"></div>
-      <button type="submit">Submit</button>
     </form>
   </body>
   <script>
@@ -39,61 +38,59 @@
       },
     };
 
-    const req = axios
+    const message = document.getElementById("response");
+
+    const sendMessage = axios
       .post(
         "https://y91dhf3vh0.execute-api.ap-northeast-1.amazonaws.com/v1",
         data
       )
       .then((response) => {
-        document.getElementById(
-          "response"
-        ).innerHTML = `Please Wait: ${response.data.SendMessageResponse.ResponseMetadata.RequestId}`;
+        message.innerHTML = `Please Wait: ${response.data.SendMessageResponse.ResponseMetadata.RequestId}`;
       })
       .catch((error) => {
         console.error(error);
       });
 
-    try {
-      axios
-        .get(
-          `https://18jihetbil.execute-api.ap-northeast-1.amazonaws.com/prod/seat/${id}`,
-          {
-            headers: {
-              "X-Random-String": data.randomString,
-            },
+    const getSeatData = axios
+      .get(
+        `https://18jihetbil.execute-api.ap-northeast-1.amazonaws.com/prod/seat/${id}`,
+        {
+          headers: {
+            "X-Random-String": data.randomString,
+          },
+        }
+      )
+      .then((response) => {
+        const data = JSON.parse(response.data.showSeat);
+        console.log(data);
+
+        const seatDataContainer = document.getElementById("seatDataContainer");
+        document.getElementById(
+          "showName"
+        ).innerHTML = `Show Name: ${data[0].name}`;
+
+        data.forEach(function (seat) {
+          const seatDiv = document.createElement("div");
+
+          let checkboxInput = "";
+          if (seat.status !== "NotReserved") {
+            checkboxInput = `<input type="checkbox" name="seat" value="${seat.id}" disabled>`;
           }
-        )
-        .then((response) => {
-          const data = JSON.parse(response.data.showSeat);
-
-          const seatDataContainer =
-            document.getElementById("seatDataContainer");
-          document.getElementById(
-            "showName"
-          ).innerHTML = `Show Name: ${data[0].name}`;
-
-          data.forEach(function (seat) {
-            const seatDiv = document.createElement("div");
-
-            let checkboxInput = "";
-            if (seat.status !== "NotReserved") {
-              checkboxInput = `<input type="checkbox" name="seat" value="${seat.hallSeat_id}" disabled>`;
-            }
-            seatDiv.innerHTML = `
+          seatDiv.innerHTML = `
               <p>座位: ${seat.seat_row}${seat.seat_number}</p>
-              <input type="checkbox" name="seat" value="${seat.hallSeat_id}"
+              <input type="checkbox" name="seat" value="${seat.id}"
               ${checkboxInput}
               <input type="hidden" name="showId" value="${data[0].id}" />
+              <button type="submit">Submit</button>
               `;
-            seatDataContainer.appendChild(seatDiv);
-          });
-        })
-        .catch((error) => {
-          console.error(error);
+          seatDataContainer.appendChild(seatDiv);
+          //message.remove();
         });
-    } catch (error) {
-      console.error(error);
-    }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
     // function validateForm() {
     //   let x = document.forms["myForm"]["seat"].value;

@@ -9,11 +9,15 @@ import {
   deleteOrder,
 } from "../controllers/ticket.js";
 
+import { killTicket } from "../middleware/lock.js";
+
 const router = Router();
 
 router.route("/ticket").post(query("id").not().isEmpty().trim(), getShowSeat);
 
 router.route("/ticket").get(query("id").not().isEmpty().trim(), getShowSeat);
+
+router.route("/test").get(query("id").not().isEmpty().trim(), getShowSeat);
 
 router.route("/order").post(createOrders);
 
@@ -24,5 +28,7 @@ router.route("/order").get(query("id").not().isEmpty().trim(), getAllOrders);
 router.route("/checkout").post(checkout);
 
 router.route("/ticket/checkout").get(getPayment);
+
+router.route("/ordertest").post(killTicket);
 
 export default router;

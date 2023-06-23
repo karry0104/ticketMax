@@ -17,24 +17,26 @@ export async function getShowSeat(req: Request, res: Response) {
   try {
     const id = Number(req.query.id);
 
-    //res.render("showSeat", { id });
-
     // const cachedShowSeat = await cache.get(`showSeat:${id}`);
+
     // if (cachedShowSeat) {
     //   const seatData = JSON.parse(cachedShowSeat);
-    //   return res.render("showSeat", { seatData });
+    //   console.log(seatData);
+    //   return res.json(seatData);
     // }
 
     const seatData = await ticketModel.getShowSeat(id);
-    if (seatData.length === 0) {
-      return res.redirect("/");
-    }
-    return res.render("showSeat", { seatData });
+    console.log(seatData);
 
-    //await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
+    await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
+
+    // if (seatData.length === 0) {
+    //   return res.json(seatData);
+    // }
+    //return res.json(seatData);
+
+    return res.render("test", { seatData });
   } catch (error) {
-    await connection.rollback();
-    await connection.release();
     console.log(error);
   }
 }
