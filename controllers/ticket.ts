@@ -5,6 +5,7 @@ import * as cache from "../utils/cache.js";
 import { Connection } from "mysql2/promise";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
+import { prepare } from "../utils/cache.js";
 
 dotenv.config();
 
@@ -17,111 +18,98 @@ export async function getShowSeat(req: Request, res: Response) {
   try {
     const id = Number(req.query.id);
 
-    // const cachedShowSeat = await cache.get(`showSeat:${id}`);
+    const cachedShowSeat = await cache.get(`showSeat:${id}`);
 
-    // if (cachedShowSeat) {
-    //   const seatData = JSON.parse(cachedShowSeat);
-    //   console.log(seatData);
-    //   return res.json(seatData);
-    // }
+    if (cachedShowSeat) {
+      const seatData = JSON.parse(cachedShowSeat);
 
-    const seatData = await ticketModel.getShowSeat(id);
-    console.log(seatData);
+      return res.render("showSeat", { seatData, id });
+    } else {
+      const seatData = await ticketModel.getShowSeat(id);
 
-    await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
+      await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
 
-    // if (seatData.length === 0) {
-    //   return res.json(seatData);
-    // }
-    //return res.json(seatData);
-
-    return res.render("test", { seatData });
+      return res.render("showSeat", { seatData, id });
+    }
   } catch (error) {
     console.log(error);
   }
 }
 
-//not yet to get user info
+//create order, updateSeatStatus , update redis seat
 export async function createOrders(req: Request, res: Response) {
   try {
-    console.log(req.body);
+    const showSeatId = req.body.showSeatId;
 
-    const seat = req.body.seat;
-    console.log(seat);
-    const showId = Number(req.body.showId[0]);
-    console.log(showId);
+    const showId = req.body.showId;
 
-    if (!seat || seat.length > 4) {
-      return res.send("not more than 4 seat or seat is empty");
-    }
+    const userId = 2;
 
-    if (Array.isArray(seat) && seat.length > 0) {
-      const reserved = seat.map((seats) => {
-        return {
-          seat: seats,
-          showId: showId,
-        };
-      });
-      console.log(reserved);
+    const orderId = await ticketModel.createOrders(showId, userId);
 
-      //await ticketModel.checkSeat(reserved);
-    } else {
-      //await ticketModel.checkSeat(seat);
-    }
-
-    await connection.beginTransaction();
-    //1 = user_id
-    const orderId = await ticketModel.createOrders(showId, 1);
+    console.log(orderId);
 
     if (typeof orderId !== "number") {
       return;
     }
 
-    if (Array.isArray(seat) && seat.length > 0) {
-      const reservedSeats = seat.map((seats) => {
+    if (Array.isArray(showSeatId) && showSeatId.length > 0) {
+      const reservedSeats = showSeatId.map((seats) => {
         return {
-          orderId: orderId,
+          orderId,
           seat: seats,
-          showId: showId,
         };
       });
-
       await ticketModel.reserveSeat(reservedSeats);
     } else {
       await ticketModel.reserveSeat([
         {
           orderId: orderId,
-          seat,
-          showId: showId,
+          seat: showSeatId,
         },
       ]);
     }
-    connection.query("COMMIT");
+    await updateSeatInCache(showId);
 
     res.redirect("/ticket/checkout");
   } catch (error) {
-    connection.query("ROLLBACK");
     console.log(error);
   }
 }
 
 export async function getPayment(req: Request, res: Response) {
   try {
-    const userId = 1;
-    //const showId = Number(req.query.id);
-    const orders = await ticketModel.getOrders(userId);
+    const user = {
+      userId: 2,
+      username: "karry",
+      email: "aa.gmail.com",
+    };
+
+    const orderIdAndShowId = await ticketModel.getReservedOrder(user.userId);
+
+    const orderId = orderIdAndShowId[0].id;
+    const showId = orderIdAndShowId[0].show_id;
+
+    const orders = await ticketModel.getOrders(orderId);
+    const showInfo = await ticketModel.getShowInfo(showId);
 
     const totalPrice = orders.reduce((sum, i) => sum + i.price, 0);
-
     const orderData = {
+      showInfo,
+      orderId,
       totalPrice,
       orders,
     };
-    //res.json(orderData);
-    res.render("checkout", { orderData });
+
+    res.render("checkout", { user, orderData });
   } catch (error) {
     console.log(error);
   }
+}
+
+async function updateSeatInCache(id: number) {
+  const seatData = await ticketModel.getShowSeat(id);
+  await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
 }
 
 export async function checkout(req: Request, res: Response) {
@@ -178,11 +166,22 @@ export async function getAllOrders(req: Request, res: Response) {
   res.json(id);
 }
 
+//delete order, update redis seat and prepare seat
 export async function deleteOrder(req: Request, res: Response) {
   const { id } = req.query;
   const orderId = Number(id);
 
+  const showIdAndShowSeatId = await ticketModel.getShowIdByOrder(orderId);
+  console.log(showIdAndShowSeatId);
+
+  if (Array.isArray(showIdAndShowSeatId) && showIdAndShowSeatId.length > 0) {
+    const idValues = showIdAndShowSeatId.map((obj) => obj.id);
+    idValues.map(async (id) => {
+      await prepare(id);
+    });
+  }
   await ticketModel.deleteOrder(orderId);
+  await updateSeatInCache(showIdAndShowSeatId[0].show_id);
 
   res.json(id);
 }

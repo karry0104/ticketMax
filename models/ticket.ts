@@ -1,4 +1,4 @@
-import { ResultSetHeader } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { z } from "zod";
 import pool from "./databasePool.js";
 
@@ -50,18 +50,17 @@ export async function reserveSeat(
   seatData: {
     orderId: number;
     seat: number;
-    showId: number;
   }[]
 ) {
   try {
     const results = seatData.map((data) => {
-      const { orderId, seat, showId } = data;
-      return [orderId, "Reserved", seat, showId];
+      const { orderId, seat } = data;
+      return [orderId, "Reserved", seat];
     });
 
     for (const result of results) {
       await pool.query(
-        `UPDATE show_seat SET order_id = ?, status = ? WHERE hallSeat_id = ? AND show_id = ?`,
+        `UPDATE show_seat SET order_id = ?, status = ? WHERE show_seat.id = ?`,
         result
       );
     }
@@ -70,38 +69,50 @@ export async function reserveSeat(
   }
 }
 
-const CheckOrderSchema = z.object({
-  hall_name: z.string(),
-  name: z.string(),
-  show_time: z.string(),
-  email: z.string(),
-  username: z.string(),
+const OrderSchema = z.object({
+  price: z.number(),
   section: z.string(),
   seat_row: z.string(),
   seat_number: z.number(),
-  price: z.number(),
-  order_id: z.number(),
 });
 
-export async function getOrders(userId: number) {
+export async function getOrders(orderId: number) {
   const results = await pool.query(
-    `SELECT hall.hall_name, shows.name, shows.show_time, user.email, user.username, hall_seat.section,hall_seat.seat_row, hall_seat.seat_number, show_seat.price, show_seat.order_id FROM orders JOIN show_seat ON orders.id = show_seat.order_id JOIN hall_seat ON 
-    hall_seat.id = show_seat.hallSeat_id JOIN user ON user.id = orders.user_id JOIN shows ON shows.id = orders.show_id JOIN hall ON hall.id = shows.hall_id WHERE orders.user_id = ? AND orders.status = 'Reserved'`,
-    [userId]
+    `SELECT price, hall_seat.section, hall_seat.seat_row, hall_seat.seat_number FROM show_seat JOIN hall_seat ON hall_seat.id = show_seat.hallSeat_id WHERE order_id = ?`,
+    [orderId]
   );
-
-  const orders = z.array(CheckOrderSchema).parse(results[0]);
+  const orders = z.array(OrderSchema).parse(results[0]);
   return orders;
 }
 
-// export async function getShowInfo(id: number) {
-//   const results = await pool.query(
-//     `SELECT shows.name, shows.seat_chart FROM shows WHERE shows.id = ?`,
-//     [id]
-//   );
-//   const showInfo = z.array(ShowInfoSchema).parse(results[0]);
-//   return showInfo;
-// }
+const ShowInfoSchema = z.object({
+  name: z.string(),
+  show_time: z.string(),
+  hall_name: z.string(),
+});
+
+export async function getShowInfo(id: number) {
+  const results = await pool.query(
+    `SELECT shows.name, shows.show_time, hall.hall_name FROM shows JOIN hall ON hall.id = shows.hall_id WHERE shows.id =?`,
+    [id]
+  );
+  const showInfo = z.array(ShowInfoSchema).parse(results[0]);
+  return showInfo;
+}
+
+const ReservedOrder = z.object({
+  id: z.number(),
+  show_id: z.number(),
+});
+
+export async function getReservedOrder(id: number) {
+  const result = await pool.query(
+    `SELECT id, show_id FROM orders WHERE status='Reserved' AND user_id = ? `,
+    [id]
+  );
+  const order = z.array(ReservedOrder).parse(result[0]);
+  return order;
+}
 
 export async function createPayment(orderId: number, total: number) {
   await pool.query(`INSERT INTO payment (order_id, total) VALUES (?, ?)`, [
@@ -127,4 +138,17 @@ export async function deleteOrder(id: number) {
   );
 }
 
-export async function checkSeat(id: number) {}
+const ShowSeatSchema = z.object({
+  show_id: z.number(),
+  id: z.number(),
+});
+
+export async function getShowIdByOrder(id: number) {
+  const result = await pool.query(
+    `SELECT show_id, id FROM show_seat WHERE order_id = ?`,
+    [id]
+  );
+
+  const showInfo = z.array(ShowSeatSchema).parse(result[0]);
+  return showInfo;
+}

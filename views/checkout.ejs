@@ -33,15 +33,15 @@
     <div class="container">
       <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
         <div id="orders">
-          <h3 class="showName">活動名稱: <%= orderData.orders[0].name %></h3>
+          <h3 class="showName">活動名稱: <%= orderData.showInfo[0].name %></h3>
           <h3 class="showTime">
-            活動時間: <%= orderData.orders[0].show_time %>
+            活動時間: <%= orderData.showInfo[0].show_time %>
           </h3>
           <h3 class="showSection">
-            地點: <%= orderData.orders[0].hall_name %>
+            地點: <%= orderData.showInfo[0].hall_name %>
           </h3>
           <h3>訂單編號：</h3>
-          <h3 class="orderId"><%= orderData.orders[0].order_id %></h3>
+          <h3 class="orderId"><%= orderData.orderId %></h3>
 
           <h3>總金額：</h3>
           <h3 class="total"><%= orderData.totalPrice %></h3>
@@ -51,21 +51,10 @@
           </p>
           <p class="price">NTD: <%= order.price %></p>
           <p class="section">區域: <%= order.section %></p>
-
-          <% }); %> <% if (Array.isArray(orderData) && orderData.length > 0) {
-          orderData.forEach(function(order) { %>
-          <input type="hidden" name="username" value="<%= order.username %>" />
-          <input type="hidden" name="email" value="<%= order.email %>" />
-          <input type="hidden" name="name" value="<%= order.name %>" />
-          <% }); } else if (typeof orderData === 'object') { %>
-          <input
-            type="hidden"
-            name="username"
-            value="<%= orderData.username %>"
-          />
-          <input type="hidden" name="email" value="<%= orderData.email %>" />
-          <input type="hidden" name="name" value="<%= orderData.name %>" />
-          <% } %>
+          <% }); %>
+          <input type="hidden" name="username" value="<%= user.username %>" />
+          <input type="hidden" name="email" value="<%= user.email %>" />
+          <input type="hidden" name="name" value="<%= orderData.orderId %>" />
         </div>
 
         <div class="form_field-name">地址</div>
@@ -112,7 +101,7 @@
       const formData = new FormData(orderForm);
 
       try {
-        const orderId = "<%= orderData.orders[0].order_id %>";
+        const orderId = "<%= orderData.orderId %>";
         const res = await axios.delete(`/order?id=${orderId}`, formData);
         console.log(res);
         window.location.assign("/");

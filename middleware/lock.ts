@@ -8,40 +8,43 @@ export async function killTicket(
   next: NextFunction
 ) {
   const showSeatId = req.body.showSeatId;
+  console.log(showSeatId);
+
   const showId = Number(req.body.showId);
+
   const userId = 123;
 
   try {
-    console.time("secKill");
+    //console.time("secKill");
 
     if (Array.isArray(showSeatId)) {
       const showSeats = showSeatId.map(async (showSeat) => {
-        prepare(showSeat);
+        //prepare(showSeat);
         const result = await secKill(showSeat, userId);
         return result;
       });
       const results = await Promise.all(showSeats);
       if (results.every((i) => i.result === 1)) {
-        res.send("success");
+        next();
       } else {
         const prepareSeats = results.filter((i) => i.result === 1);
         prepareSeats.map(async (showSeat) => {
           prepare(showSeat.showSeatId);
         });
-        res.send("false");
+        res.send("sorry, no ticket");
       }
     } else {
-      prepare(showSeatId);
+      //prepare(showSeatId);
       const result = await secKill(showSeatId, userId);
-      console.log(`result:${result}`);
+
       if (result.result === 1) {
-        res.send("success");
+        next();
       } else {
-        res.send("false");
+        res.send("sorry, no ticket");
       }
     }
 
-    console.timeEnd("secKill");
+    //console.timeEnd("secKill");
   } catch (error) {
     next(error);
   }

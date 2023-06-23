@@ -17,18 +17,16 @@ router.route("/ticket").post(query("id").not().isEmpty().trim(), getShowSeat);
 
 router.route("/ticket").get(query("id").not().isEmpty().trim(), getShowSeat);
 
-router.route("/test").get(query("id").not().isEmpty().trim(), getShowSeat);
-
-router.route("/order").post(createOrders);
+//router.route("/test").get(query("id").not().isEmpty().trim(), getShowSeat);
 
 router.route("/order").delete(query("id").not().isEmpty().trim(), deleteOrder);
 
 router.route("/order").get(query("id").not().isEmpty().trim(), getAllOrders);
 
+router.route("/order").post([killTicket, createOrders]);
+
 router.route("/checkout").post(checkout);
 
 router.route("/ticket/checkout").get(getPayment);
-
-router.route("/ordertest").post(killTicket);
 
 export default router;

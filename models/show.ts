@@ -30,9 +30,10 @@ function instanceOfhallId(object: any): object is hallId {
 
 export async function getHallIdByName(name: string) {
   try {
-    const results = await pool.query(`SELECT id FROM hall WHERE name = ?`, [
-      name,
-    ]);
+    const results = await pool.query(
+      `SELECT id FROM hall WHERE hall_name = ?`,
+      [name]
+    );
     if (Array.isArray(results[0]) && instanceOfhallId(results[0][0])) {
       const hallId = hallIdSchema.parse(results[0][0]);
       return hallId.id;
