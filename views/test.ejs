@@ -5,13 +5,13 @@
   </head>
   <body>
     <h1>Shows</h1>
-    <form action="/ordertest" method="POST" onsubmit="limitCheckboxSelection()">
+    <form action="/order" method="POST" onsubmit="limitCheckboxSelection()">
       <% seatData.forEach((seat) => { %> <input type="checkbox"
       name="showSeatId" value="<%= seat.id %>" <%= seat.status !== 'NotReserved'
       ? 'disabled' : '' %> />
       <p class="seatRow"><%= seat.seat_row %><%= seat.seat_number %></p>
       <% }); %>
-      <input type="hidden" name="showId" value="<%= seatData[0].id %>" />
+      <input type="hidden" name="showId" value="<%= seatData[0].show_id %>" />
       <button type="submit">Submit</button>
     </form>
   </body>

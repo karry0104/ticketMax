@@ -8,11 +8,10 @@ export async function killTicket(
   next: NextFunction
 ) {
   const showSeatId = req.body.showSeatId;
-  console.log(showSeatId);
 
   const showId = Number(req.body.showId);
 
-  const userId = 123;
+  const userId = res.locals.userId;
 
   try {
     //console.time("secKill");

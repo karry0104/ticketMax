@@ -88,12 +88,17 @@
     </div>
   </body>
   <script>
+    const btn = document.getElementById("submit-button");
     const form = document.getElementById("payment-form");
     const orderForm = document.getElementById("deleteOrder");
     const orderId = document.querySelector(".orderId");
     const orderIdValue = orderId.innerText;
     const total = document.querySelector(".total");
     const totalValue = total.innerText;
+
+    btn.addEventListener("click", function handleClick() {
+      btn.textContent = "Please wait...";
+    });
 
     orderForm.addEventListener("submit", async function (e) {
       e.preventDefault();
@@ -146,10 +151,10 @@
       formData.append("total", totalValue);
       const entFormData = Object.fromEntries(formData);
 
-      // const token = document.cookie.replace(
-      //   /(?:(?:^|.*;\s*)jwtoken\s*=\s*([^;]*).*$)|^.*$/,
-      //   "$1"
-      // );
+      const token = document.cookie.replace(
+        /(?:(?:^|.*;\s*)jwtoken\s*=\s*([^;]*).*$)|^.*$/,
+        "$1"
+      );
 
       TPDirect.card.getPrime(async (result) => {
         if (result.status !== 0) {
@@ -157,20 +162,24 @@
         }
 
         const { prime } = result.card;
-        //console.log(prime);
 
         try {
           const data = {
             prime,
-            //token,
+            token,
             order: entFormData,
           };
-          console.log(data);
 
-          const res = await axios.post("/checkout", data);
-          const id = res.data.data.orderId;
+          const goQueue = await axios.post("/queue", data);
 
-          window.location.assign(`/order?id=${id}`);
+          async function shortPolling() {
+            const result = await axios.post("/checkPaid", data);
+            if (result.data.checkOrder === "Paid") {
+              window.location.assign(`/order?id=${orderIdValue}`);
+            }
+            console.log("Short Polling");
+          }
+          setInterval(shortPolling, 300);
         } catch (err) {
           console.log(err);
           // alert("請先登入");

@@ -1,5 +1,13 @@
 import { Redis } from "ioredis";
 import fs from "fs";
+
+import path from "path";
+
+const __dirname = path.resolve();
+
+const luaScriptPath = path.join(__dirname, "secKill.lua");
+const secKillScript = fs.readFileSync(luaScriptPath, "utf8");
+
 export const cache = new Redis(6379);
 
 export async function get(key: string) {
@@ -29,9 +37,18 @@ export async function del(key: string) {
   }
 }
 
-const secKillScript = fs.readFileSync(
-  "/Users/liyizhen/Desktop/ticket/dist/secKill.lua"
-);
+export async function rpush(key: string, value: string) {
+  try {
+    const result = await cache.rpush(key, value);
+    return result;
+  } catch (err) {
+    return null;
+  }
+}
+
+// const secKillScript = fs.readFileSync(
+//   "/Users/liyizhen/Desktop/ticket/dist/secKill.lua"
+// );
 
 export async function prepare(showSeatId: number) {
   await cache.hset(`${showSeatId}`, { Total: 1, Booked: 0 });

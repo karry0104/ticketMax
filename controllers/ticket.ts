@@ -1,18 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import axios from "axios";
-import pool from "../models/databasePool.js";
 import * as cache from "../utils/cache.js";
-import { Connection } from "mysql2/promise";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
+import * as showModel from "../models/show.js";
 import { prepare } from "../utils/cache.js";
 
 dotenv.config();
-
-const TAPPAY_PARTNER_KEY = process.env.TAPPAY_PARTNER_KEY;
-const TAPPAY_MERCHANT_ID = process.env.TAPPAY_MERCHANT_ID;
-
-const connection = await pool.getConnection();
 
 export async function getShowSeat(req: Request, res: Response) {
   try {
@@ -23,13 +16,7 @@ export async function getShowSeat(req: Request, res: Response) {
     if (cachedShowSeat) {
       const seatData = JSON.parse(cachedShowSeat);
 
-      return res.render("showSeat", { seatData, id });
-    } else {
-      const seatData = await ticketModel.getShowSeat(id);
-
-      await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
-
-      return res.render("showSeat", { seatData, id });
+      return res.render("test", { seatData, id });
     }
   } catch (error) {
     console.log(error);
@@ -43,11 +30,9 @@ export async function createOrders(req: Request, res: Response) {
 
     const showId = req.body.showId;
 
-    const userId = 2;
+    const userId = res.locals.userId;
 
     const orderId = await ticketModel.createOrders(showId, userId);
-
-    console.log(orderId);
 
     if (typeof orderId !== "number") {
       return;
@@ -80,9 +65,9 @@ export async function createOrders(req: Request, res: Response) {
 export async function getPayment(req: Request, res: Response) {
   try {
     const user = {
-      userId: 2,
-      username: "karry",
-      email: "aa.gmail.com",
+      userId: res.locals.userId,
+      username: res.locals.username,
+      email: res.locals.email,
     };
 
     const orderIdAndShowId = await ticketModel.getReservedOrder(user.userId);
@@ -108,56 +93,8 @@ export async function getPayment(req: Request, res: Response) {
 }
 
 async function updateSeatInCache(id: number) {
-  const seatData = await ticketModel.getShowSeat(id);
+  const seatData = await showModel.getShowSeat(id);
   await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
-}
-
-export async function checkout(req: Request, res: Response) {
-  const { prime, order } = req.body;
-
-  const data = {
-    prime,
-    partner_key: TAPPAY_PARTNER_KEY,
-    merchant_id: TAPPAY_MERCHANT_ID,
-    amount: order.total,
-    details: order.name,
-    cardholder: {
-      phone_number: order.phone,
-      name: order.username,
-      email: order.email,
-      address: order.address,
-    },
-    remember: false,
-    order_number: order.orderId,
-  };
-
-  try {
-    await ticketModel.createPayment(order.orderId, order.total);
-    await connection.query("BEGIN");
-    const result = await axios.post(
-      "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime",
-      data,
-      {
-        headers: {
-          "x-api-key": process.env.TAPPAY_PARTNER_KEY,
-        },
-      }
-    );
-    if (result.data.status !== 0) {
-      throw new Error(result.data.msg);
-    }
-
-    connection.query("COMMIT");
-
-    await ticketModel.updateOrderStatus(order.orderId);
-
-    await ticketModel.updateShowSeatStatus(order.orderId);
-
-    res.status(200).json({ data: { orderId: order.orderId } });
-  } catch (err) {
-    connection.query("ROLLBACK");
-    throw err;
-  }
 }
 
 export async function getAllOrders(req: Request, res: Response) {
@@ -172,7 +109,6 @@ export async function deleteOrder(req: Request, res: Response) {
   const orderId = Number(id);
 
   const showIdAndShowSeatId = await ticketModel.getShowIdByOrder(orderId);
-  console.log(showIdAndShowSeatId);
 
   if (Array.isArray(showIdAndShowSeatId) && showIdAndShowSeatId.length > 0) {
     const idValues = showIdAndShowSeatId.map((obj) => obj.id);
@@ -184,4 +120,11 @@ export async function deleteOrder(req: Request, res: Response) {
   await updateSeatInCache(showIdAndShowSeatId[0].show_id);
 
   res.json(id);
+}
+
+export async function checkPaid(req: Request, res: Response) {
+  const orderId = req.body.order.orderId;
+  const checkOrder = await ticketModel.checkPaid(orderId);
+  console.log(checkOrder);
+  res.status(200).json({ checkOrder });
 }

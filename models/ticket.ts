@@ -6,25 +6,6 @@ function instanceOfSetHeader(object: any): object is ResultSetHeader {
   return "insertId" in object;
 }
 
-const ShowDeatSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  status: z.string(),
-  price: z.number(),
-  section: z.string(),
-  seat_row: z.string(),
-  seat_number: z.number(),
-});
-
-export async function getShowSeat(id: number) {
-  const results = await pool.query(
-    `SELECT show_seat.id, shows.name,show_seat.status, show_seat.price, hall_seat.section, hall_seat.seat_row,hall_seat.seat_number FROM shows JOIN show_seat ON shows.id = show_seat.show_id JOIN hall_seat ON show_seat.hallSeat_id = hall_seat.id WHERE shows.id = ? ORDER BY hall_seat.seat_number ASC`,
-    [id]
-  );
-  const showSeat = z.array(ShowDeatSchema).parse(results[0]);
-  return showSeat;
-}
-
 export async function createOrders(showId: number, userId: number) {
   const orders = await pool.query(
     `INSERT INTO orders (show_id, user_id) VALUES (?, ?)`,
@@ -34,16 +15,6 @@ export async function createOrders(showId: number, userId: number) {
   if (Array.isArray(orders) && instanceOfSetHeader(orders[0])) {
     return orders[0].insertId;
   }
-}
-
-const orderIdSchema = z.object({
-  id: z.number(),
-});
-
-type orderId = z.infer<typeof orderIdSchema>;
-
-function instanceOforderId(object: any): object is orderId {
-  return "id" in object;
 }
 
 export async function reserveSeat(
@@ -151,4 +122,25 @@ export async function getShowIdByOrder(id: number) {
 
   const showInfo = z.array(ShowSeatSchema).parse(result[0]);
   return showInfo;
+}
+
+const StatusSchema = z.object({
+  status: z.string(),
+});
+
+type status = z.infer<typeof StatusSchema>;
+
+function instanceOrderStatus(object: any): object is status {
+  return "status" in object;
+}
+
+export async function checkPaid(orderId: number) {
+  const result = await pool.query(`SELECT status FROM orders WHERE id = ?`, [
+    orderId,
+  ]);
+
+  if (Array.isArray(result[0]) && instanceOrderStatus(result[0][0])) {
+    const hallId = StatusSchema.parse(result[0][0]);
+    return hallId.status;
+  }
 }

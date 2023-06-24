@@ -5,7 +5,8 @@ import { nanoid } from "nanoid";
 import { NextFunction, Request, Response } from "express";
 import { fileTypeFromBuffer } from "file-type";
 import * as showModel from "../models/show.js";
-import { type } from "os";
+import * as cache from "../utils/cache.js";
+import { prepare } from "../utils/cache.js";
 
 export async function showForm(req: Request, res: Response) {
   try {
@@ -56,6 +57,20 @@ export async function createShow(req: Request, res: Response) {
         };
       });
       await showModel.createShowSeat(showSeat);
+    }
+
+    //put new seat to cache
+    if (showId) {
+      const seatData = await showModel.getShowSeat(showId);
+
+      await cache.set(`showSeat:${showId}`, JSON.stringify(seatData));
+      const showSeat = await showModel.getShowSeatByShowId(showId);
+      if (showSeat) {
+        showSeat.map(async (seat) => {
+          await prepare(seat.id);
+          return;
+        });
+      }
     }
 
     res.send("sucess to create show");

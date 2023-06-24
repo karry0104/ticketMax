@@ -1,32 +1,35 @@
 import { Router } from "express";
-import { param, query } from "express-validator";
+import { check, param, query } from "express-validator";
 import {
   getShowSeat,
   createOrders,
-  checkout,
   getAllOrders,
   getPayment,
   deleteOrder,
+  checkPaid,
 } from "../controllers/ticket.js";
+import authenticate from "../middleware/authenticate.js";
 
 import { killTicket } from "../middleware/lock.js";
 
 const router = Router();
 
-router.route("/ticket").post(query("id").not().isEmpty().trim(), getShowSeat);
+router
+  .route("/ticket")
+  .post(query("id").not().isEmpty().trim(), authenticate, getShowSeat);
 
-router.route("/ticket").get(query("id").not().isEmpty().trim(), getShowSeat);
-
-//router.route("/test").get(query("id").not().isEmpty().trim(), getShowSeat);
+router
+  .route("/ticket")
+  .get(query("id").not().isEmpty().trim(), authenticate, getShowSeat);
 
 router.route("/order").delete(query("id").not().isEmpty().trim(), deleteOrder);
 
 router.route("/order").get(query("id").not().isEmpty().trim(), getAllOrders);
 
-router.route("/order").post([killTicket, createOrders]);
+router.route("/order").post([authenticate, killTicket, createOrders]);
 
-router.route("/checkout").post(checkout);
+router.route("/checkPaid").post(checkPaid);
 
-router.route("/ticket/checkout").get(getPayment);
+router.route("/ticket/checkout").get([authenticate, getPayment]);
 
 export default router;
