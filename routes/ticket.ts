@@ -7,6 +7,7 @@ import {
   getPayment,
   deleteOrder,
   checkPaid,
+  waitPage,
 } from "../controllers/ticket.js";
 import authenticate from "../middleware/authenticate.js";
 
@@ -31,5 +32,7 @@ router.route("/order").post([authenticate, killTicket, createOrders]);
 router.route("/checkPaid").post(checkPaid);
 
 router.route("/ticket/checkout").get([authenticate, getPayment]);
+
+router.route("/wait").get(waitPage);
 
 export default router;

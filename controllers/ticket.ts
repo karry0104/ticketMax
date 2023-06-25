@@ -4,23 +4,28 @@ import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
 import * as showModel from "../models/show.js";
 import { prepare } from "../utils/cache.js";
+import path from "path";
+
+const __dirname = path.resolve();
 
 dotenv.config();
 
 export async function getShowSeat(req: Request, res: Response) {
   try {
-    const id = Number(req.query.id);
-
-    const cachedShowSeat = await cache.get(`showSeat:${id}`);
-
-    if (cachedShowSeat) {
-      const seatData = JSON.parse(cachedShowSeat);
-
-      return res.render("test", { seatData, id });
-    }
+    // const id = Number(req.query.id);
+    // const cachedShowSeat = await cache.get(`showSeat:${id}`);
+    // if (cachedShowSeat) {
+    //   const seatData = JSON.parse(cachedShowSeat);
+    //   return res.render("test", { seatData, id });
+    // }
+    return res.render("showSeat");
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function waitPage(req: Request, res: Response) {
+  res.sendFile(path.join(__dirname, "/views/wait.html"));
 }
 
 //create order, updateSeatStatus , update redis seat
@@ -56,7 +61,7 @@ export async function createOrders(req: Request, res: Response) {
     }
     await updateSeatInCache(showId);
 
-    res.redirect("/ticket/checkout");
+    res.json({ showId });
   } catch (error) {
     console.log(error);
   }
@@ -100,7 +105,7 @@ async function updateSeatInCache(id: number) {
 export async function getAllOrders(req: Request, res: Response) {
   const { id } = req.query;
 
-  res.json(id);
+  res.status(200).json(id);
 }
 
 //delete order, update redis seat and prepare seat

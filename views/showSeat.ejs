@@ -12,7 +12,7 @@
   <body>
     <h1 id="showName"></h1>
     <h3 id="response"></h3>
-    <form name="myForm" action="/order" method="POST">
+    <form id="myForm" action="/order" method="POST">
       <div id="seatDataContainer"></div>
       <button type="submit">Submit</button>
     </form>
@@ -82,10 +82,9 @@
               }
               seatDiv.innerHTML = `
               <p>座位: ${seat.seat_row}${seat.seat_number}</p>
-              <input type="checkbox" name="seat" value="${seat.id}"
+              <input type="checkbox" name="showSeatId" value="${seat.id}"
               ${checkboxInput}
               <input type="hidden" name="showId" value="${data[0].id}" />
-              
               `;
               seatDataContainer.appendChild(seatDiv);
               //message.remove();
@@ -99,13 +98,29 @@
         });
     }
     fetchData();
-    // function validateForm() {
-    //   let x = document.forms["myForm"]["seat"].value;
-    //   console.log(x);
-    //   if (x == "" || x > 4) {
-    //     alert("not more than 4 seat or seat is empty");
-    //     return false;
-    //   }
-    // }
+
+    const form = document.getElementById("myForm");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {
+        showSeatId: formData.get("showSeatId"),
+        showId: formData.get("showId"),
+      };
+
+      try {
+        const res = await axios.post("/order", data);
+        console.log(res);
+        if (res.data === "sorry, no ticket") {
+          alert("sorry, no ticket");
+        } else {
+          window.location.assign("/ticket/checkout");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    });
   </script>
 </html>

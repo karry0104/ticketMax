@@ -5,31 +5,45 @@
   </head>
   <body>
     <h1>Shows</h1>
-    <form action="/order" method="POST" onsubmit="limitCheckboxSelection()">
-      <% seatData.forEach((seat) => { %> <input type="checkbox"
+    <form id="form" method="post">
+      <% seatData.forEach((seat) => { %> <input type="checkbox" id="showSeatId"
       name="showSeatId" value="<%= seat.id %>" <%= seat.status !== 'NotReserved'
       ? 'disabled' : '' %> />
       <p class="seatRow"><%= seat.seat_row %><%= seat.seat_number %></p>
       <% }); %>
-      <input type="hidden" name="showId" value="<%= seatData[0].show_id %>" />
+      <input
+        type="hidden"
+        id="showIds"
+        name="showId"
+        value="<%= seatData[0].show_id %>"
+      />
       <button type="submit">Submit</button>
     </form>
   </body>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
-    function limitCheckboxSelection() {
-      const checkboxes = document.getElementsByName("seat");
-      const checkedCount = 0;
+    const form = document.getElementById("form");
 
-      checkboxes.forEach(function (checkbox) {
-        if (checkbox.checked) {
-          checkedCount++;
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {
+        showSeatId: formData.get("showSeatId"),
+        showId: formData.get("showId"),
+      };
+
+      try {
+        const res = await axios.post("/order", data);
+        console.log(res);
+        if (res.data === "sorry, no ticket") {
+          alert("sorry, no ticket");
+        } else {
+          window.location.assign("/ticket/checkout");
         }
-      });
-
-      if (checkedCount > 4) {
-        alert("not more than 4");
-        return false;
+      } catch (err) {
+        console.log(err);
       }
-    }
+    });
   </script>
 </html>
