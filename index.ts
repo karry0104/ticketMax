@@ -21,7 +21,7 @@ const router = Router();
 router.use(function (req, res, next) {
   next();
 });
-app.use(rateLimiter);
+//app.use(rateLimiter);
 
 app.use(cors());
 
@@ -40,9 +40,9 @@ app.use(errorHandler);
 app.use("/uploads", express.static("./uploads"));
 app.use(express.static("public"));
 
-app.get("*", (req, res) => {
-  res.redirect("/");
-});
+// app.get("*", (req, res) => {
+//   res.redirect("/");
+// });
 
 app.listen(port, () => {
   console.log(`it's alive on port ${port}`);

@@ -142,7 +142,7 @@ export async function getShowSeatByShowId(id: number) {
 export async function getShows() {
   try {
     const results = await pool.query(
-      `SELECT name, start_time, end_time, image FROM shows`
+      `SELECT id, name, start_time, end_time, image FROM shows`
     );
     if (Array.isArray(results)) {
       return results[0];
@@ -151,6 +151,18 @@ export async function getShows() {
     console.log(err);
   }
 }
+
+// export async function getShowsPic() {
+//   try {
+//     const results = await pool.query(`SELECT image FROM shows`);
+//     if (Array.isArray(results)) {
+//       console.log(results[0]);
+//       return `https://localhost:3000/uploads/${results[0]}`;
+//     }
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
 
 export async function getShow(id: number) {
   try {

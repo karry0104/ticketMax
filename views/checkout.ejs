@@ -33,6 +33,7 @@
     <div class="container">
       <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
         <div id="orders">
+          <h2>請於5分鐘內付款完畢</h2>
           <h3 class="showName">活動名稱: <%= orderData.showInfo[0].name %></h3>
           <h3 class="showTime">
             活動時間: <%= orderData.showInfo[0].show_time %>
@@ -88,6 +89,15 @@
     </div>
   </body>
   <script>
+    // const paymentData = axios
+    //   .get("/ticket/checkout")
+    //   .then((res) => console.log(res));
+
+    // async function getPaymentData() {
+    //   const paymentData = await axios.get("/ticket/checkout");
+    // }
+    // getPaymentData();
+
     const btn = document.getElementById("submit-button");
     const form = document.getElementById("payment-form");
     const orderForm = document.getElementById("deleteOrder");
@@ -108,7 +118,10 @@
       try {
         const orderId = "<%= orderData.orderId %>";
         const res = await axios.delete(`/order?id=${orderId}`, formData);
-        console.log(res);
+        if (res.data.message === "Order is canceled") {
+          alert("已超過時間，訂單已取消");
+        }
+
         window.location.assign("/");
       } catch (err) {
         console.log(err);
@@ -171,6 +184,11 @@
           };
 
           const goQueue = await axios.post("/queue", data);
+          console.log(goQueue.status);
+          if (goQueue.data.message === "Order is canceled") {
+            alert("已超過付款時間，請重新購票");
+            window.location.assign(`/`);
+          }
 
           async function shortPolling() {
             const result = await axios.post("/checkPaid", data);
@@ -179,7 +197,7 @@
             }
             console.log("Short Polling");
           }
-          setInterval(shortPolling, 300);
+          setInterval(shortPolling, 500);
         } catch (err) {
           console.log(err);
         }

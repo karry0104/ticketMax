@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <% shows.forEach((show) => { %>
+    <h1 class="name"><%= show.name %></h1>
+    <h3 class="startTime">開賣時間：<%= show.start_time %></h3>
+    <a href="/show/detail?id=<%= show.id %>">
+      <img
+        src="http://localhost:3000/uploads/<%= show.image %>"
+        alt="<%= show.id %>"
+      />
+    </a>
+
+    <% }); %>
+  </body>
+</html>

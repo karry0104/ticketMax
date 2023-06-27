@@ -49,10 +49,6 @@ export async function rpush(key: string, value: string) {
   }
 }
 
-// const secKillScript = fs.readFileSync(
-//   "/Users/liyizhen/Desktop/ticket/dist/secKill.lua"
-// );
-
 export async function prepare(showSeatId: number) {
   await cache.hset(`${showSeatId}`, { Total: 1, Booked: 0 });
 }
@@ -79,7 +75,6 @@ export async function secKill(showSeatId: number, userId: number) {
   // }
 
   const results = { showSeatId, result };
-  console.log(results);
 
   return results;
 }

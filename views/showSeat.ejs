@@ -12,6 +12,7 @@
   <body>
     <h1 id="showName"></h1>
     <h3 id="response"></h3>
+    <h3 id="sqsCount"></h3>
     <form id="myForm" action="/order" method="POST">
       <div id="seatDataContainer"></div>
       <button type="submit">Submit</button>
@@ -39,15 +40,31 @@
       },
     };
 
+    console.log(data.data);
+
     const message = document.getElementById("response");
 
     const sendMessage = axios
       .post(
         "https://y91dhf3vh0.execute-api.ap-northeast-1.amazonaws.com/v1",
-        data.randomString
+        data
       )
       .then((response) => {
-        message.innerHTML = `Please Wait: ${response.data.SendMessageResponse.ResponseMetadata.RequestId}`;
+        console.log(response);
+        const MessageId =
+          response.data.SendMessageResponse.SendMessageResult.MessageId;
+        message.innerHTML = `Please Wait: ${MessageId}`;
+
+        const sqs = axios.post("/checkSQS", { MessageId }).then((res) => {
+          if (res.data.data > 0) {
+            document.getElementById(
+              "sqsCount"
+            ).innerText = `您前面尚有 ${res.data.data} 個用戶`;
+          } else {
+            sqsCount.remove();
+            message.remove();
+          }
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -55,27 +72,22 @@
 
     function fetchData() {
       const getSeatData = axios
-        .get(
+        .post(
           `https://18jihetbil.execute-api.ap-northeast-1.amazonaws.com/prod/seat/${id}`,
-          {
-            headers: {
-              "X-Random-String": data.randomString,
-            },
-          }
+          data
         )
         .then((response) => {
-          if (response.status === 200) {
+          console.log(response.data);
+          console.log(response.data.data.checkKey);
+          if (response.data.data.checkKey === 1) {
             const data = JSON.parse(response.data.showSeat);
-
             const seatDataContainer =
               document.getElementById("seatDataContainer");
             document.getElementById(
               "showName"
             ).innerHTML = `Show Name: ${data[0].name}`;
-
             data.forEach(function (seat) {
               const seatDiv = document.createElement("div");
-
               let checkboxInput = "";
               if (seat.status !== "NotReserved") {
                 checkboxInput = `<input type="checkbox" name="seat" value="${seat.id}" disabled>`;
@@ -84,13 +96,14 @@
               <p>座位: ${seat.seat_row}${seat.seat_number}</p>
               <input type="checkbox" name="showSeatId" value="${seat.id}"
               ${checkboxInput}
-              <input type="hidden" name="showId" value="${data[0].id}" />
+              <input type="hidden" name="showId" value="${data[0].show_id}" />
               `;
               seatDataContainer.appendChild(seatDiv);
-              //message.remove();
             });
-          } else if (response.status === 400) {
-            setTimeout(fetchData, 100);
+            sqsCount.remove();
+            message.remove();
+          } else {
+            setTimeout(fetchData, 1000);
           }
         })
         .catch((error) => {
@@ -106,7 +119,7 @@
 
       const formData = new FormData(form);
       const data = {
-        showSeatId: formData.get("showSeatId"),
+        showSeatId: formData.getAll("showSeatId"),
         showId: formData.get("showId"),
       };
 

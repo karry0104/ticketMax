@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import amqp from "amqplib";
 import * as dotenv from "dotenv";
+import * as ticketModel from "../models/ticket.js";
 
 dotenv.config();
 
@@ -8,6 +9,11 @@ const queue = "queue";
 
 export async function waitPayment(req: Request, res: Response) {
   const { prime, order, token } = req.body;
+
+  const orderStatus = await ticketModel.checkReserved(order.orderId);
+  if (orderStatus && orderStatus === "Canceled") {
+    return res.status(200).json({ message: "Order is canceled" });
+  }
 
   const data = {
     prime,

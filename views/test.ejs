@@ -6,17 +6,17 @@
   <body>
     <h1>Shows</h1>
     <form id="form" method="post">
-      <% seatData.forEach((seat) => { %> <input type="checkbox" id="showSeatId"
-      name="showSeatId" value="<%= seat.id %>" <%= seat.status !== 'NotReserved'
-      ? 'disabled' : '' %> />
+      <% seatData.forEach((seat) => { %>
       <p class="seatRow"><%= seat.seat_row %><%= seat.seat_number %></p>
-      <% }); %>
+      <input type="checkbox" id="showSeatId" name="showSeatId" value="<%=
+      seat.id %>" <%= seat.status !== 'NotReserved' ? 'disabled' : '' %> /> <%
+      }); %>
       <input
         type="hidden"
-        id="showIds"
+        id="showId"
         name="showId"
         value="<%= seatData[0].show_id %>"
-      />
+      /><br />
       <button type="submit">Submit</button>
     </form>
   </body>
@@ -28,16 +28,20 @@
       e.preventDefault();
 
       const formData = new FormData(form);
+      console.log([...formData]);
       const data = {
-        showSeatId: formData.get("showSeatId"),
+        showSeatId: formData.getAll("showSeatId"),
         showId: formData.get("showId"),
       };
+
+      console.log("data" + data);
 
       try {
         const res = await axios.post("/order", data);
         console.log(res);
         if (res.data === "sorry, no ticket") {
           alert("sorry, no ticket");
+          location.reload();
         } else {
           window.location.assign("/ticket/checkout");
         }

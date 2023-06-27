@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
+        <div id="orders">
+          <h2>請於5分鐘內付款完畢</h2>
+          <h3 id="showName" class="showName"></h3>
+          <h3 id="showTime" class="showTime"></h3>
+          <h3 id="showSection" class="showSection">地點:</h3>
+          <h3 id="orderId" class="orderId"></h3>
+          <h3 id="total" class="total"></h3>
+          <div id="orderContainer"></div>
+          <!-- <% orderData.orders.forEach((order) => { %>
+          <p class="seat">
+            座位: <%= order.seat_row %><%= order.seat_number %>
+          </p>
+          <p class="price">NTD: <%= order.price %></p>
+          <p class="section">區域: <%= order.section %></p>
+          <% }); %> -->
+          <!-- <input type="hidden" name="username" value="<%= user.username %>" />
+          <input type="hidden" name="email" value="<%= user.email %>" />
+          <input type="hidden" name="name" value="<%= orderData.orderId %>" /> -->
+        </div>
+
+        <div class="form_field-name">地址</div>
+        <input class="form_field-input" name="address" value />
+        <div class="form_field-name">手機</div>
+        <input class="form_field-input" name="phone" value />
+        <h3 class="payment-title">輸入付款資訊</h3>
+        <div class="form-group card-number-group">
+          <label for="card-number" class="control-label"
+            ><span id="cardtype"></span>卡號</label
+          >
+          <div class="form-control card-number"></div>
+        </div>
+        <div class="form-group expiration-date-group">
+          <label for="expiration-date" class="control-label">卡片到期日</label>
+          <div
+            class="form-control expiration-date"
+            id="tappay-expiration-date"
+          ></div>
+        </div>
+        <div class="form-group ccv-group">
+          <label for="ccv" class="control-label">卡片後三碼</label>
+          <div class="form-control ccv"></div>
+        </div>
+
+        <button type="submit" id="submit-button">Pay</button>
+      </form>
+      <form id="deleteOrder" onsubmit="click();">
+        <button type="submit">取消訂單</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    async function getPaymentData() {
+      const paymentData = await axios.post("/ticket/checkout");
+      console.log(paymentData.data);
+      document.getElementById(
+        "showName"
+      ).innerText = `活動名稱： ${paymentData.data.orderData.showInfo[0].name}`;
+      document.getElementById(
+        "showTime"
+      ).innerText = `活動時間： ${paymentData.data.orderData.showInfo[0].show_time}`;
+      document.getElementById(
+        "showSection"
+      ).innerText = `活動地點： ${paymentData.data.orderData.showInfo[0].hall_name}`;
+      document.getElementById(
+        "orderId"
+      ).innerText = `訂單編號： ${paymentData.data.orderData.orderId}`;
+      document.getElementById(
+        "total"
+      ).innerText = `總金額： ${paymentData.data.orderData.totalPrice}`;
+    }
+    getPaymentData();
+  </script>
+</html>

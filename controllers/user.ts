@@ -26,7 +26,7 @@ export async function signUp(req: Request, res: Response) {
 
     res.cookie("jwtoken", token).status(200);
 
-    return res.redirect("/profile");
+    return res.redirect("/user/profile");
   } catch (err) {
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });
@@ -52,14 +52,20 @@ export async function signIn(req: Request, res: Response) {
 
   res.cookie("jwtoken", token).status(200);
 
-  return res.redirect("/profile");
+  return res.redirect("/user/profile");
 }
 
 export async function getProfile(req: Request, res: Response) {
   try {
     const email = res.locals.email;
     const user = await userModel.checkUser(email);
-    res.status(200).json({ data: user });
+    const data = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    };
+    res.render("profile", { data });
+    //res.status(200).json({ data });
   } catch (err) {
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });

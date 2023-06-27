@@ -134,13 +134,24 @@ function instanceOrderStatus(object: any): object is status {
   return "status" in object;
 }
 
+export async function checkReserved(orderId: number) {
+  const result = await pool.query(`SELECT status FROM orders WHERE id = ?`, [
+    orderId,
+  ]);
+
+  if (Array.isArray(result[0]) && instanceOrderStatus(result[0][0])) {
+    const orderStatus = StatusSchema.parse(result[0][0]);
+    return orderStatus.status;
+  }
+}
+
 export async function checkPaid(orderId: number) {
   const result = await pool.query(`SELECT status FROM orders WHERE id = ?`, [
     orderId,
   ]);
 
   if (Array.isArray(result[0]) && instanceOrderStatus(result[0][0])) {
-    const hallId = StatusSchema.parse(result[0][0]);
-    return hallId.status;
+    const orderStatus = StatusSchema.parse(result[0][0]);
+    return orderStatus.status;
   }
 }

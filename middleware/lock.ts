@@ -7,15 +7,7 @@ export async function killTicket(
   res: Response,
   next: NextFunction
 ) {
-  console.log(req.body);
-
   const { showSeatId, showId } = req.body;
-  console.log(req.body.showId);
-  // console.log(showId);
-  // console.log(showSeatId);
-  // const showSeatId = req.body.showSeatId;
-
-  // const showId = Number(req.body.showId);
 
   const userId = res.locals.userId;
 
@@ -26,6 +18,7 @@ export async function killTicket(
         return result;
       });
       const results = await Promise.all(showSeats);
+      console.log("arr" + results);
       if (results.every((i) => i.result === 1)) {
         next();
       } else {
@@ -41,7 +34,7 @@ export async function killTicket(
       if (result.result === 1) {
         next();
       } else {
-        console.log(result);
+        //console.log(result);
         res.send("sorry, no ticket");
       }
     }

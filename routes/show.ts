@@ -6,11 +6,16 @@ import {
   showForm,
   getShows,
   getShow,
+  showDetailPage,
 } from "../controllers/show.js";
 
 const router = Router();
 
 router.route("/admin/show").get(showForm);
+
+router
+  .route("/api/show/detail")
+  .get(query("id").not().isEmpty().trim(), getShow);
 
 router.route("/admin/show").post(
   uploadToDisk.fields([
@@ -23,7 +28,7 @@ router.route("/admin/show").post(
 router.route("/").get(getShows);
 
 router
-  .route("/show/detail/:id")
-  .get(param("id").not().isEmpty().trim(), getShow);
+  .route("/show/detail")
+  .get(query("id").not().isEmpty().trim(), showDetailPage);
 
 export default router;

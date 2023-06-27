@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+    <style>
+      .chart-size {
+        width: 400px;
+        height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="image" id="image"></div>
+    <h1>購票前請先登入</h1>
+    <h3 id="showName" class="showName"></h3>
+    <h3 id="showIntro" class="showIntro"></h3>
+    <h3 id="showTime" class="showTime"></h3>
+    <div class="seatChart" id="seatChart"></div>
+    <div id="seatForm"></div>
+  </body>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+    async function getShowData() {
+      const showDetail = await axios.get(`/api/show/detail?id=${id}`);
+      console.log(showDetail.data);
+      document.getElementById(
+        "image"
+      ).innerHTML = `<img src="http://localhost:3000/uploads/${showDetail.data.show[0].image}" alt="seatChart" class="img-size">`;
+      document.getElementById(
+        "showName"
+      ).innerText = `活動名稱： ${showDetail.data.show[0].name}`;
+      document.getElementById(
+        "showIntro"
+      ).innerText = `活動介紹 : ${showDetail.data.show[0].introduction}`;
+      document.getElementById(
+        "showTime"
+      ).innerText = `活動時間: ${showDetail.data.show[0].show_time}`;
+      document.getElementById(
+        "seatChart"
+      ).innerHTML = `<img src="http://localhost:3000/uploads/${showDetail.data.show[0].seat_chart}" alt="seatChart" class="chart-size">`;
+      document.getElementById(
+        "seatForm"
+      ).innerHTML = `<form action="/ticket?id=${id}" method="POST">
+      <input type="hidden" name="id" value="${id}" />
+      <button type="submit">我要買票</button>
+    </form>`;
+    }
+    getShowData();
+  </script>
+</html>

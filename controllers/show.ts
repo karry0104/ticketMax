@@ -8,6 +8,8 @@ import * as showModel from "../models/show.js";
 import * as cache from "../utils/cache.js";
 import { prepare } from "../utils/cache.js";
 
+const __dirname = path.resolve();
+
 export async function showForm(req: Request, res: Response) {
   try {
     res.render("createShow");
@@ -18,6 +20,10 @@ export async function showForm(req: Request, res: Response) {
     }
     res.status(500).json({ errors: "create product failed" });
   }
+}
+
+export async function showDetailPage(req: Request, res: Response) {
+  res.sendFile(path.join(__dirname, "/views/showDetail.html"));
 }
 
 export async function createShow(req: Request, res: Response) {
@@ -86,7 +92,10 @@ export async function createShow(req: Request, res: Response) {
 export async function getShows(req: Request, res: Response) {
   try {
     const shows = await showModel.getShows();
-    res.json(shows);
+
+    res.render("home", { shows });
+
+    //res.status(200).json({ shows });
   } catch (err) {
     if (err instanceof Error) {
       res.status(500).json({ errors: err.message });
@@ -98,10 +107,11 @@ export async function getShows(req: Request, res: Response) {
 
 export async function getShow(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
+    const id = Number(req.query.id);
+
     const show = await showModel.getShow(id);
 
-    res.render("showDetail", { show });
+    res.status(200).json({ show });
   } catch (err) {
     if (err instanceof Error) {
       res.status(500).json({ errors: err.message });

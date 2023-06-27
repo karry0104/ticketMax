@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.32, for macos13 (arm64)
 --
--- Host: localhost    Database: ticket
+-- Host: localhost    Database: ticket2
 -- ------------------------------------------------------
 -- Server version	8.0.32
 
@@ -88,7 +88,7 @@ CREATE TABLE `orders` (
   KEY `show_id_idx` (`show_id`),
   CONSTRAINT `fk_orders_show_id` FOREIGN KEY (`show_id`) REFERENCES `shows` (`id`),
   CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +97,6 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (67,'2023-06-16 15:29:15','Reserved',1,50,NULL),(68,'2023-06-16 15:38:04','Reserved',1,50,NULL),(69,'2023-06-16 15:40:16','Paid',1,50,NULL),(70,'2023-06-16 15:41:44','Reserved',1,50,NULL),(71,'2023-06-16 15:46:12','Reserved',1,50,NULL),(72,'2023-06-16 15:47:20','Paid',1,50,NULL),(73,'2023-06-16 15:53:30','Paid',1,50,NULL),(74,'2023-06-16 15:53:34','Reserved',1,50,NULL),(75,'2023-06-16 16:00:32','Reserved',1,50,NULL),(76,'2023-06-17 05:29:05','Paid',1,64,NULL),(77,'2023-06-17 06:57:41','Canceled',1,64,NULL),(78,'2023-06-17 07:50:31','Paid',1,64,NULL),(79,'2023-06-17 07:51:05','Canceled',1,64,NULL),(80,'2023-06-17 07:54:07','Canceled',1,64,NULL),(81,'2023-06-17 07:54:24','Canceled',1,64,NULL),(82,'2023-06-17 07:54:53','Canceled',1,64,NULL),(83,'2023-06-17 11:24:11','Reserved',1,64,NULL);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,7 +124,6 @@ CREATE TABLE `payment` (
 
 LOCK TABLES `payment` WRITE;
 /*!40000 ALTER TABLE `payment` DISABLE KEYS */;
-INSERT INTO `payment` VALUES (40,200,69,'2023-06-16 15:40:35'),(41,100,72,'2023-06-16 15:47:54'),(42,100,73,'2023-06-16 15:55:03'),(43,500,76,'2023-06-17 05:29:18'),(44,300,78,'2023-06-17 07:50:49');
 /*!40000 ALTER TABLE `payment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -150,7 +148,7 @@ CREATE TABLE `show_seat` (
   CONSTRAINT `fk_order_id` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
   CONSTRAINT `hallSeat_id` FOREIGN KEY (`hallSeat_id`) REFERENCES `hall_seat` (`id`),
   CONSTRAINT `show_id` FOREIGN KEY (`show_id`) REFERENCES `shows` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,7 +157,6 @@ CREATE TABLE `show_seat` (
 
 LOCK TABLES `show_seat` WRITE;
 /*!40000 ALTER TABLE `show_seat` DISABLE KEYS */;
-INSERT INTO `show_seat` VALUES (11,'NotReserved',100,56,50,NULL),(12,'NotReserved',100,57,50,NULL),(13,'Paid',100,58,50,NULL),(14,'NotReserved',100,59,50,NULL),(15,'Reserved',100,60,50,NULL),(16,'NotReserved',100,61,50,NULL),(17,'NotReserved',100,62,50,NULL),(18,'Paid',100,63,50,69),(19,'Paid',100,64,50,72),(20,'Paid',100,65,50,69),(21,'NotReserved',500,46,53,NULL),(22,'NotReserved',500,47,53,NULL),(23,'NotReserved',500,48,53,NULL),(24,'NotReserved',500,49,53,NULL),(25,'NotReserved',500,50,53,NULL),(26,'NotReserved',500,51,53,NULL),(27,'NotReserved',500,52,53,NULL),(28,'NotReserved',500,53,53,NULL),(29,'NotReserved',500,54,53,NULL),(30,'NotReserved',500,55,53,NULL),(31,'NotReserved',2000,26,54,NULL),(32,'NotReserved',2000,27,54,NULL),(33,'NotReserved',2000,28,54,NULL),(34,'NotReserved',2000,29,54,NULL),(35,'NotReserved',2000,30,54,NULL),(36,'NotReserved',2000,31,54,NULL),(37,'NotReserved',2000,32,54,NULL),(38,'NotReserved',2000,33,54,NULL),(39,'NotReserved',2000,34,54,NULL),(40,'NotReserved',2000,35,54,NULL),(41,'NotReserved',300,56,63,NULL),(42,'NotReserved',300,57,63,NULL),(43,'NotReserved',300,58,63,NULL),(44,'NotReserved',300,59,63,NULL),(45,'NotReserved',300,60,63,NULL),(46,'NotReserved',300,61,63,NULL),(47,'NotReserved',300,62,63,NULL),(48,'NotReserved',300,63,63,NULL),(49,'NotReserved',300,64,63,NULL),(50,'NotReserved',300,65,63,NULL),(51,'NotReserved',300,26,64,NULL),(52,'Reserved',300,27,64,NULL),(53,'Reserved',300,28,64,83),(54,'NotReserved',300,29,64,NULL),(55,'NotReserved',300,30,64,NULL),(56,'NotReserved',300,31,64,NULL),(57,'NotReserved',300,32,64,NULL),(58,'Paid',300,33,64,NULL),(59,'Paid',300,34,64,78),(60,'Paid',300,35,64,76);
 /*!40000 ALTER TABLE `show_seat` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -183,7 +180,7 @@ CREATE TABLE `shows` (
   PRIMARY KEY (`id`),
   KEY `hall_id_idx` (`hall_id`),
   CONSTRAINT `fk_shows_hall_id` FOREIGN KEY (`hall_id`) REFERENCES `hall` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,7 +189,6 @@ CREATE TABLE `shows` (
 
 LOCK TABLES `shows` WRITE;
 /*!40000 ALTER TABLE `shows` DISABLE KEYS */;
-INSERT INTO `shows` VALUES (50,'superIdol','2023-06-15','2023-06-23','good','ftgRXZT.png','jAHfa-C.png',3,'2023-06-13T19:58'),(51,'superIdol','2023-06-15','2023-06-23','good','QHk0A4p.png','aDqlWhJ.png',3,'2023-07-12'),(52,'superIdol','2023-06-15','2023-06-23','good','FkbeVyN.png','HESa-Dt.png',3,'2023-07-12'),(53,'superIdol','2023-06-15','2023-06-23','good','jusGKK3.png','7Z051Y2.png',2,'2023-07-12'),(54,'superIdol','2023-06-15','2023-06-23','good','7bzq0Zj.png','eCo56qP.png',1,'2023-07-12'),(55,'superIdol','2023-06-15','2023-06-23','good','R7GHNyW.png','A8g4CT7.png',1,'2023-07-12'),(56,'superIdol','2023-06-15','2023-06-23','good','7pVMcdf.png','0prApQE.png',1,'2023-07-12'),(57,'superIdol','2023-06-15','2023-06-23','good','caVZB_V.png','ExKS9KU.png',1,'2023-07-12'),(58,'superIdol','2023-06-15','2023-06-23','good','A5_QM1J.png','aQ2OV4K.png',1,'2023-07-12'),(59,'superIdol','2023-06-15','2023-06-23','good','zRLIDXG.png','NVcYc8P.png',1,'2023-07-12'),(60,'superIdol','2023-06-15','2023-06-23','good','jcak0uw.png','P4oQ4ha.png',1,'2023-07-12'),(61,'superIdol','2023-06-15','2023-06-23','good','gNd--Xy.png','SoZxZjI.png',1,'2023-07-12'),(62,'superIdol','2023-06-15','2023-06-23','good','C3cGoTs.png','mgsw0r2.png',1,'2023-07-12'),(63,'idol','2023-06-16','2023-06-23','good show','Yv9jbOj.png','CurkxkX.png',3,'2023-07-12'),(64,'idol2','2023-06-13','2023-06-29','good','bowjHbg.png','sMTRNAw.png',1,'2023-06-13T19:58');
 /*!40000 ALTER TABLE `shows` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -210,7 +206,7 @@ CREATE TABLE `user` (
   `password` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,7 +215,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'Karry','zhen860104@gmail.com','aaa','2023-05-19 08:55:44');
+INSERT INTO `user` VALUES (1,'Karry','zhen860104@gmail.com','aaa','2023-05-19 08:55:44'),(2,'aa','aa@gmail.com','$2b$07$IdwJ.5NN96NUFYCFdvebtOZxemmy46Xs/EreSqD8tYFe4SJScqU1W','2023-06-27 14:03:51');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -232,4 +228,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-18 19:34:50
+-- Dump completed on 2023-06-27 22:30:20
