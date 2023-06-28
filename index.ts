@@ -8,9 +8,16 @@ import userRouter from "./routes/user.js";
 import queueRouter from "./routes/queue.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { rateLimiter } from "./middleware/rateLimiter.js";
+import { Server } from "socket.io";
 
 const app = express();
 const port = 3000;
+
+const httpServer = app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
+export const io = new Server(httpServer);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -40,10 +47,14 @@ app.use(errorHandler);
 app.use("/uploads", express.static("./uploads"));
 app.use(express.static("public"));
 
+io.on("connection", (socket) => {
+  console.log("Hello!");
+
+  socket.on("disconnect", () => {
+    console.log("Bye~");
+  });
+});
+
 // app.get("*", (req, res) => {
 //   res.redirect("/");
 // });
-
-app.listen(port, () => {
-  console.log(`it's alive on port ${port}`);
-});

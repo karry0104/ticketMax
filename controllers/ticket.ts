@@ -4,6 +4,7 @@ import * as cache from "../utils/cache.js";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
 import * as showModel from "../models/show.js";
+import { io } from "../index.js";
 import { prepare } from "../utils/cache.js";
 import path from "path";
 
@@ -18,13 +19,13 @@ export async function checkoutPage(req: Request, res: Response) {
 
 export async function getShowSeat(req: Request, res: Response) {
   try {
-    const id = Number(req.query.id);
-    const cachedShowSeat = await cache.get(`showSeat:${id}`);
-    if (cachedShowSeat) {
-      const seatData = JSON.parse(cachedShowSeat);
-      return res.render("test", { seatData, id });
-    }
-    //return res.render("showSeat");
+    // const id = Number(req.query.id);
+    // const cachedShowSeat = await cache.get(`showSeat:${id}`);
+    // if (cachedShowSeat) {
+    //   const seatData = JSON.parse(cachedShowSeat);
+    //   return res.render("test", { seatData, id });
+    // }
+    return res.render("showSeat");
   } catch (error) {
     console.log(error);
   }
@@ -37,6 +38,7 @@ export async function createOrders(req: Request, res: Response) {
     console.log("createOrders" + showSeatId);
 
     const showId = req.body.showId;
+    console.log("orders" + showId);
 
     const userId = res.locals.userId;
 
@@ -127,6 +129,9 @@ export async function getPayment(req: Request, res: Response) {
 async function updateSeatInCache(id: number) {
   const seatData = await showModel.getShowSeat(id);
   await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
+  const updateSeat = await cache.get(`showSeat:${id}`);
+
+  io.emit("updateSeat", updateSeat);
 }
 
 export async function getAllOrders(req: Request, res: Response) {
@@ -169,9 +174,9 @@ export async function checkPaid(req: Request, res: Response) {
 
 export async function checkSQS(req: Request, res: Response) {
   const sqs = new AWS.SQS({ region: "ap-northeast-1" });
+  const { id } = req.body;
 
-  const queueUrl =
-    "https://sqs.ap-northeast-1.amazonaws.com/649086394704/mes2.fifo";
+  const queueUrl = `https://sqs.ap-northeast-1.amazonaws.com/649086394704/mes${id}.fifo`;
 
   const attributeParams = {
     QueueUrl: queueUrl,

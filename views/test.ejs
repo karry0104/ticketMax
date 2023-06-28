@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>Shows</title>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <body>
     <h1>Shows</h1>
@@ -20,8 +22,17 @@
       <button type="submit">Submit</button>
     </form>
   </body>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
+    const socket = io();
+
+    socket.on("connect", function () {
+      socket.emit("updateSeat");
+    });
+
+    socket.on("updateSeat", function (data) {
+      updateSeatData(data);
+    });
+
     const form = document.getElementById("form");
 
     form.addEventListener("submit", async function (e) {

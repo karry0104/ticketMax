@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Shows</title>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <style>
@@ -46,7 +47,7 @@
 
     const sendMessage = axios
       .post(
-        "https://y91dhf3vh0.execute-api.ap-northeast-1.amazonaws.com/v1",
+        `https://llibq3igv0.execute-api.ap-northeast-1.amazonaws.com/v1/mes${id}`,
         data
       )
       .then((response) => {
@@ -55,7 +56,7 @@
           response.data.SendMessageResponse.SendMessageResult.MessageId;
         message.innerHTML = `Please Wait: ${MessageId}`;
 
-        const sqs = axios.post("/checkSQS", { MessageId }).then((res) => {
+        const sqs = axios.post("/checkSQS", { id }).then((res) => {
           if (res.data.data > 0) {
             document.getElementById(
               "sqsCount"
@@ -102,6 +103,8 @@
             });
             sqsCount.remove();
             message.remove();
+
+            connectSocketIO();
           } else {
             setTimeout(fetchData, 1000);
           }
@@ -112,15 +115,53 @@
     }
     fetchData();
 
+    function connectSocketIO() {
+      const socket = io();
+
+      socket.on("connect", function () {
+        socket.emit("updateSeat");
+      });
+
+      socket.on("updateSeat", function (data) {
+        updateSeatData(data);
+      });
+    }
+
+    function updateSeatData(data) {
+      const seatDataContainer = document.getElementById("seatDataContainer");
+      seatDataContainer.innerHTML = "";
+
+      document.getElementById("seatDataContainer");
+      document.getElementById(
+        "showName"
+      ).innerHTML = `Show Name: ${data[0].name}`;
+
+      data.forEach(function (seat) {
+        const seatDiv = document.createElement("div");
+        let checkboxInput = "";
+        if (seat.status !== "NotReserved") {
+          checkboxInput = `<input type="checkbox" name="seat" value="${seat.id}" disabled>`;
+        }
+        seatDiv.innerHTML = `
+      <p>座位: ${seat.seat_row}${seat.seat_number}</p>
+      <input type="checkbox" name="showSeatId" value="${seat.id}"
+      ${checkboxInput}
+      <input type="hidden" name="showId" value="${id}" />
+    `;
+        seatDataContainer.appendChild(seatDiv);
+      });
+    }
+
     const form = document.getElementById("myForm");
 
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const formData = new FormData(form);
+      console.log([...formData]);
       const data = {
         showSeatId: formData.getAll("showSeatId"),
-        showId: formData.get("showId"),
+        showId: id,
       };
 
       try {
@@ -128,6 +169,7 @@
         console.log(res);
         if (res.data === "sorry, no ticket") {
           alert("sorry, no ticket");
+          location.reload();
         } else {
           window.location.assign("/ticket/checkout");
         }

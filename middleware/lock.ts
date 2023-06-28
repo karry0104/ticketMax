@@ -30,6 +30,7 @@ export async function killTicket(
       }
     } else {
       const result = await secKill(showSeatId, userId);
+      console.log("single" + result);
 
       if (result.result === 1) {
         next();
