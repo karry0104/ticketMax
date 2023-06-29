@@ -1,7 +1,7 @@
 import amqp from "amqplib";
 import * as dotenv from "dotenv";
 import axios from "axios";
-import * as ticketModel from "./dist/models/ticket.js";
+import * as ticketModel from "../dist/models/ticket.js";
 
 dotenv.config();
 

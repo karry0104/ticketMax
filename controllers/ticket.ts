@@ -4,8 +4,9 @@ import * as cache from "../utils/cache.js";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
 import * as showModel from "../models/show.js";
-import { io } from "../index.js";
+// import { io } from "../index.js";
 import { prepare } from "../utils/cache.js";
+import { checkOrderPaymentStatus } from "../controllers/queue.js";
 import path from "path";
 
 const __dirname = path.resolve();
@@ -19,13 +20,13 @@ export async function checkoutPage(req: Request, res: Response) {
 
 export async function getShowSeat(req: Request, res: Response) {
   try {
-    // const id = Number(req.query.id);
-    // const cachedShowSeat = await cache.get(`showSeat:${id}`);
-    // if (cachedShowSeat) {
-    //   const seatData = JSON.parse(cachedShowSeat);
-    //   return res.render("test", { seatData, id });
-    // }
-    return res.render("showSeat");
+    const id = Number(req.query.id);
+    const cachedShowSeat = await cache.get(`showSeat:${id}`);
+    if (cachedShowSeat) {
+      const seatData = JSON.parse(cachedShowSeat);
+      return res.render("test", { seatData, id });
+    }
+    //return res.render("showSeat");
   } catch (error) {
     console.log(error);
   }
@@ -66,25 +67,7 @@ export async function createOrders(req: Request, res: Response) {
     }
     await updateSeatInCache(showId);
 
-    setTimeout(async () => {
-      const checkResvered = await ticketModel.checkReserved(orderId);
-      if (checkResvered && checkResvered === "Reserved") {
-        const showIdAndShowSeatId = await ticketModel.getShowIdByOrder(orderId);
-
-        if (
-          Array.isArray(showIdAndShowSeatId) &&
-          showIdAndShowSeatId.length > 0
-        ) {
-          const idValues = showIdAndShowSeatId.map((obj) => obj.id);
-          idValues.map(async (id) => {
-            await prepare(id);
-          });
-        }
-
-        ticketModel.deleteOrder(orderId);
-        await updateSeatInCache(showId);
-      }
-    }, ORDER_EXPIRATION_TIME);
+    await checkOrderPaymentStatus(orderId, showId);
 
     res.json({ showId });
   } catch (error) {
@@ -126,12 +109,12 @@ export async function getPayment(req: Request, res: Response) {
   }
 }
 
-async function updateSeatInCache(id: number) {
+export async function updateSeatInCache(id: number) {
   const seatData = await showModel.getShowSeat(id);
   await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
   const updateSeat = await cache.get(`showSeat:${id}`);
 
-  io.emit("updateSeat", updateSeat);
+  //io.emit("updateSeat", updateSeat);
 }
 
 export async function getAllOrders(req: Request, res: Response) {

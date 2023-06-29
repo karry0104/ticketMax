@@ -7,6 +7,8 @@ dotenv.config();
 
 const queue = "queue";
 
+const orderQueue = "order";
+
 export async function waitPayment(req: Request, res: Response) {
   const { prime, order, token } = req.body;
 
@@ -37,6 +39,28 @@ export async function waitPayment(req: Request, res: Response) {
     console.log(" [x] Sent '%s'", data);
     await channel.close();
     res.send("put to queue");
+  } catch (err) {
+    console.warn(err);
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+export async function checkOrderPaymentStatus(orderId: number, showId: number) {
+  const data = {
+    orderId,
+    showId,
+  };
+
+  let connection;
+  try {
+    connection = await amqp.connect("amqp://127.0.0.1:5672");
+    const channel = await connection.createChannel();
+
+    await channel.assertQueue(orderQueue, { durable: false });
+    channel.sendToQueue(orderQueue, Buffer.from(JSON.stringify(data)));
+    console.log(" [x] Sent '%s'", data);
+    await channel.close();
   } catch (err) {
     console.warn(err);
   } finally {

@@ -190,14 +190,13 @@
             window.location.assign(`/`);
           }
 
-          async function shortPolling() {
+          async function checkPaid() {
             const result = await axios.post("/checkPaid", data);
             if (result.data.checkOrder === "Paid") {
               window.location.assign(`/order?id=${orderIdValue}`);
             }
-            console.log("Short Polling");
           }
-          setInterval(shortPolling, 500);
+          setInterval(checkPaid, 500);
         } catch (err) {
           console.log(err);
         }
