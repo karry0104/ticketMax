@@ -8,28 +8,12 @@ import userRouter from "./routes/user.js";
 import queueRouter from "./routes/queue.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { rateLimiter } from "./middleware/rateLimiter.js";
-// import http from "http";
-
-// import { Server } from "socket.io";
 
 const app = express();
 const port = 3000;
 
-// const options = {};
-
-// const server = http.createServer(options);
-
-// server.listen(4040);
-// export const io = new Server(server);
-// //const io = new Server(server);
-
-//export const io = new Server(httpServer);
-
-app.listen(port, () => {
-  console.log(`listening on port ${port}`);
-});
-
 app.use(express.json());
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -55,16 +39,11 @@ app.get("/", (req, res) => {
 app.use(errorHandler);
 
 app.use("/uploads", express.static("./uploads"));
-app.use(express.static("public"));
 
-// io.on("connection", (socket) => {
-//   console.log("Hello!");
+app.get("*", (req, res) => {
+  res.redirect("/");
+});
 
-//   socket.on("disconnect", () => {
-//     console.log("Bye~");
-//   });
-// });
-
-// app.get("*", (req, res) => {
-//   res.redirect("/");
-// });
+app.listen(port, () => {
+  console.log(`listening on port ${port}`);
+});

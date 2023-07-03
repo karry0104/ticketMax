@@ -4,19 +4,70 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/src/output.css" rel="stylesheet" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>Document</title>
   </head>
+  <style>
+    #image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
   <body>
-    <% shows.forEach((show) => { %>
-    <h1 class="name"><%= show.name %></h1>
-    <h3 class="startTime">開賣時間：<%= show.start_time %></h3>
-    <a href="/show/detail?id=<%= show.id %>">
-      <img
-        src="http://localhost:3000/uploads/<%= show.image %>"
-        alt="<%= show.id %>"
-      />
-    </a>
+    <div class="navbar shadow-md bg-white fixed z-50 top-0">
+      <div class="flex-1">
+        <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
+          >TicketMax</a
+        >
+      </div>
+      <div class="flex-none">
+        <ul
+          class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+        >
+          <li><a href="/user/profile">PROFILE</a></li>
+        </ul>
+      </div>
+    </div>
 
-    <% }); %>
+    <div class="relative mt-20 mb-16">
+      <div class="bgimage" id="bgimage"></div>
+      <div class="image" id="image"></div>
+    </div>
+
+    <div class="flex justify-evenly w-7/12 mx-auto">
+      <div class="flex justify-evenly w-full mx-auto flex-wrap">
+        <% shows.forEach((show) => { %>
+        <a href="/show/detail?id=<%= show.id %>" class="max-w-[30%]">
+          <div
+            class="mt-10 mx-auto overflow-hidden bg-white rounded-lg shadow-lg grow"
+          >
+            <img
+              class="object-cover w-full h-56"
+              src="http://localhost:3000/uploads/<%= show.image %>"
+              alt="<%= show.id %>"
+            />
+
+            <div class="py-5 text-center">
+              <h1 class="name"><%= show.name %></h1>
+              <span class="startTime text-sm text-gray-700 dark:text-gray-200"
+                >開賣時間：<%= show.start_time %></span
+              >
+            </div>
+          </div>
+        </a>
+
+        <% }); %>
+      </div>
+    </div>
+
+    <footer class="footer p-4 bg-gray-100 text-lg mt-36">
+      <div>
+        <p>TicketMax© 2023</p>
+      </div>
+    </footer>
+    <script src="/js/home.js"></script>
   </body>
 </html>

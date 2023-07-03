@@ -41,6 +41,7 @@ export async function reserveSeat(
 }
 
 const OrderSchema = z.object({
+  show_id: z.number(),
   price: z.number(),
   section: z.string(),
   seat_row: z.string(),
@@ -49,7 +50,7 @@ const OrderSchema = z.object({
 
 export async function getOrders(orderId: number) {
   const results = await pool.query(
-    `SELECT price, hall_seat.section, hall_seat.seat_row, hall_seat.seat_number FROM show_seat JOIN hall_seat ON hall_seat.id = show_seat.hallSeat_id WHERE order_id = ?`,
+    `SELECT show_seat.show_id, price, hall_seat.section, hall_seat.seat_row, hall_seat.seat_number FROM show_seat JOIN hall_seat ON hall_seat.id = show_seat.hallSeat_id WHERE order_id = ?`,
     [orderId]
   );
   const orders = z.array(OrderSchema).parse(results[0]);
@@ -57,6 +58,7 @@ export async function getOrders(orderId: number) {
 }
 
 const ShowInfoSchema = z.object({
+  image: z.string(),
   name: z.string(),
   show_time: z.string(),
   hall_name: z.string(),
@@ -64,7 +66,7 @@ const ShowInfoSchema = z.object({
 
 export async function getShowInfo(id: number) {
   const results = await pool.query(
-    `SELECT shows.name, shows.show_time, hall.hall_name FROM shows JOIN hall ON hall.id = shows.hall_id WHERE shows.id =?`,
+    `SELECT shows.image, shows.name, shows.show_time, hall.hall_name FROM shows JOIN hall ON hall.id = shows.hall_id WHERE shows.id =?`,
     [id]
   );
   const showInfo = z.array(ShowInfoSchema).parse(results[0]);
@@ -154,4 +156,13 @@ export async function checkPaid(orderId: number) {
     const orderStatus = StatusSchema.parse(result[0][0]);
     return orderStatus.status;
   }
+}
+
+export async function getPaidOrder(id: number) {
+  const result = await pool.query(
+    `SELECT id, show_id FROM shows WHERE order_id = ? `,
+    [id]
+  );
+  const order = z.array(ReservedOrder).parse(result[0]);
+  return order;
 }

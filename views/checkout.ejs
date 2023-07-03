@@ -6,201 +6,326 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-      crossorigin="anonymous"
-    />
+    <link href="/src/output.css" rel="stylesheet" />
 
     <title>Connect payment with TapPay</title>
-    <style>
-      body {
-        margin: 100px 0;
-      }
-      .container {
-        max-width: 450px;
-      }
-      form {
-        padding: 20px;
-      }
-      #payment-title {
-        padding-left: 30px;
-      }
-    </style>
   </head>
-  <body>
-    <div class="container">
-      <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
-        <div id="orders">
-          <h2>請於5分鐘內付款完畢</h2>
-          <h3 class="showName">活動名稱: <%= orderData.showInfo[0].name %></h3>
-          <h3 class="showTime">
-            活動時間: <%= orderData.showInfo[0].show_time %>
-          </h3>
-          <h3 class="showSection">
-            地點: <%= orderData.showInfo[0].hall_name %>
-          </h3>
-          <h3>訂單編號：</h3>
-          <h3 class="orderId"><%= orderData.orderId %></h3>
 
-          <h3>總金額：</h3>
-          <h3 class="total"><%= orderData.totalPrice %></h3>
-          <% orderData.orders.forEach((order) => { %>
-          <p class="seat">
-            座位: <%= order.seat_row %><%= order.seat_number %>
-          </p>
-          <p class="price">NTD: <%= order.price %></p>
-          <p class="section">區域: <%= order.section %></p>
-          <% }); %>
+  <body>
+    <div class="navbar shadow-md bg-white">
+      <div class="flex-1">
+        <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
+          >TicketMax</a
+        >
+      </div>
+      <div class="flex-none">
+        <ul
+          class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+        >
+          <li><a href="/user/profile">PROFILE</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div
+        class="after:mt-4 after:block after:h-1 after:w-full after:rounded-lg after:bg-gray-200 w-1/2 mx-auto mt-16"
+      >
+        <ol class="grid grid-cols-3 text-lg font-medium text-gray-500">
+          <li class="relative flex justify-start text-blue-700">
+            <span
+              class="absolute -bottom-[1.75rem] start-0 rounded-full bg-blue-700 text-white"
+            >
+              <svg
+                class="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+
+            <span class="hidden sm:block">選擇位置</span>
+
+            <svg
+              class="h-6 w-6 sm:hidden"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
+              />
+            </svg>
+          </li>
+
+          <li class="relative flex justify-center text-blue-700">
+            <span
+              class="absolute -bottom-[1.75rem] left-1/2 -translate-x-1/2 rounded-full bg-blue-700 text-white"
+            >
+              <svg
+                class="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+
+            <span class="hidden sm:block">購票確認</span>
+
+            <svg
+              class="mx-auto h-6 w-6 sm:hidden"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+          </li>
+
+          <li class="relative flex justify-end">
+            <span
+              class="absolute -bottom-[1.75rem] end-0 rounded-full bg-gray-600 text-white"
+            >
+              <svg
+                class="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+
+            <span class="hidden sm:block">完成訂單</span>
+
+            <svg
+              class="h-6 w-6 sm:hidden"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+              />
+            </svg>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <h2 class="mt-20 text-4xl flex justify-center gap-5 text-center">
+      請於5分鐘內付款完畢
+    </h2>
+
+    <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
+      <div class="container flex justify-between mx-auto mt-20">
+        <div class="order card w-7/12 bg-base-100" id="orders">
+          <div class="card bg-base-100 shadow-xl">
+            <figure class="h-48">
+              <img
+                src="http://localhost:3000/uploads/<%= orderData.showInfo[0].image %>"
+                alt="image"
+              />
+            </figure>
+            <div class="card-body">
+              <div>
+                <div class="text-xl">活動</div>
+                <h2 class="showName text-2xl">
+                  <%= orderData.showInfo[0].name %>
+                </h2>
+              </div>
+              <div>
+                <div class="text-xl mt-8">時間</div>
+                <h2 class="showTime text-2xl"><%= date %> <%= time %></h2>
+              </div>
+              <div>
+                <div class="text-xl mt-8">地點</div>
+                <h2 class="showHall text-2xl">
+                  <%= orderData.showInfo[0].hall_name %>
+                </h2>
+              </div>
+
+              <div class="mt-8 flex">
+                <h3 class="text-lg">訂單編號</h3>
+                <h3 class="orderId text-lg ml-4"><%= orderData.orderId %></h3>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="table text-xl text-slate-950">
+                  <thead class="bg-amber-300 text-xl text-slate-950">
+                    <tr>
+                      <th>區域</th>
+                      <th>座位</th>
+                      <th>票價(NTD)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% orderData.orders.forEach((order) => { %>
+                    <tr class="seat">
+                      <td><%= order.section %></td>
+                      <td><%= order.seat_row %><%= order.seat_number %></td>
+                      <td><%= order.price %></td>
+                    </tr>
+                  </tbody>
+                  <tbody>
+                    <% }); %>
+                    <tr>
+                      <td>總金額</td>
+                      <td></td>
+                      <td class="total"><%= orderData.totalPrice %></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
           <input type="hidden" name="username" value="<%= user.username %>" />
           <input type="hidden" name="email" value="<%= user.email %>" />
           <input type="hidden" name="name" value="<%= orderData.orderId %>" />
         </div>
+        <div class="checkout w-3/5 ml-20 flex flex-col">
+          <div class="mt-8 flex justify-between gap-5 w-[490px]">
+            <h3 class="text-3xl mb-8">付款資訊</h3>
+            <div class="w-auto flex">
+              <div>
+                <span id="minutes" class="countdown font-mono text-4xl">
+                  <span style="--value: 5"></span>
+                </span>
+                min
+              </div>
+              <div>
+                <span id="seconds" class="countdown font-mono text-4xl">
+                  <span style="--value: 00"></span>
+                </span>
+                sec
+              </div>
+            </div>
+          </div>
 
-        <div class="form_field-name">地址</div>
-        <input class="form_field-input" name="address" value />
-        <div class="form_field-name">手機</div>
-        <input class="form_field-input" name="phone" value />
-        <h3 class="payment-title">輸入付款資訊</h3>
-        <div class="form-group card-number-group">
-          <label for="card-number" class="control-label"
-            ><span id="cardtype"></span>卡號</label
+          <div class="mb-6">
+            <label
+              for="address"
+              class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+              >地址</label
+            >
+            <input
+              type="text"
+              name="address"
+              value
+              class="border border-slate-500 text-sm rounded block p-2 outline-none w-[490px] h-[40px]"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label
+              for="phone"
+              class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+              >手機</label
+            >
+            <input
+              type="text"
+              name="phone"
+              value
+              class="border border-slate-500 text-sm rounded block p-2 outline-none w-[490px] h-[40px]"
+              required
+            />
+          </div>
+
+          <div class="card-number-group">
+            <label
+              for="card-number"
+              class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+              >信用卡號碼</label
+            >
+            <div
+              class="card-number w-[490px] h-[40px] rounded border border-slate-500 block outline-none"
+              id="card-number"
+            ></div>
+          </div>
+          <div class="flex mt-8">
+            <div class="expiration-date-group">
+              <label
+                for="expiration-date"
+                class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+                >有效期限</label
+              >
+              <div
+                class="expiration-date w-[220px] h-[40px] rounded border border-slate-500 block outline-none"
+                id="expiration-date"
+              ></div>
+            </div>
+            <div class="ccv-group ml-10">
+              <label
+                for="card-ccv"
+                class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+                >安全碼</label
+              >
+              <div
+                class="card-ccv w-[230px] h-[40px] rounded border border-slate-500 block outline-none"
+                id="card-ccv"
+              ></div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="bg-amber-300 p-3 w-[490px] rounded-md mt-20"
+            id="submit-button"
           >
-          <div class="form-control card-number"></div>
+            確認付款
+          </button>
+          <button
+            id="deleteBtn"
+            class="bg-violet-700 text-white p-3 w-[490px] rounded-md mt-12"
+            type="click"
+          >
+            取消訂單
+          </button>
         </div>
-        <div class="form-group expiration-date-group">
-          <label for="expiration-date" class="control-label">卡片到期日</label>
-          <div
-            class="form-control expiration-date"
-            id="tappay-expiration-date"
-          ></div>
-        </div>
-        <div class="form-group ccv-group">
-          <label for="ccv" class="control-label">卡片後三碼</label>
-          <div class="form-control ccv"></div>
-        </div>
+      </div>
+    </form>
 
-        <button type="submit" id="submit-button">Pay</button>
-      </form>
-      <form id="deleteOrder" onsubmit="click();">
-        <button type="submit">取消訂單</button>
-      </form>
-    </div>
+    <form id="deleteOrder"></form>
+    <footer class="footer p-4 bg-gray-100 text-lg mt-36">
+      <div>
+        <p>TicketMax© 2023</p>
+      </div>
+    </footer>
+    <script src="/js/checkout.js"></script>
   </body>
-  <script>
-    // const paymentData = axios
-    //   .get("/ticket/checkout")
-    //   .then((res) => console.log(res));
-
-    // async function getPaymentData() {
-    //   const paymentData = await axios.get("/ticket/checkout");
-    // }
-    // getPaymentData();
-
-    const btn = document.getElementById("submit-button");
-    const form = document.getElementById("payment-form");
-    const orderForm = document.getElementById("deleteOrder");
-    const orderId = document.querySelector(".orderId");
-    const orderIdValue = orderId.innerText;
-    const total = document.querySelector(".total");
-    const totalValue = total.innerText;
-
-    btn.addEventListener("click", function handleClick() {
-      btn.textContent = "Please wait...";
-    });
-
-    orderForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      const formData = new FormData(orderForm);
-
-      try {
-        const orderId = "<%= orderData.orderId %>";
-        const res = await axios.delete(`/order?id=${orderId}`, formData);
-        if (res.data.message === "Order is canceled") {
-          alert("已超過時間，訂單已取消");
-        }
-
-        window.location.assign("/");
-      } catch (err) {
-        console.log(err);
-      }
-    });
-
-    TPDirect.setupSDK(
-      11327,
-      "app_whdEWBH8e8Lzy4N6BysVRRMILYORF6UxXbiOFsICkz0J9j1C0JUlCHv1tVJC",
-      "sandbox"
-    );
-
-    TPDirect.card.setup({
-      fields: {
-        number: {
-          element: ".card-number",
-          placeholder: "**** **** **** ****",
-        },
-        expirationDate: {
-          element: ".expiration-date",
-          placeholder: "MM / YY",
-        },
-        ccv: {
-          element: ".ccv",
-          placeholder: "後三碼",
-        },
-      },
-      isMaskCreditCardNumber: true,
-      maskCreditCardNumberRange: {
-        beginIndex: 6,
-        endIndex: 11,
-      },
-    });
-    const submitButton = document.querySelector("#submit-button");
-    const cardViewContainer = document.querySelector("#container");
-
-    function onClick() {
-      const formData = new FormData(form);
-      formData.append("orderId", orderIdValue);
-      formData.append("total", totalValue);
-      const entFormData = Object.fromEntries(formData);
-
-      const token = document.cookie.replace(
-        /(?:(?:^|.*;\s*)jwtoken\s*=\s*([^;]*).*$)|^.*$/,
-        "$1"
-      );
-
-      TPDirect.card.getPrime(async (result) => {
-        if (result.status !== 0) {
-          return;
-        }
-
-        const { prime } = result.card;
-
-        try {
-          const data = {
-            prime,
-            token,
-            order: entFormData,
-          };
-
-          const goQueue = await axios.post("/queue", data);
-          console.log(goQueue.status);
-          if (goQueue.data.message === "Order is canceled") {
-            alert("已超過付款時間，請重新購票");
-            window.location.assign(`/`);
-          }
-
-          async function checkPaid() {
-            const result = await axios.post("/checkPaid", data);
-            if (result.data.checkOrder === "Paid") {
-              window.location.assign(`/order?id=${orderIdValue}`);
-            }
-          }
-          setInterval(checkPaid, 500);
-        } catch (err) {
-          console.log(err);
-        }
-      });
-    }
-  </script>
 </html>

@@ -3,11 +3,12 @@ import { check, param, query } from "express-validator";
 import {
   getShowSeat,
   createOrders,
-  getAllOrders,
+  getPaidOrders,
   getPayment,
   deleteOrder,
   checkPaid,
   checkoutPage,
+  countDown,
   checkSQS,
 } from "../controllers/ticket.js";
 import authenticate from "../middleware/authenticate.js";
@@ -26,7 +27,7 @@ router
 
 router.route("/order").delete(query("id").not().isEmpty().trim(), deleteOrder);
 
-router.route("/order").get(query("id").not().isEmpty().trim(), getAllOrders);
+router.route("/order").get(query("id").not().isEmpty().trim(), getPaidOrders);
 
 router.route("/order").post([authenticate, killTicket, createOrders]);
 
@@ -34,10 +35,8 @@ router.route("/checkPaid").post(checkPaid);
 
 router.route("/ticket/checkout").get([authenticate, getPayment]);
 
+router.route("/ticket/countDown").get(countDown);
+
 router.route("/checkSQS").post(checkSQS);
-
-// router.route("/checkout").get(checkoutPage);
-
-// router.route("/ticket/checkout").post([authenticate, getPayment]);
 
 export default router;

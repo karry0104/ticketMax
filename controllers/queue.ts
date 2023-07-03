@@ -11,6 +11,7 @@ const orderQueue = "order";
 
 export async function waitPayment(req: Request, res: Response) {
   const { prime, order, token } = req.body;
+  console.log(req.body);
 
   const orderStatus = await ticketModel.checkReserved(order.orderId);
   if (orderStatus && orderStatus === "Canceled") {

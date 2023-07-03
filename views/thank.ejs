@@ -1,10 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head> </head>
+  <head>
+    <link href="/src/output.css" rel="stylesheet" />
+  </head>
   <body>
-    <div class="message">
-      <h3 class="orderNumber">訂單編號： <%= id %></h3>
-      <h1>付款成功，感謝您的購買</h1>
+    <div class="navbar shadow-md bg-white">
+      <div class="flex-1">
+        <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
+          >TicketMax</a
+        >
+      </div>
+      <div class="flex-none">
+        <ul
+          class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+        >
+          <li><a href="/user/profile">PROFILE</a></li>
+        </ul>
+      </div>
     </div>
+    <div
+      class="flex flex-col justify-center items-center font-mono mt-20 w-1/2 mx-auto"
+    >
+      <div>
+        <div class="message text-4xl mb-10 mt-10">
+          <h1>付款成功，請再次確認購票資訊</h1>
+        </div>
+      </div>
+      <div class="order card w-2/3 bg-base-100" id="orders">
+        <div class="card bg-base-100 shadow-xl">
+          <figure class="h-48">
+            <img
+              src="http://localhost:3000/uploads/<%= showInfo[0].image %>"
+              alt="image"
+            />
+          </figure>
+          <div class="card-body">
+            <div>
+              <div class="text-xl">活動</div>
+              <h2 class="showName text-2xl"><%= showInfo[0].name %></h2>
+            </div>
+            <div>
+              <div class="text-xl mt-8">時間</div>
+              <h2 class="showTime text-2xl"><%= date %> <%= time %></h2>
+            </div>
+            <div>
+              <div class="text-xl mt-8">地點</div>
+              <h2 class="showHall text-2xl"><%= showInfo[0].hall_name %></h2>
+            </div>
+
+            <div class="mt-8 flex">
+              <h3 class="text-lg">訂單編號</h3>
+              <h3 class="orderId text-lg ml-4"><%= id %></h3>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="table text-xl text-slate-950">
+                <thead class="bg-amber-300 text-xl text-slate-950">
+                  <tr>
+                    <th>區域</th>
+                    <th>座位</th>
+                    <th>票價(NTD)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% orders.forEach((order) => { %>
+                  <tr class="seat">
+                    <td><%= order.section %></td>
+                    <td><%= order.seat_row %><%= order.seat_number %></td>
+                    <td><%= order.price %></td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer p-4 bg-gray-100 text-lg mt-36">
+      <div>
+        <p>TicketMax© 2023</p>
+      </div>
+    </footer>
   </body>
 </html>

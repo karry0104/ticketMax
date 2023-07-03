@@ -4,52 +4,123 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/src/output.css" rel="stylesheet" />
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>Document</title>
     <style>
-      .chart-size {
-        width: 400px;
-        height: 500px;
+      #image {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
     </style>
   </head>
   <body>
-    <div class="image" id="image"></div>
-    <h1>購票前請先登入</h1>
-    <h3 id="showName" class="showName"></h3>
-    <h3 id="showIntro" class="showIntro"></h3>
-    <h3 id="showTime" class="showTime"></h3>
-    <div class="seatChart" id="seatChart"></div>
-    <div id="seatForm"></div>
+    <div class="navbar shadow-md bg-white fixed z-50 top-0">
+      <div class="flex-1">
+        <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
+          >TicketMax</a
+        >
+      </div>
+      <div class="flex-none">
+        <ul
+          class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+        >
+          <li><a href="/user/profile">PROFILE</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="relative mt-20">
+      <div class="bgimage" id="bgimage"></div>
+      <div class="image" id="image"></div>
+    </div>
+
+    <div class="info mt-14 mx-auto flex flex-col justify-center items-center">
+      <div class="mt-6 w-7/12 font-mono">
+        <div class="flex items-center py-4">
+          <div class="flex-grow h-px bg-gray-400"></div>
+
+          <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
+            >歌手介紹</span
+          >
+
+          <div class="flex-grow h-px bg-gray-400"></div>
+        </div>
+      </div>
+
+      <div class="singerIntro w-7/12 text-lg font-mono" id="singerIntro"></div>
+
+      <div class="mt-6 w-7/12 font-mono">
+        <div class="flex items-center py-4">
+          <div class="flex-grow h-px bg-gray-400"></div>
+
+          <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
+            >活動介紹</span
+          >
+
+          <div class="flex-grow h-px bg-gray-400"></div>
+        </div>
+      </div>
+
+      <div class="showIntro w-7/12 text-lg font-mono" id="showIntro"></div>
+
+      <!-- <h1
+        class="border-2 rounded-lg text-3xl mt-6 p-2 px-80 bg-amber-300 border-amber-300"
+      >
+        購票前請先登入
+      </h1> -->
+      <div class="mt-6 w-7/12 font-mono">
+        <div class="flex items-center py-4">
+          <div class="flex-grow h-px bg-gray-400"></div>
+
+          <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
+            >活動</span
+          >
+
+          <div class="flex-grow h-px bg-gray-400"></div>
+        </div>
+      </div>
+      <div class="overflow-x-auto w-7/12 flex justify-between">
+        <table class="table font-mono">
+          <!-- head -->
+          <thead class="text-xl">
+            <tr class="bg-base-200">
+              <th>演出時間</th>
+              <th>活動名稱</th>
+              <th>場地</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- row 1 -->
+            <tr class="text-base">
+              <td>
+                <h3 class="showTime hidden"></h3>
+                <h3 class="date"></h3>
+                <h3 class="time mt-3 ml-6"></h3>
+              </td>
+              <td><h3 class="showName"></h3></td>
+              <td><h3 class="showHall"></h3></td>
+              <th><div id="seatForm"></div></th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-6 w-7/12 font-mono">
+        <h3 class="text-xl text-gray-500">座位圖僅供參考</h3>
+        <div
+          class="seatChart w-7/12 mt-8 hover:scale-150 hover:translate-x-28 hover:translate-y-40"
+          id="seatChart"
+        ></div>
+      </div>
+    </div>
+    <footer class="footer p-4 bg-gray-100 text-lg mt-36">
+      <div>
+        <p>TicketMax© 2023</p>
+      </div>
+    </footer>
+    <script src="/js/showDetail.js"></script>
   </body>
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get("id");
-    async function getShowData() {
-      const showDetail = await axios.get(`/api/show/detail?id=${id}`);
-      console.log(showDetail.data);
-      document.getElementById(
-        "image"
-      ).innerHTML = `<img src="http://localhost:3000/uploads/${showDetail.data.show[0].image}" alt="seatChart" class="img-size">`;
-      document.getElementById(
-        "showName"
-      ).innerText = `活動名稱： ${showDetail.data.show[0].name}`;
-      document.getElementById(
-        "showIntro"
-      ).innerText = `活動介紹 : ${showDetail.data.show[0].introduction}`;
-      document.getElementById(
-        "showTime"
-      ).innerText = `活動時間: ${showDetail.data.show[0].show_time}`;
-      document.getElementById(
-        "seatChart"
-      ).innerHTML = `<img src="http://localhost:3000/uploads/${showDetail.data.show[0].seat_chart}" alt="seatChart" class="chart-size">`;
-      document.getElementById(
-        "seatForm"
-      ).innerHTML = `<form action="/ticket?id=${id}" method="POST">
-      <input type="hidden" name="id" value="${id}" />
-      <button type="submit">我要買票</button>
-    </form>`;
-    }
-    getShowData();
-  </script>
 </html>

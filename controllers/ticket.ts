@@ -20,13 +20,13 @@ export async function checkoutPage(req: Request, res: Response) {
 
 export async function getShowSeat(req: Request, res: Response) {
   try {
-    const id = Number(req.query.id);
-    const cachedShowSeat = await cache.get(`showSeat:${id}`);
-    if (cachedShowSeat) {
-      const seatData = JSON.parse(cachedShowSeat);
-      return res.render("test", { seatData, id });
-    }
-    //return res.render("showSeat");
+    // const id = Number(req.query.id);
+    // const cachedShowSeat = await cache.get(`showSeat:${id}`);
+    // if (cachedShowSeat) {
+    //   const seatData = JSON.parse(cachedShowSeat);
+    //   return res.render("test", { seatData, id });
+    // }
+    return res.render("showSeat");
   } catch (error) {
     console.log(error);
   }
@@ -93,6 +93,9 @@ export async function getPayment(req: Request, res: Response) {
     const orders = await ticketModel.getOrders(orderId);
     const showInfo = await ticketModel.getShowInfo(showId);
 
+    const date = showInfo[0].show_time.split("T")[0];
+    const time = showInfo[0].show_time.split("T")[1];
+
     const totalPrice = orders.reduce((sum, i) => sum + i.price, 0);
     const orderData = {
       showInfo,
@@ -103,25 +106,68 @@ export async function getPayment(req: Request, res: Response) {
 
     //res.status(200).json({ user, orderData });
 
-    res.render("checkout", { user, orderData });
+    res.render("checkout", { user, orderData, date, time });
   } catch (error) {
     console.log(error);
   }
+}
+
+// let time = 300;
+// export async function countDown(req: Request, res: Response) {
+//   setInterval(() => {
+//     const minites = Math.floor(time / 60);
+//     const seconds = time % 60;
+
+//     res.json({ minites, seconds });
+
+//     time--;
+//   }, 1000);
+// }
+let time = 300;
+let isCounting = false;
+
+export async function countDown(req: Request, res: Response) {
+  if (isCounting) {
+    return;
+  }
+
+  isCounting = true;
+
+  const intervalId = setInterval(() => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+
+    if (!res.headersSent) {
+      res.json({ minutes, seconds });
+    }
+
+    time--;
+
+    if (time < 0) {
+      clearInterval(intervalId);
+      isCounting = false;
+    }
+  }, 1000);
 }
 
 export async function updateSeatInCache(id: number) {
   const seatData = await showModel.getShowSeat(id);
   await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
   const updateSeat = await cache.get(`showSeat:${id}`);
-
-  //io.emit("updateSeat", updateSeat);
 }
 
-export async function getAllOrders(req: Request, res: Response) {
+export async function getPaidOrders(req: Request, res: Response) {
   const { id } = req.query;
 
-  res.render("thank", { id });
-  //res.status(200).json(id);
+  const orders = await ticketModel.getOrders(Number(id));
+
+  const showInfo = await ticketModel.getShowInfo(orders[0].show_id);
+
+  const date = showInfo[0].show_time.split("T")[0];
+  const time = showInfo[0].show_time.split("T")[1];
+
+  res.render("thank", { id, orders, showInfo, date, time });
+  //res.status(200).json({ id, orders, showInfo });
 }
 
 //delete order, update redis seat and prepare seat

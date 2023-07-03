@@ -22,6 +22,18 @@ export async function showForm(req: Request, res: Response) {
   }
 }
 
+export async function campaignForm(req: Request, res: Response) {
+  try {
+    res.render("createCampaign");
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: "create campaign failed" });
+  }
+}
+
 export async function showDetailPage(req: Request, res: Response) {
   res.sendFile(path.join(__dirname, "/views/showDetail.html"));
 }
@@ -86,6 +98,43 @@ export async function createShow(req: Request, res: Response) {
       return;
     }
     res.status(500).json({ errors: "create product failed" });
+  }
+}
+
+export async function createShowCampaign(req: Request, res: Response) {
+  const { id } = req.body;
+  const image = req.files;
+
+  try {
+    if (image && typeof image === "object") {
+      if (Array.isArray(image)) {
+        console.log(image[0].filename);
+      } else if (image.image && Array.isArray(image.image)) {
+        const imageName = image.image[0].filename;
+
+        await showModel.createShowCampaign(id, imageName);
+      }
+    }
+    res.send("sucess to create campaign");
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: "create campaign failed" });
+  }
+}
+
+export async function getShowCampagin(req: Request, res: Response) {
+  try {
+    const campaign = await showModel.getShowCampaign();
+
+    res.status(200).json({ campaign });
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
   }
 }
 

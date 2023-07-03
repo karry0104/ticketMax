@@ -7,11 +7,16 @@ import {
   getShows,
   getShow,
   showDetailPage,
+  getShowCampagin,
+  campaignForm,
+  createShowCampaign,
 } from "../controllers/show.js";
 
 const router = Router();
 
 router.route("/admin/show").get(showForm);
+
+router.route("/admin/show/campaign").get(campaignForm);
 
 router
   .route("/api/show/detail")
@@ -25,7 +30,16 @@ router.route("/admin/show").post(
   createShow
 );
 
+router
+  .route("/admin/show/campaign")
+  .post(
+    uploadToDisk.fields([{ name: "image", maxCount: 1 }]),
+    createShowCampaign
+  );
+
 router.route("/").get(getShows);
+
+router.route("/show/campaign").get(getShowCampagin);
 
 router
   .route("/show/detail")

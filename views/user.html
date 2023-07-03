@@ -1,299 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login and Registration Form</title>
+    <link href="/src/output.css" rel="stylesheet" />
+    <title>Document</title>
   </head>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
-    html,
-    body {
-      display: grid;
-      height: 100%;
-      width: 100%;
-      place-items: center;
-    }
-    ::selection {
-      background: #fa4299;
-      color: #fff;
-    }
-    .wrapper {
-      overflow: hidden;
-      max-width: 390px;
-      background: #fff;
-      padding: 30px;
-      border-radius: 5px;
-      box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.1);
-    }
-    .wrapper .title-text {
-      display: flex;
-      width: 200%;
-    }
-    .wrapper .title {
-      width: 50%;
-      font-size: 35px;
-      font-weight: 600;
-      text-align: center;
-      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .wrapper .slide-controls {
-      position: relative;
-      display: flex;
-      height: 50px;
-      width: 100%;
-      overflow: hidden;
-      margin: 30px 0 10px 0;
-      justify-content: space-between;
-      border: 1px solid lightgrey;
-      border-radius: 5px;
-    }
-    .slide-controls .slide {
-      height: 100%;
-      width: 100%;
-      color: #fff;
-      font-size: 18px;
-      font-weight: 500;
-      text-align: center;
-      line-height: 48px;
-      cursor: pointer;
-      z-index: 1;
-      transition: all 0.6s ease;
-    }
-    .slide-controls label.signup {
-      color: #000;
-    }
-    .slide-controls .slider-tab {
-      position: absolute;
-      height: 100%;
-      width: 50%;
-      left: 0;
-      z-index: 0;
-      border-radius: 5px;
-      background: #d31b43;
-      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    input[type="radio"] {
-      display: none;
-    }
-    #signup:checked ~ .slider-tab {
-      left: 50%;
-    }
-    #signup:checked ~ label.signup {
-      color: #fff;
-      cursor: default;
-      user-select: none;
-    }
-    #signup:checked ~ label.login {
-      color: #000;
-    }
-    #login:checked ~ label.signup {
-      color: #000;
-    }
-    #login:checked ~ label.login {
-      cursor: default;
-      user-select: none;
-    }
-    .wrapper .form-container {
-      width: 100%;
-      overflow: hidden;
-    }
-    .form-container .form-inner {
-      display: flex;
-      width: 200%;
-    }
-    .form-container .form-inner form {
-      width: 50%;
-      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .form-inner form .field {
-      height: 50px;
-      width: 100%;
-      margin-top: 20px;
-    }
-    .form-inner form .field input {
-      height: 100%;
-      width: 100%;
-      outline: none;
-      padding-left: 15px;
-      border-radius: 5px;
-      border: 1px solid lightgrey;
-      border-bottom-width: 2px;
-      font-size: 17px;
-      transition: all 0.3s ease;
-    }
-    .form-inner form .field input:focus {
-      border-color: #fc83bb;
-      /* box-shadow: inset 0 0 3px #fb6aae; */
-    }
-    .form-inner form .field input::placeholder {
-      color: #999;
-      transition: all 0.3s ease;
-    }
-    form .field input:focus::placeholder {
-      color: #b3b3b3;
-    }
-    .form-inner form .pass-link {
-      margin-top: 5px;
-    }
-    .form-inner form .signup-link {
-      text-align: center;
-      margin-top: 30px;
-    }
-    .form-inner form .pass-link a,
-    .form-inner form .signup-link a {
-      color: #e3840f;
-      text-decoration: none;
-    }
-    .form-inner form .pass-link a:hover,
-    .form-inner form .signup-link a:hover {
-      text-decoration: underline;
-    }
-    form .btn {
-      height: 50px;
-      width: 100%;
-      border-radius: 5px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    form .btn .btn-layer {
-      height: 100%;
-      width: 300%;
-      position: absolute;
-      left: -100%;
-      background: #fcb55f;
-      border-radius: 5px;
-      transition: all 0.4s ease;
-    }
-    form .btn:hover .btn-layer {
-      left: 0;
-    }
-    form .btn input[type="submit"] {
-      height: 100%;
-      width: 100%;
-      z-index: 1;
-      position: relative;
-      background: none;
-      border: none;
-      color: #fff;
-      padding-left: 0;
-      border-radius: 5px;
-      font-size: 20px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    .fb-field {
-      margin-top: 20px;
-    }
-
-    .fb-login-button {
-      background-color: #4267b2;
-      color: #fff;
-      font-size: 50px;
-      cursor: pointer;
-    }
-  </style>
   <body>
-    <div class="wrapper">
-      <div class="title-text">
-        <div class="title login">Login</div>
-        <div class="title signup">Signup</div>
+    <div class="navbar shadow-md bg-white">
+      <div class="flex-1">
+        <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
+          >TicketMax</a
+        >
       </div>
-      <div class="form-container">
-        <div class="slide-controls">
-          <input type="radio" name="slide" id="login" checked />
-          <input type="radio" name="slide" id="signup" />
-          <label for="login" class="slide login">Login</label>
-          <label for="signup" class="slide signup">Signup</label>
-          <div class="slider-tab"></div>
+      <div class="flex-none">
+        <ul
+          class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+        >
+          <li><a href="/user/profile">PROFILE</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+      <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div class="flex justify-around mb-2">
+          <div
+            class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
+          >
+            <button id="loginButton" type="button">SingIn</button>
+          </div>
+          <div
+            class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
+          >
+            <button id="signupButton" type="button">SingUp</button>
+          </div>
         </div>
-        <div class="form-inner">
-          <form action="/user/signin" method="POST" class="login">
-            <div class="field">
-              <input
-                type="text"
-                name="email"
-                placeholder="Email Address"
-                required
-              />
-            </div>
-            <div class="field">
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                required
-              />
-            </div>
-            <div class="field btn">
-              <div class="btn-layer"></div>
-              <input type="submit" value="Login" />
-            </div>
-            <div class="fb-field">
-              <fb:login-button
-                scope="public_profile,email"
-                onlogin="checkLoginState()"
+        <hr />
+        <div>
+          <form
+            id="signinForm"
+            class="space-y-6 mt-4"
+            action="/user/signin"
+            method="POST"
+          >
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium leading-6 text-gray-900"
+                >Email address</label
               >
-              </fb:login-button>
+              <div class="mt-2">
+                <input
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
             </div>
-            <div class="signup-link">
-              Not a member? <a href="">Signup now</a>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <label
+                  for="password"
+                  class="block text-sm font-medium leading-6 text-gray-900"
+                  >Password</label
+                >
+              </div>
+              <div class="mt-2">
+                <input
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Sign in
+              </button>
             </div>
           </form>
-          <form action="/user/signup" method="post" class="signup">
-            <div class="field">
-              <input type="text" name="name" placeholder="Username" required />
+        </div>
+        <div>
+          <form
+            id="signupForm"
+            class="space-y-6"
+            action="/user/signup"
+            method="POST"
+            style="display: none"
+          >
+            <div>
+              <label
+                for="name"
+                class="block text-sm font-medium leading-6 text-gray-900"
+                >Name</label
+              >
+              <div class="mt-2">
+                <input
+                  id="name"
+                  name="name"
+                  type="name"
+                  autocomplete="name"
+                  required
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
             </div>
-            <div class="field">
-              <input
-                type="text"
-                name="email"
-                placeholder="Email Address"
-                required
-              />
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium leading-6 text-gray-900"
+                >Email address</label
+              >
+              <div class="mt-2">
+                <input
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
             </div>
-            <div class="field">
-              <input
-                type="password"
-                name="password"
-                placeholder="password"
-                required
-              />
+
+            <div>
+              <div class="flex items-center justify-between">
+                <label
+                  for="password"
+                  class="block text-sm font-medium leading-6 text-gray-900"
+                  >Password</label
+                >
+              </div>
+              <div class="mt-2">
+                <input
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
             </div>
-            <div class="field btn">
-              <div class="btn-layer"></div>
-              <input type="submit" value="Signup" />
+
+            <div>
+              <button
+                type="submit"
+                class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Sign up
+              </button>
             </div>
           </form>
         </div>
       </div>
     </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script>
-      const loginText = document.querySelector(".title-text .login");
-      const loginForm = document.querySelector("form.login");
-      const loginBtn = document.querySelector("label.login");
-      const signupBtn = document.querySelector("label.signup");
-      const signupLink = document.querySelector("form .signup-link a");
-      signupBtn.onclick = () => {
-        loginForm.style.marginLeft = "-50%";
-        loginText.style.marginLeft = "-50%";
-      };
-      loginBtn.onclick = () => {
-        loginForm.style.marginLeft = "0%";
-        loginText.style.marginLeft = "0%";
-      };
-      signupLink.onclick = () => {
-        signupBtn.click();
-        return false;
-      };
-    </script>
+    <script src="/js/user.js"></script>
   </body>
 </html>

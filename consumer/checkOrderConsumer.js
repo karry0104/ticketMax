@@ -5,7 +5,7 @@ import { updateSeatInCache } from "../dist/controllers/ticket.js";
 
 const orderQueue = "order";
 
-const ORDER_EXPIRATION_TIME = 5 * 60 * 1000;
+const ORDER_EXPIRATION_TIME = 100 * 60 * 1000;
 
 (async () => {
   try {
