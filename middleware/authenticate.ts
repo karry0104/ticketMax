@@ -5,7 +5,8 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
   try {
     const token = req.cookies.jwtoken;
     if (!token) {
-      return res.redirect("/user");
+      res.status(401).json({ errors: "invalid token" });
+      return;
     }
     const decoded = await verifyJWT(token);
     res.locals.username = decoded.username;

@@ -4,31 +4,37 @@ import * as cache from "../utils/cache.js";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
 import * as showModel from "../models/show.js";
-// import { io } from "../index.js";
 import { prepare } from "../utils/cache.js";
 import { checkOrderPaymentStatus } from "../controllers/queue.js";
 import path from "path";
 
 const __dirname = path.resolve();
-const ORDER_EXPIRATION_TIME = 5 * 60 * 1000;
 
 dotenv.config();
 
 export async function checkoutPage(req: Request, res: Response) {
-  res.sendFile(path.join(__dirname, "/views/checkout.html"));
+  res.sendFile(path.join(__dirname, "/views/html/checkout.html"));
+}
+
+export async function thankPage(req: Request, res: Response) {
+  res.sendFile(path.join(__dirname, "/views/html/thank.html"));
 }
 
 export async function getShowSeat(req: Request, res: Response) {
   try {
-    // const id = Number(req.query.id);
-    // const cachedShowSeat = await cache.get(`showSeat:${id}`);
-    // if (cachedShowSeat) {
-    //   const seatData = JSON.parse(cachedShowSeat);
-    //   return res.render("test", { seatData, id });
-    // }
-    return res.render("showSeat");
-  } catch (error) {
-    console.log(error);
+    const id = Number(req.query.id);
+    const cachedShowSeat = await cache.get(`showSeat:${id}`);
+    if (cachedShowSeat) {
+      const seatData = JSON.parse(cachedShowSeat);
+      return res.render("test", { seatData, id });
+    }
+    // res.render("showSeat");
+    // res.sendFile(path.join(__dirname, "/views/html/showSeat.html"));
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
   }
 }
 
@@ -36,10 +42,8 @@ export async function getShowSeat(req: Request, res: Response) {
 export async function createOrders(req: Request, res: Response) {
   try {
     const showSeatId = req.body.showSeatId;
-    console.log("createOrders" + showSeatId);
 
     const showId = req.body.showId;
-    console.log("orders" + showId);
 
     const userId = res.locals.userId;
 
@@ -70,8 +74,11 @@ export async function createOrders(req: Request, res: Response) {
     await checkOrderPaymentStatus(orderId, showId);
 
     res.json({ showId });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
   }
 }
 
@@ -104,11 +111,13 @@ export async function getPayment(req: Request, res: Response) {
       orders,
     };
 
-    //res.status(200).json({ user, orderData });
-
-    res.render("checkout", { user, orderData, date, time });
-  } catch (error) {
-    console.log(error);
+    res.status(200).json({ user, orderData, date, time });
+    //res.render("checkout", { user, orderData, date, time });
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
   }
 }
 
@@ -123,32 +132,32 @@ export async function getPayment(req: Request, res: Response) {
 //     time--;
 //   }, 1000);
 // }
-let time = 300;
-let isCounting = false;
+// let time = 300;
+// let isCounting = false;
 
-export async function countDown(req: Request, res: Response) {
-  if (isCounting) {
-    return;
-  }
+// export async function countDown(req: Request, res: Response) {
+//   if (isCounting) {
+//     return;
+//   }
 
-  isCounting = true;
+//   isCounting = true;
 
-  const intervalId = setInterval(() => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
+//   const intervalId = setInterval(() => {
+//     const minutes = Math.floor(time / 60);
+//     const seconds = time % 60;
 
-    if (!res.headersSent) {
-      res.json({ minutes, seconds });
-    }
+//     if (!res.headersSent) {
+//       res.json({ minutes, seconds });
+//     }
 
-    time--;
+//     time--;
 
-    if (time < 0) {
-      clearInterval(intervalId);
-      isCounting = false;
-    }
-  }, 1000);
-}
+//     if (time < 0) {
+//       clearInterval(intervalId);
+//       isCounting = false;
+//     }
+//   }, 1000);
+// }
 
 export async function updateSeatInCache(id: number) {
   const seatData = await showModel.getShowSeat(id);
@@ -158,16 +167,23 @@ export async function updateSeatInCache(id: number) {
 
 export async function getPaidOrders(req: Request, res: Response) {
   const { id } = req.query;
+  try {
+    const orders = await ticketModel.getOrders(Number(id));
 
-  const orders = await ticketModel.getOrders(Number(id));
+    const showInfo = await ticketModel.getShowInfo(orders[0].show_id);
 
-  const showInfo = await ticketModel.getShowInfo(orders[0].show_id);
+    const date = showInfo[0].show_time.split("T")[0];
+    const time = showInfo[0].show_time.split("T")[1];
 
-  const date = showInfo[0].show_time.split("T")[0];
-  const time = showInfo[0].show_time.split("T")[1];
+    res.status(200).json({ id, orders, showInfo, date, time });
 
-  res.render("thank", { id, orders, showInfo, date, time });
-  //res.status(200).json({ id, orders, showInfo });
+    //res.render("thank", { id, orders, showInfo, date, time });
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+  }
 }
 
 //delete order, update redis seat and prepare seat
@@ -175,30 +191,44 @@ export async function deleteOrder(req: Request, res: Response) {
   const { id } = req.query;
   const orderId = Number(id);
 
-  const orderStatus = await ticketModel.checkReserved(orderId);
-  if (orderStatus && orderStatus === "Canceled") {
-    return res.status(200).json({ message: "Order is canceled" });
+  try {
+    const orderStatus = await ticketModel.checkReserved(orderId);
+    if (orderStatus && orderStatus === "Canceled") {
+      return res.status(200).json({ message: "Order is canceled" });
+    }
+
+    const showIdAndShowSeatId = await ticketModel.getShowIdByOrder(orderId);
+
+    if (Array.isArray(showIdAndShowSeatId) && showIdAndShowSeatId.length > 0) {
+      const idValues = showIdAndShowSeatId.map((obj) => obj.id);
+      idValues.map(async (id) => {
+        await prepare(id);
+      });
+    }
+    await ticketModel.deleteOrder(orderId);
+    await updateSeatInCache(showIdAndShowSeatId[0].show_id);
+
+    res.status(200).json(id);
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
   }
-
-  const showIdAndShowSeatId = await ticketModel.getShowIdByOrder(orderId);
-
-  if (Array.isArray(showIdAndShowSeatId) && showIdAndShowSeatId.length > 0) {
-    const idValues = showIdAndShowSeatId.map((obj) => obj.id);
-    idValues.map(async (id) => {
-      await prepare(id);
-    });
-  }
-  await ticketModel.deleteOrder(orderId);
-  await updateSeatInCache(showIdAndShowSeatId[0].show_id);
-
-  res.json(id);
 }
 
 export async function checkPaid(req: Request, res: Response) {
   const orderId = req.body.order.orderId;
-  const checkOrder = await ticketModel.checkPaid(orderId);
-  console.log(checkOrder);
-  res.status(200).json({ checkOrder });
+  try {
+    const checkOrder = await ticketModel.checkPaid(orderId);
+    console.log(checkOrder);
+    res.status(200).json({ checkOrder });
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
+    }
+  }
 }
 
 export async function checkSQS(req: Request, res: Response) {
@@ -212,17 +242,24 @@ export async function checkSQS(req: Request, res: Response) {
     AttributeNames: ["All"],
   };
 
-  sqs.getQueueAttributes(attributeParams, (err, data) => {
-    if (err) {
-      console.log("Error getting queue attributes:", err);
-    } else {
-      const attributes = data.Attributes;
-      // console.log(attributes);
-      if (attributes) {
-        const messages = attributes.ApproximateNumberOfMessages;
+  try {
+    sqs.getQueueAttributes(attributeParams, (err, data) => {
+      if (err) {
+        console.log("Error getting queue attributes:", err);
+      } else {
+        const attributes = data.Attributes;
 
-        res.status(200).json({ data: messages });
+        if (attributes) {
+          const messages = attributes.ApproximateNumberOfMessages;
+
+          res.status(200).json({ data: messages });
+        }
       }
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ errors: err.message });
+      return;
     }
-  });
+  }
 }

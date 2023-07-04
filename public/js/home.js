@@ -1,5 +1,6 @@
 const bgimage = document.querySelector(".bgimage");
 const image = document.querySelector(".image");
+const show = document.getElementById(".show");
 
 const campaign = axios.get("/show/campaign").then((res) => {
   console.log(res);
@@ -9,8 +10,70 @@ const campaign = axios.get("/show/campaign").then((res) => {
 
   // image.innerHTML = `<a href="/show/detail?id=${id}"><img src="http://localhost:3000/uploads/${campaignImage}"  >`;
 
-  bgimage.innerHTML = `<a href="/show/detail?id=${id}"><div
+  bgimage.innerHTML = `<a href="/show?id=${id}"><div
         class="bg-cover"
         style="background-image: url('http://localhost:3000/uploads/${campaignImage}'); height: 430px"
       ></div>`;
 });
+
+const shows = axios
+  .get("/api/v1/shows")
+  .then((response) => {
+    const shows = response.data.shows;
+
+    shows.forEach((show) => {
+      const showElement = createShowElement(show);
+      document.getElementById("showsContainer").appendChild(showElement);
+    });
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+  });
+
+function createShowElement(show) {
+  const container = document.createElement("a");
+  container.href = `/show?id=${show.id}`;
+  container.classList.add("max-w-[30%]");
+
+  const showDiv = document.createElement("div");
+  showDiv.classList.add(
+    "mt-10",
+    "mx-auto",
+    "overflow-hidden",
+    "bg-white",
+    "rounded-lg",
+    "shadow-lg",
+    "grow"
+  );
+
+  const image = document.createElement("img");
+  image.classList.add("object-cover", "w-full", "h-56");
+  image.src = `http://localhost:3000/uploads/${show.image}`;
+  image.alt = show.id;
+
+  const infoDiv = document.createElement("div");
+  infoDiv.classList.add("py-5", "text-center");
+
+  const nameHeading = document.createElement("h1");
+  nameHeading.classList.add("name");
+  nameHeading.innerText = show.name;
+
+  const startTimeSpan = document.createElement("span");
+  startTimeSpan.classList.add(
+    "startTime",
+    "text-sm",
+    "text-gray-700",
+    "dark:text-gray-200"
+  );
+  startTimeSpan.innerText = `開賣時間：${show.start_time}`;
+
+  infoDiv.appendChild(nameHeading);
+  infoDiv.appendChild(startTimeSpan);
+
+  showDiv.appendChild(image);
+  showDiv.appendChild(infoDiv);
+
+  container.appendChild(showDiv);
+
+  return container;
+}

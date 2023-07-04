@@ -10,7 +10,7 @@ const bgimage = document.querySelector(".bgimage");
 const image = document.querySelector(".image");
 const seatChart = document.getElementById("seatChart");
 async function getShowData() {
-  const showDetail = await axios.get(`/api/show/detail?id=${id}`);
+  const showDetail = await axios.get(`/api/v1/show?id=${id}`);
   console.log(showDetail.data);
 
   document.getElementById(
@@ -52,8 +52,21 @@ async function getShowData() {
   document.getElementById(
     "seatForm"
   ).innerHTML = `<form action="/ticket?id=${id}" method="POST">
-  <input type="hidden" name="id" value="${id}" />
-  <button class="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 border rounded font-mono" type="submit">我要買票</button>
-</form>`;
+    <input type="hidden" name="id" value="${id}" />
+    <button class="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 border rounded font-mono" type="submit">我要買票</button>
+  </form>`;
+  // document.getElementById("seatForm").innerHTML = `
+  //   <button id="seatBtn" class="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 border rounded font-mono" type="click">我要買票</button>
+  // `;
+
+  // const seatBtn = document.getElementById("seatBtn");
+
+  // seatBtn.addEventListener("click", async function (e) {
+  //   e.preventDefault();
+
+  //   window.location.assign(
+  //     `https://s3.ap-northeast-1.amazonaws.com/ticketmax.yzuhyu.com/${id}/showSeat.html`
+  //   );
+  // });
 }
 getShowData();

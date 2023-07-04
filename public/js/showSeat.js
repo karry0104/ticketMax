@@ -6,6 +6,13 @@ const message = document.getElementById("response");
 const waitCount = document.getElementById("waitCount");
 const word = document.getElementById("word");
 
+// const url =
+//   "https://s3.ap-northeast-1.amazonaws.com/ticketmax.yzuhyu.com/69/showSeat.html";
+// const regex = /\/(\d+)\//;
+// const match = url.match(regex);
+// const id = match ? match[1] : null;
+// console.log(id);
+
 function generateRandomString(length) {
   const charset =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -37,7 +44,7 @@ const sendMessage = axios
       response.data.SendMessageResponse.SendMessageResult.MessageId;
     message.textContent = `排隊序號： ${MessageId}`;
 
-    const sqs = axios.post("/checkSQS", { id }).then((res) => {
+    const sqs = axios.post("/api/v1/checkSQS", { id }).then((res) => {
       if (res.data.data > 0) {
         waitCount.textContent = `${res.data.data}`;
         word.textContent = `位用戶在您前面`;
@@ -68,7 +75,6 @@ function fetchData() {
         const alertMsg = document.getElementById("alertMsg");
         const chooseMsg = document.getElementById("chooseMsg");
         const statusMsg = document.getElementById("statusMsg");
-        // stepper.innerHTML = ``;
         alertMsg.innerHTML = `<div class="text-center text-base text-gray-500">購票過程請勿重新整理，否則須重新排隊</div>`;
         chooseMsg.innerHTML = `<div class="text-center text-2xl mt-16">請選擇座位</div>`;
         statusMsg.innerHTML = `<div class="statusInfo flex justify-center mt-4">
@@ -147,7 +153,7 @@ form.addEventListener("submit", async function (e) {
 
   console.log(data);
   try {
-    const res = await axios.post("/order", data);
+    const res = await axios.post("/api/v1/order", data);
     console.log(res);
     if (res.data === "sorry, no ticket") {
       alert("sorry, no ticket");

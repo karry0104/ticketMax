@@ -7,7 +7,11 @@ import path from "path";
 const __dirname = path.resolve();
 
 export async function userPage(req: Request, res: Response) {
-  res.sendFile(path.join(__dirname, "/views/user.html"));
+  res.sendFile(path.join(__dirname, "/views/html/user.html"));
+}
+
+export async function profilePage(req: Request, res: Response) {
+  res.sendFile(path.join(__dirname, "/views/html/profile.html"));
 }
 
 export async function signUp(req: Request, res: Response) {
@@ -26,7 +30,7 @@ export async function signUp(req: Request, res: Response) {
 
     res.cookie("jwtoken", token).status(200);
 
-    return res.redirect("/user/profile");
+    return res.redirect("/profile");
   } catch (err) {
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });
@@ -52,7 +56,7 @@ export async function signIn(req: Request, res: Response) {
 
   res.cookie("jwtoken", token).status(200);
 
-  return res.redirect("/user/profile");
+  return res.redirect("/profile");
 }
 
 export async function getProfile(req: Request, res: Response) {
@@ -64,8 +68,8 @@ export async function getProfile(req: Request, res: Response) {
       username: user.username,
       email: user.email,
     };
-    res.render("profile", { data });
-    //res.status(200).json({ data });
+    //res.render("profile", { data });
+    res.status(200).json({ data });
   } catch (err) {
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });

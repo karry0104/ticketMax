@@ -10,6 +10,7 @@ import {
   getShowCampagin,
   campaignForm,
   createShowCampaign,
+  homePage,
 } from "../controllers/show.js";
 
 const router = Router();
@@ -18,9 +19,13 @@ router.route("/admin/show").get(showForm);
 
 router.route("/admin/show/campaign").get(campaignForm);
 
-router
-  .route("/api/show/detail")
-  .get(query("id").not().isEmpty().trim(), getShow);
+router.route("/").get(homePage);
+
+router.route("/show").get(query("id").not().isEmpty().trim(), showDetailPage);
+
+router.route("/api/v1/shows").get(getShows);
+
+router.route("/api/v1/show").get(query("id").not().isEmpty().trim(), getShow);
 
 router.route("/admin/show").post(
   uploadToDisk.fields([
@@ -37,12 +42,6 @@ router
     createShowCampaign
   );
 
-router.route("/").get(getShows);
-
 router.route("/show/campaign").get(getShowCampagin);
-
-router
-  .route("/show/detail")
-  .get(query("id").not().isEmpty().trim(), showDetailPage);
 
 export default router;

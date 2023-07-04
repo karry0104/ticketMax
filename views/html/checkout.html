@@ -2,15 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link href="/src/output.css" rel="stylesheet" />
     <script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link href="/src/output.css" rel="stylesheet" />
-
-    <title>Connect payment with TapPay</title>
+    <title>Document</title>
   </head>
-
   <body>
     <div class="navbar shadow-md bg-white">
       <div class="flex-1">
@@ -22,11 +20,10 @@
         <ul
           class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
         >
-          <li><a href="/user/profile">PROFILE</a></li>
+          <li><a href="/profile">PROFILE</a></li>
         </ul>
       </div>
     </div>
-
     <div>
       <div
         class="after:mt-4 after:block after:h-1 after:w-full after:rounded-lg after:bg-gray-200 w-1/2 mx-auto mt-16"
@@ -150,38 +147,30 @@
     <h2 class="mt-20 text-4xl flex justify-center gap-5 text-center">
       請於5分鐘內付款完畢
     </h2>
-
     <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
       <div class="container flex justify-between mx-auto mt-20">
         <div class="order card w-7/12 bg-base-100" id="orders">
           <div class="card bg-base-100 shadow-xl">
-            <figure class="h-48">
-              <img
-                src="http://localhost:3000/uploads/<%= orderData.showInfo[0].image %>"
-                alt="image"
-              />
+            <figure class="h-48" id="imgFigure">
+              <img id="image" alt="image" />
             </figure>
             <div class="card-body">
               <div>
                 <div class="text-xl">活動</div>
-                <h2 class="showName text-2xl">
-                  <%= orderData.showInfo[0].name %>
-                </h2>
+                <h2 class="showName text-2xl" id="showName"></h2>
               </div>
               <div>
                 <div class="text-xl mt-8">時間</div>
-                <h2 class="showTime text-2xl"><%= date %> <%= time %></h2>
+                <h2 class="showTime text-2xl" id="showTime"></h2>
               </div>
               <div>
                 <div class="text-xl mt-8">地點</div>
-                <h2 class="showHall text-2xl">
-                  <%= orderData.showInfo[0].hall_name %>
-                </h2>
+                <h2 class="showHall text-2xl" id="showHall"></h2>
               </div>
 
               <div class="mt-8 flex">
                 <h3 class="text-lg">訂單編號</h3>
-                <h3 class="orderId text-lg ml-4"><%= orderData.orderId %></h3>
+                <h3 class="orderId text-lg ml-4"></h3>
               </div>
 
               <div class="overflow-x-auto">
@@ -193,20 +182,12 @@
                       <th>票價(NTD)</th>
                     </tr>
                   </thead>
+                  <tbody id="orderTable"></tbody>
                   <tbody>
-                    <% orderData.orders.forEach((order) => { %>
-                    <tr class="seat">
-                      <td><%= order.section %></td>
-                      <td><%= order.seat_row %><%= order.seat_number %></td>
-                      <td><%= order.price %></td>
-                    </tr>
-                  </tbody>
-                  <tbody>
-                    <% }); %>
                     <tr>
                       <td>總金額</td>
                       <td></td>
-                      <td class="total"><%= orderData.totalPrice %></td>
+                      <td class="total"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -214,9 +195,10 @@
             </div>
           </div>
 
-          <input type="hidden" name="username" value="<%= user.username %>" />
-          <input type="hidden" name="email" value="<%= user.email %>" />
-          <input type="hidden" name="name" value="<%= orderData.orderId %>" />
+          <input type="hidden" name="username" id="username" value="" />
+          <input type="hidden" name="email" id="email" value="" />
+          <input type="hidden" name="orderId" id="hiddenOrderId" value="" />
+          <input type="hidden" name="total" id="hiddenTotal" value="" />
         </div>
         <div class="checkout w-3/5 ml-20 flex flex-col">
           <div class="mt-8 flex justify-between gap-5 w-[490px]">
@@ -319,7 +301,6 @@
         </div>
       </div>
     </form>
-
     <form id="deleteOrder"></form>
     <footer class="footer p-4 bg-gray-100 text-lg mt-36">
       <div>

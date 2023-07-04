@@ -40,9 +40,9 @@ app.use(errorHandler);
 
 app.use("/uploads", express.static("./uploads"));
 
-app.get("*", (req, res) => {
-  res.redirect("/");
-});
+// app.get("*", (req, res) => {
+//   res.redirect("/");
+// });
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);

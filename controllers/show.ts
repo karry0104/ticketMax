@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+
 import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
 import { NextFunction, Request, Response } from "express";
@@ -7,35 +8,24 @@ import { fileTypeFromBuffer } from "file-type";
 import * as showModel from "../models/show.js";
 import * as cache from "../utils/cache.js";
 import { prepare } from "../utils/cache.js";
+import { deflate } from "zlib";
 
 const __dirname = path.resolve();
 
 export async function showForm(req: Request, res: Response) {
-  try {
-    res.render("createShow");
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: "create product failed" });
-  }
+  res.sendFile(path.join(__dirname, "/views/html/createShow.html"));
 }
 
 export async function campaignForm(req: Request, res: Response) {
-  try {
-    res.render("createCampaign");
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: "create campaign failed" });
-  }
+  res.sendFile(path.join(__dirname, "/views/html/createCampaign.html"));
 }
 
 export async function showDetailPage(req: Request, res: Response) {
-  res.sendFile(path.join(__dirname, "/views/showDetail.html"));
+  res.sendFile(path.join(__dirname, "/views/html/showDetail.html"));
+}
+
+export async function homePage(req: Request, res: Response) {
+  res.sendFile(path.join(__dirname, "/views/html/index.html"));
 }
 
 export async function createShow(req: Request, res: Response) {
@@ -142,9 +132,9 @@ export async function getShows(req: Request, res: Response) {
   try {
     const shows = await showModel.getShows();
 
-    res.render("home", { shows });
+    //res.render("home", { shows });
 
-    //res.status(200).json({ shows });
+    res.status(200).json({ shows });
   } catch (err) {
     if (err instanceof Error) {
       res.status(500).json({ errors: err.message });
