@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import bodyParser from "body-parser";
+import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import showRouter from "./routes/show.js";
@@ -22,6 +23,7 @@ const router = Router();
 router.use(function (req, res, next) {
   next();
 });
+
 //app.use(rateLimiter);
 
 app.use(cors());
@@ -40,9 +42,10 @@ app.use(errorHandler);
 
 app.use("/uploads", express.static("./uploads"));
 
-// app.get("*", (req, res) => {
-//   res.redirect("/");
-// });
+const __dirname = path.resolve();
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/views/html/error.html"));
+});
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);

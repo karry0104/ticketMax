@@ -1,5 +1,3 @@
-const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get("id");
 const imgFigure = document.getElementById("imgFigure");
 const image = document.getElementById("image");
 const showName = document.getElementById("showName");
@@ -7,11 +5,12 @@ const showTime = document.getElementById("showTime");
 const showHall = document.getElementById("showHall");
 const orderId = document.querySelector(".orderId");
 const orderTable = document.getElementById("orderTable");
+const id = localStorage.getItem("orderId");
 
 async function getpaidOrder() {
-  const data = await axios.get(`/api/v1/order?id=${id}`);
+  const data = await axios.get(`http://13.115.196.55/api/v1/order?id=${id}`);
   console.log(data.data);
-  image.src = `http://localhost:3000/uploads/${data.data.showInfo[0].image}`;
+  image.src = `http://13.115.196.55/uploads/${data.data.showInfo[0].image}`;
   showName.textContent = `${data.data.showInfo[0].name}`;
   showTime.textContent = `${data.data.date} ${data.data.time}`;
   showHall.textContent = `${data.data.showInfo[0].hall_name}`;

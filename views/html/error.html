@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/src/output.css" rel="stylesheet" />
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <title>Profile</title>
+    <title>404</title>
   </head>
   <body>
     <div class="navbar shadow-md bg-white">
@@ -23,23 +22,22 @@
         </ul>
       </div>
     </div>
-    <div class="flex flex-col w-6/12 m-auto mt-20">
-      <div class="title text-3xl mb-8">會員資料</div>
+    <div>
       <div
-        class="card bg-base-100 border rounded-md flex flex-col w-full m-auto font-sans"
+        class="card bg-base-100 shadow-xl mt-20 w-1/2 flex flex-col justify-center items-center font-mono mx-auto"
       >
-        <div class="profile ml-8 my-8">
-          <div class="name-title text-xl text-slate-500" id="name-title">
-            姓名
+        <div class="card-body flex flex-col justify-center items-center">
+          <h1 class="card-title text-4xl text-indigo-800 mb-10 mt-6">404</h1>
+          <p class="text-xl">
+            Sorry, the page you are looking for doesn't exist or has been moved.
+          </p>
+          <div class="card-actions justify-center mt-10">
+            <a href="/"
+              ><button class="btn btn-primary">Back to homepage</button></a
+            >
           </div>
-          <div class="name text-2xl mt-2" id="name"></div>
-          <div class="email-title mt-8 text-xl text-slate-500" id="email.title">
-            信箱
-          </div>
-          <div class="email text-2xl mt-2" id="email"></div>
         </div>
       </div>
     </div>
   </body>
-  <script src="/js/profile.js"></script>
 </html>

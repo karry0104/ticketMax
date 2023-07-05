@@ -17,11 +17,21 @@ const email = document.getElementById("email");
 const hiddenOrderId = document.getElementById("hiddenOrderId");
 const hiddenTotal = document.getElementById("hiddenTotal");
 
+const jwtToken = localStorage.getItem("jwtToken");
+
 async function getPaymentData() {
-  const paymentData = await axios.get("/api/v1/ticket/checkout");
+  const paymentData = await axios.get(
+    "http://13.115.196.55/api/v1/ticket/checkout",
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    }
+  );
   const data = paymentData.data;
   console.log(data);
-  image.src = `http://localhost:3000/uploads/${data.orderData.showInfo[0].image}`;
+  image.src = `http://13.115.196.55/uploads/${data.orderData.showInfo[0].image}`;
   showName.textContent = `${data.orderData.showInfo[0].name}`;
   showTime.textContent = `${data.date} ${data.time}`;
   showHall.textContent = `${data.orderData.showInfo[0].hall_name}`;
@@ -53,11 +63,42 @@ async function getPaymentData() {
 }
 getPaymentData();
 
+async function countDown() {
+  const time = await axios.get("http://13.115.196.55/api/v1/ticket/countDown");
+  const expirationTime = Date.now() + time.data.data * 1000;
+  console.log(expirationTime);
+  const currentTime = Date.now();
+
+  const remainingTime = Math.max(0, expirationTime - currentTime);
+
+  console.log(remainingTime);
+
+  const minutes = Math.floor(remainingTime / 60000);
+  const seconds = Math.floor((remainingTime % 60000) / 1000);
+
+  document.getElementById("minutes").textContent = minutes
+    .toString()
+    .padStart(2, "0");
+  document.getElementById("seconds").textContent = seconds
+    .toString()
+    .padStart(2, "0");
+
+  if (remainingTime <= 0) {
+    clearInterval(interval);
+    document.getElementById("minutes").textContent = "00";
+    document.getElementById("seconds").textContent = "00";
+  }
+}
+// setInterval(countDown, 1000);
+// countDown();
+
 deleteBtn.addEventListener("click", async function (e) {
   e.preventDefault();
 
   try {
-    const res = await axios.delete(`/api/v1/order?id=${hiddenOrderId.value}`);
+    const res = await axios.delete(
+      `http://13.115.196.55/api/v1/order?id=${hiddenOrderId.value}`
+    );
     if (res.data.message === "Order is canceled") {
       alert("已超過時間，訂單已取消");
     }
@@ -104,15 +145,10 @@ const cardViewContainer = document.querySelector("#container");
 
 function onClick() {
   const formData = new FormData(form);
-  // formData.append("orderId", orderIdValue);
-  // formData.append("total", totalValue);
   const entFormData = Object.fromEntries(formData);
   console.log(entFormData);
 
-  const token = document.cookie.replace(
-    /(?:(?:^|.*;\s*)jwtoken\s*=\s*([^;]*).*$)|^.*$/,
-    "$1"
-  );
+  const token = localStorage.getItem("jwtToken");
 
   TPDirect.card.getPrime(async (result) => {
     if (result.status !== 0) {
@@ -128,7 +164,10 @@ function onClick() {
         order: entFormData,
       };
 
-      const goQueue = await axios.post("/queue", data);
+      const goQueue = await axios.post(
+        "http://13.115.196.55/api/v1/queue",
+        data
+      );
       console.log(goQueue.status);
       if (goQueue.data.message === "Order is canceled") {
         alert("已超過付款時間，請重新購票");
@@ -136,8 +175,12 @@ function onClick() {
       }
 
       async function checkPaid() {
-        const result = await axios.post("/checkPaid", data);
+        const result = await axios.post(
+          "http://13.115.196.55/api/v1/checkPaid",
+          data
+        );
         if (result.data.checkOrder === "Paid") {
+          localStorage.setItem("orderId", `${hiddenOrderId.value}`);
           window.location.assign(`/order?id=${hiddenOrderId.value}`);
         }
       }

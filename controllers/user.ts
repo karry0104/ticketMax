@@ -28,9 +28,22 @@ export async function signUp(req: Request, res: Response) {
     const userId = await userModel.createUser(name, email, hashedPassword);
     const token = await signJWT(userId, name, email);
 
-    res.cookie("jwtoken", token).status(200);
+    const data = {
+      token,
+      email,
+      name: user.username,
+    };
 
-    return res.redirect("/profile");
+    const COOKIE_OPTIONS = {
+      httpOnly: true,
+      path: "/",
+      secure: true,
+      sameSite: "strict",
+    } as const;
+
+    res.cookie("jwtToken", token, COOKIE_OPTIONS).status(200).json({ data });
+
+    //return res.redirect("/profile");
   } catch (err) {
     if (err instanceof Error) {
       res.status(400).json({ errors: err.message });
@@ -54,9 +67,22 @@ export async function signIn(req: Request, res: Response) {
 
   const token = await signJWT(user.id, user.username, user.email);
 
-  res.cookie("jwtoken", token).status(200);
+  const data = {
+    token,
+    email,
+    name: user.username,
+  };
 
-  return res.redirect("/profile");
+  const COOKIE_OPTIONS = {
+    httpOnly: true,
+    path: "/",
+    secure: true,
+    sameSite: "strict",
+  } as const;
+
+  res.cookie("jwtToken", token, COOKIE_OPTIONS).status(200).json({ data });
+
+  //return res.redirect("/profile");
 }
 
 export async function getProfile(req: Request, res: Response) {

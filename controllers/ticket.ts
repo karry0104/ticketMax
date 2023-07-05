@@ -12,6 +12,8 @@ const __dirname = path.resolve();
 
 dotenv.config();
 
+const ORDER_EXPIRATION_TIME = 5 * 60 * 1000;
+
 export async function checkoutPage(req: Request, res: Response) {
   res.sendFile(path.join(__dirname, "/views/html/checkout.html"));
 }
@@ -121,43 +123,9 @@ export async function getPayment(req: Request, res: Response) {
   }
 }
 
-// let time = 300;
-// export async function countDown(req: Request, res: Response) {
-//   setInterval(() => {
-//     const minites = Math.floor(time / 60);
-//     const seconds = time % 60;
-
-//     res.json({ minites, seconds });
-
-//     time--;
-//   }, 1000);
-// }
-// let time = 300;
-// let isCounting = false;
-
-// export async function countDown(req: Request, res: Response) {
-//   if (isCounting) {
-//     return;
-//   }
-
-//   isCounting = true;
-
-//   const intervalId = setInterval(() => {
-//     const minutes = Math.floor(time / 60);
-//     const seconds = time % 60;
-
-//     if (!res.headersSent) {
-//       res.json({ minutes, seconds });
-//     }
-
-//     time--;
-
-//     if (time < 0) {
-//       clearInterval(intervalId);
-//       isCounting = false;
-//     }
-//   }, 1000);
-// }
+export async function countDown(req: Request, res: Response) {
+  res.json({ data: ORDER_EXPIRATION_TIME });
+}
 
 export async function updateSeatInCache(id: number) {
   const seatData = await showModel.getShowSeat(id);
@@ -223,39 +191,6 @@ export async function checkPaid(req: Request, res: Response) {
     const checkOrder = await ticketModel.checkPaid(orderId);
     console.log(checkOrder);
     res.status(200).json({ checkOrder });
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-  }
-}
-
-export async function checkSQS(req: Request, res: Response) {
-  const sqs = new AWS.SQS({ region: "ap-northeast-1" });
-  const { id } = req.body;
-
-  const queueUrl = `https://sqs.ap-northeast-1.amazonaws.com/649086394704/mes${id}.fifo`;
-
-  const attributeParams = {
-    QueueUrl: queueUrl,
-    AttributeNames: ["All"],
-  };
-
-  try {
-    sqs.getQueueAttributes(attributeParams, (err, data) => {
-      if (err) {
-        console.log("Error getting queue attributes:", err);
-      } else {
-        const attributes = data.Attributes;
-
-        if (attributes) {
-          const messages = attributes.ApproximateNumberOfMessages;
-
-          res.status(200).json({ data: messages });
-        }
-      }
-    });
   } catch (err) {
     if (err instanceof Error) {
       res.status(500).json({ errors: err.message });

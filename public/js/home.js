@@ -2,22 +2,22 @@ const bgimage = document.querySelector(".bgimage");
 const image = document.querySelector(".image");
 const show = document.getElementById(".show");
 
-const campaign = axios.get("/show/campaign").then((res) => {
+const campaign = axios.get("http://13.115.196.55/show/campaign").then((res) => {
   console.log(res);
-  const campaignImage = res.data.campaign[7].image;
-  const id = res.data.campaign[7].show_id;
+  const campaignImage = res.data.campaign[0].image;
+  const id = res.data.campaign[0].show_id;
   console.log(id);
 
   // image.innerHTML = `<a href="/show/detail?id=${id}"><img src="http://localhost:3000/uploads/${campaignImage}"  >`;
 
   bgimage.innerHTML = `<a href="/show?id=${id}"><div
         class="bg-cover"
-        style="background-image: url('http://localhost:3000/uploads/${campaignImage}'); height: 430px"
+        style="background-image: url('http://13.115.196.55/uploads/${campaignImage}'); height: 430px"
       ></div>`;
 });
 
 const shows = axios
-  .get("/api/v1/shows")
+  .get("http://13.115.196.55/api/v1/shows")
   .then((response) => {
     const shows = response.data.shows;
 
@@ -32,7 +32,7 @@ const shows = axios
 
 function createShowElement(show) {
   const container = document.createElement("a");
-  container.href = `/show?id=${show.id}`;
+  container.href = `/show/${show.id}`;
   container.classList.add("max-w-[30%]");
 
   const showDiv = document.createElement("div");
@@ -48,7 +48,7 @@ function createShowElement(show) {
 
   const image = document.createElement("img");
   image.classList.add("object-cover", "w-full", "h-56");
-  image.src = `http://localhost:3000/uploads/${show.image}`;
+  image.src = `http://13.115.196.55/uploads/${show.image}`;
   image.alt = show.id;
 
   const infoDiv = document.createElement("div");

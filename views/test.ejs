@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>Shows</title>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <body>
     <h1>Shows</h1>
@@ -20,8 +22,6 @@
       <button type="submit">Submit</button>
     </form>
   </body>
-
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script>
     const form = document.getElementById("form");
 
@@ -38,7 +38,7 @@
       console.log("data" + data);
 
       try {
-        const res = await axios.post("/order", data);
+        const res = await axios.post("/api/v1/order", data);
         console.log(res);
         if (res.data === "sorry, no ticket") {
           alert("sorry, no ticket");

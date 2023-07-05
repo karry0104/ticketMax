@@ -32,8 +32,8 @@ router
 
 router.route("/user/test").get(signIn);
 
-router.route("/user/profile").get([authenticate, getProfile]);
+router.route("/api/v1/user/profile").get([authenticate, getProfile]);
 
-router.route("/profile").get(profilePage);
+router.route("/user/profile").get(profilePage);
 
 export default router;

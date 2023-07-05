@@ -1,17 +1,11 @@
-const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get("id");
+const path = window.location.pathname;
+const parts = path.split("/");
+const id = parts[parts.length - 2];
 const stepper = document.getElementById("stepper");
 const queueMsg = document.getElementById("queue");
 const message = document.getElementById("response");
 const waitCount = document.getElementById("waitCount");
 const word = document.getElementById("word");
-
-// const url =
-//   "https://s3.ap-northeast-1.amazonaws.com/ticketmax.yzuhyu.com/69/showSeat.html";
-// const regex = /\/(\d+)\//;
-// const match = url.match(regex);
-// const id = match ? match[1] : null;
-// console.log(id);
 
 function generateRandomString(length) {
   const charset =
@@ -32,6 +26,7 @@ const data = {
 };
 
 console.log(data.data);
+console.log(id);
 
 const sendMessage = axios
   .post(
@@ -44,14 +39,22 @@ const sendMessage = axios
       response.data.SendMessageResponse.SendMessageResult.MessageId;
     message.textContent = `排隊序號： ${MessageId}`;
 
-    const sqs = axios.post("/api/v1/checkSQS", { id }).then((res) => {
-      if (res.data.data > 0) {
-        waitCount.textContent = `${res.data.data}`;
-        word.textContent = `位用戶在您前面`;
-      } else {
-        queueMsg.remove();
-      }
-    });
+    const sqs = axios
+      .post(
+        `https://8tqvd2l76i.execute-api.ap-northeast-1.amazonaws.com/prod/queue/${id}`
+      )
+      .then((response) => {
+        console.log(response.data.messages);
+        if (response.data.messages > 0) {
+          waitCount.textContent = `${response.data.messages}`;
+          word.textContent = `位用戶在您前面`;
+        } else {
+          queueMsg.remove();
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   })
   .catch((error) => {
     console.error(error);
@@ -73,9 +76,11 @@ function fetchData() {
         const showName = document.getElementById("showName");
         const stage = document.getElementById("stage");
         const alertMsg = document.getElementById("alertMsg");
+        const ticketMsg = document.getElementById("ticketMsg");
         const chooseMsg = document.getElementById("chooseMsg");
         const statusMsg = document.getElementById("statusMsg");
         alertMsg.innerHTML = `<div class="text-center text-base text-gray-500">購票過程請勿重新整理，否則須重新排隊</div>`;
+        ticketMsg.innerHTML = `<div class="text-center text-base text-gray-500 mt-4">每次限購4張票</div>`;
         chooseMsg.innerHTML = `<div class="text-center text-2xl mt-16">請選擇座位</div>`;
         statusMsg.innerHTML = `<div class="statusInfo flex justify-center mt-4">
         <div
@@ -105,7 +110,7 @@ function fetchData() {
           if (seat.status === "NotReserved") {
             seatDiv.classList.add("bg-white");
             seatDiv.addEventListener("click", () => {
-              seatDiv.classList.add("showSeatId");
+              seatDiv.classList.toggle("showSeatId");
               seatDiv.setAttribute("value", seat.id);
               seatDiv.classList.toggle("bg-yellow-500");
               seatDiv.classList.toggle("border-yellow-500");
@@ -146,22 +151,39 @@ form.addEventListener("submit", async function (e) {
 
   const selectedSeatIds = Array.from(selectedSeat).map((seat) => seat.id);
 
+  if (selectedSeatIds.length > 4) {
+    console.log(selectedSeatIds);
+    console.log(selectedSeatIds.length);
+    alert("一次只能選購4張票");
+    return;
+  }
+
   const data = {
     showSeatId: selectedSeatIds,
     showId: id,
   };
 
   console.log(data);
+  const jwtToken = localStorage.getItem("jwtToken");
   try {
-    const res = await axios.post("/api/v1/order", data);
+    const res = await axios.post("http://13.115.196.55/api/v1/order", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
     console.log(res);
     if (res.data === "sorry, no ticket") {
-      alert("sorry, no ticket");
+      alert("座位已被選購");
       location.reload();
     } else {
-      window.location.assign("/ticket/checkout");
+      window.location.assign("/checkout");
     }
   } catch (err) {
-    console.log(err);
+    if (err.response.status === 401) {
+      console.log(err);
+      alert("請登入後再購票");
+      window.location.assign("/user");
+    }
   }
 });

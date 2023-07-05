@@ -132,8 +132,6 @@ export async function getShows(req: Request, res: Response) {
   try {
     const shows = await showModel.getShows();
 
-    //res.render("home", { shows });
-
     res.status(200).json({ shows });
   } catch (err) {
     if (err instanceof Error) {
