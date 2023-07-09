@@ -9,6 +9,10 @@ export async function killTicket(
 ) {
   const { showSeatId, showId } = req.body;
 
+  console.log(typeof showSeatId);
+  if (showSeatId.length > 4) {
+    throw new Error("一次最多選擇４個位置");
+  }
   const userId = res.locals.userId;
 
   try {
@@ -26,7 +30,7 @@ export async function killTicket(
         prepareSeats.map(async (showSeat) => {
           prepare(showSeat.showSeatId);
         });
-        res.send("sorry, no ticket");
+        throw new Error("座位已被購買，請重新選擇座位");
       }
     } else {
       const result = await secKill(showSeatId, userId);
@@ -35,11 +39,14 @@ export async function killTicket(
       if (result.result === 1) {
         next();
       } else {
-        //console.log(result);
-        res.send("sorry, no ticket");
+        throw new Error("座位已被購買，請重新選擇座位");
       }
     }
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(400).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: "buy ticket failed" });
   }
 }

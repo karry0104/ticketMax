@@ -16,7 +16,7 @@
       }
     </style>
   </head>
-  <body>
+  <body style="background-color: #ffffff">
     <div class="navbar shadow-md bg-white fixed z-50 top-0">
       <div class="flex-1">
         <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
@@ -31,122 +31,125 @@
         </ul>
       </div>
     </div>
+    <div class="bg-white">
+      <div class="relative mt-20 bg-white">
+        <div class="bgimage" id="bgimage">
+          <div
+            class="bg-cover blur"
+            style="
+              background-image: url('/upload/main/69_main.jpeg');
+              height: 430px;
+            "
+          ></div>
+        </div>
+        <div class="image bg-white" id="image">
+          <img src="/upload/main/69_main.jpeg" alt="main" />
+        </div>
+      </div>
 
-    <div class="relative mt-20">
-      <div class="bgimage" id="bgimage">
+      <div
+        class="info mt-14 mx-auto flex flex-col justify-center items-center bg-white"
+      >
+        <div class="mt-6 w-7/12 font-mono">
+          <div class="flex items-center py-4">
+            <div class="flex-grow h-px bg-gray-400"></div>
+
+            <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
+              >歌手介紹</span
+            >
+
+            <div class="flex-grow h-px bg-gray-400"></div>
+          </div>
+        </div>
+
         <div
-          class="bg-cover blur"
-          style="
-            background-image: url('/upload/main/69_main.jpeg');
-            height: 430px;
-          "
+          class="singerIntro w-7/12 text-lg font-mono"
+          id="singerIntro"
         ></div>
-      </div>
-      <div class="image" id="image">
-        <img src="/upload/main/69_main.jpeg" alt="main" />
-      </div>
-    </div>
 
-    <div class="info mt-14 mx-auto flex flex-col justify-center items-center">
-      <div class="mt-6 w-7/12 font-mono">
-        <div class="flex items-center py-4">
-          <div class="flex-grow h-px bg-gray-400"></div>
+        <div class="mt-6 w-7/12 font-mono">
+          <div class="flex items-center py-4">
+            <div class="flex-grow h-px bg-gray-400"></div>
 
-          <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
-            >歌手介紹</span
-          >
+            <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
+              >活動介紹</span
+            >
 
-          <div class="flex-grow h-px bg-gray-400"></div>
+            <div class="flex-grow h-px bg-gray-400"></div>
+          </div>
         </div>
-      </div>
 
-      <div class="singerIntro w-7/12 text-lg font-mono" id="singerIntro">
-        告五人這個樂團已經漸漸走進大眾的視野，繼去年的第31屆金曲獎入圍了最佳新人後，今年的金曲獎一舉入圍了四個獎項：年度歌曲、最佳演唱錄音專輯獎、最佳樂團獎、最佳作曲人獎。
-        聽他們的歌，總會讓人認真起來、陷入自己的小小世界，不只他們迷幻、耐人尋味、有魅力的音樂，成員雲安、犬青、哲謙三人其實都超圈粉，這次喜歡獨立音樂的編輯就帶著大家來好好認識超可愛的告五人！
-      </div>
-
-      <div class="mt-6 w-7/12 font-mono">
-        <div class="flex items-center py-4">
-          <div class="flex-grow h-px bg-gray-400"></div>
-
-          <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
-            >活動介紹</span
-          >
-
-          <div class="flex-grow h-px bg-gray-400"></div>
+        <div class="showIntro w-7/12 text-lg font-mono" id="showIntro">
+          在這座城市… 1. 愛人錯過不要緊 2. 撞到要說對不起 3. 好不容易沒關係
+          4.魔法藥水喝下去 告五人帶你去找YA生活 宇宙的有趣
+          你想用飛的去？還是走的去？ 宇宙的有趣 天天去還是有不同的樂趣？
+          宇宙的有趣 我們，一起去。
         </div>
-      </div>
 
-      <div class="showIntro w-7/12 text-lg font-mono" id="showIntro">
-        在這座城市… 1. 愛人錯過不要緊 2. 撞到要說對不起 3. 好不容易沒關係
-        4.魔法藥水喝下去 告五人帶你去找YA生活 宇宙的有趣
-        你想用飛的去？還是走的去？ 宇宙的有趣 天天去還是有不同的樂趣？
-        宇宙的有趣 我們，一起去。
-      </div>
-
-      <!-- <h1
+        <!-- <h1
         class="border-2 rounded-lg text-3xl mt-6 p-2 px-80 bg-amber-300 border-amber-300"
       >
         購票前請先登入
       </h1> -->
-      <div class="mt-6 w-7/12 font-mono">
-        <div class="flex items-center py-4">
-          <div class="flex-grow h-px bg-gray-400"></div>
+        <div class="mt-6 w-7/12 font-mono">
+          <div class="flex items-center py-4">
+            <div class="flex-grow h-px bg-gray-400"></div>
 
-          <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
-            >活動</span
-          >
+            <span class="flex-shrink text-2xl text-gray-500 px-4 font-mono"
+              >活動</span
+            >
 
-          <div class="flex-grow h-px bg-gray-400"></div>
+            <div class="flex-grow h-px bg-gray-400"></div>
+          </div>
         </div>
-      </div>
-      <div class="overflow-x-auto w-7/12 flex justify-between">
-        <table class="table font-mono">
-          <!-- head -->
-          <thead class="text-xl">
-            <tr class="bg-base-200">
-              <th>演出時間</th>
-              <th>活動名稱</th>
-              <th>場地</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- row 1 -->
-            <tr class="text-base">
-              <td>
-                <h3 class="showTime hidden"></h3>
-                <h3 class="date">2023-08-31</h3>
-                <h3 class="time mt-3 ml-6">18:00</h3>
-              </td>
-              <td><h3 class="showName">告五人第一次新世界巡迴演唱會</h3></td>
-              <td><h3 class="showHall">C</h3></td>
-              <th>
-                <div id="seatForm">
-                  <button
-                    id="seatBtn"
-                    class="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 border rounded font-mono"
-                    type="click"
-                  >
-                    我要買票
-                  </button>
-                </div>
-              </th>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="mt-6 w-7/12 font-mono">
-        <h3 class="text-xl text-gray-500">座位圖僅供參考</h3>
-        <div
-          class="seatChart w-7/12 mt-8 hover:scale-150 hover:translate-x-28 hover:translate-y-40"
-          id="seatChart"
-        >
-          <img
-            src="/upload/chart/69_chart.jpeg"
-            alt="seatChart"
-            class="chart-size"
-          />
+        <div class="overflow-x-auto w-7/12 flex justify-between">
+          <table class="table font-mono">
+            <!-- head -->
+            <thead class="text-xl">
+              <tr class="bg-base-200 bg-white">
+                <th>演出時間</th>
+                <th>活動名稱</th>
+                <th>場地</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- row 1 -->
+              <tr class="text-base">
+                <td>
+                  <h3 class="showTime hidden"></h3>
+                  <h3 class="date">2023-08-31</h3>
+                  <h3 class="time mt-3 ml-6">18:00</h3>
+                </td>
+                <td><h3 class="showName">告五人第一次新世界巡迴演唱會</h3></td>
+                <td><h3 class="showHall">C</h3></td>
+                <th>
+                  <div id="seatForm">
+                    <button
+                      id="seatBtn"
+                      class="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 border rounded font-mono"
+                      type="click"
+                    >
+                      我要買票
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-6 w-7/12 font-mono">
+          <h3 class="text-xl text-gray-500">座位圖僅供參考</h3>
+          <div
+            class="seatChart w-7/12 mt-8 hover:scale-150 hover:translate-x-28 hover:translate-y-40"
+            id="seatChart"
+          >
+            <img
+              src="/upload/chart/69_chart.jpeg"
+              alt="seatChart"
+              class="chart-size"
+            />
+          </div>
         </div>
       </div>
     </div>

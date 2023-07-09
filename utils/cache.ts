@@ -8,7 +8,10 @@ const __dirname = path.resolve();
 const luaScriptPath = path.join(__dirname, "secKill.lua");
 const secKillScript = fs.readFileSync(luaScriptPath, "utf8");
 
-export const cache = new Redis(6379);
+export const cache = new Redis({
+  port: 6379,
+  host: "ticket-2.f8lhxs.ng.0001.apne1.cache.amazonaws.com",
+});
 
 export async function get(key: string) {
   try {

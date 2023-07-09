@@ -123,10 +123,6 @@ export async function getPayment(req: Request, res: Response) {
   }
 }
 
-export async function countDown(req: Request, res: Response) {
-  res.json({ data: ORDER_EXPIRATION_TIME });
-}
-
 export async function updateSeatInCache(id: number) {
   const seatData = await showModel.getShowSeat(id);
   await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
@@ -197,4 +193,13 @@ export async function checkPaid(req: Request, res: Response) {
       return;
     }
   }
+}
+
+const limitTime = 5 * 60 * 1000;
+export async function countDown(req: Request, res: Response) {
+  const userId = 2;
+  const orderDate = await ticketModel.getReservedOrder(userId);
+  const time = orderDate[0].time.getTime() + limitTime;
+
+  res.send({ time });
 }

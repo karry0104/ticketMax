@@ -8,80 +8,90 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>Document</title>
   </head>
-  <style>
-    .hidden {
-      display: none;
-    }
-  </style>
-  <body>
-    <div class="navbar shadow-md bg-white">
-      <div class="flex-1">
-        <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
-          >TicketMax</a
-        >
+  <body style="background-color: #ffffff">
+    <div>
+      <div class="navbar shadow-md bg-white">
+        <div class="flex-1">
+          <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
+            >TicketMax</a
+          >
+        </div>
+        <div class="flex-none">
+          <ul
+            class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+          >
+            <li><a href="/user/profile">PROFILE</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="flex-none">
-        <ul
-          class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
-        >
-          <li><a href="/user/profile">PROFILE</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="mt-14 flex flex-col justify-center items-center w-6/12 m-auto">
       <div
-        class="card rounded-lg bg-base-100 shadow-xl flex items-center w-full"
-        id="queue"
+        class="alert absolute left-1/2 justify-center -translate-x-1/2"
+        id="alert"
+        style="
+          display: none;
+          width: 30%;
+          top: 100px;
+          background-color: rgb(252 211 77);
+        "
+      ></div>
+      <div
+        class="mt-14 flex flex-col justify-center items-center w-6/12 m-auto"
+        style="margin-bottom: 600px"
       >
-        <h3 class="text-2xl">您正在隊伍中</h3>
-        <h3 class="waitCount text-6xl my-4" id="waitCount"></h3>
-        <h3 class="word text-slate-500 font-mono" id="word"></h3>
+        <div
+          class="card rounded-lg bg-base-100 shadow-xl flex items-center w-full bg-white"
+          id="queue"
+          style="display: none"
+        >
+          <h3 class="text-2xl">您正在隊伍中</h3>
+          <h3 class="waitCount text-6xl my-4" id="waitCount"></h3>
+          <h3 class="word text-slate-500 font-mono" id="word"></h3>
 
-        <div class="bg-white rounded-lg w-1/2 p-4">
-          <div class="w-full h-8 bg-gray-300 rounded-lg">
-            <div
-              class="w-3/4 h-8 text-center text-lg text-white bg-violet-600 rounded-lg"
-            >
-              waiting
+          <div class="bg-white rounded-lg w-1/2 p-4">
+            <div class="w-full h-8 bg-gray-300 rounded-lg">
+              <div
+                class="w-3/4 h-8 text-center text-lg text-white bg-violet-600 rounded-lg"
+              >
+                waiting
+              </div>
             </div>
           </div>
+          <hr class="h-px bg-gray-200 border-0 dark:bg-gray-700 w-full" />
+          <h3 class="response flex items-center my-4" id="response"></h3>
         </div>
-        <hr class="h-px bg-gray-200 border-0 dark:bg-gray-700 w-full" />
-        <h3 class="response flex items-center my-4" id="response"></h3>
-      </div>
-      <form id="myForm" action="/order" method="POST">
-        <div class="showSeats">
-          <div id="stepper"></div>
-          <div
-            id="showName"
-            class="text-lg flex justify-center items-center"
-          ></div>
-          <div class="rounded-xl bg-base-100 shadow-xl mt-14">
-            <div id="alertMsg"></div>
-            <div id="ticketMsg"></div>
-            <div id="chooseMsg"></div>
-            <div id="statusMsg"></div>
+        <form id="myForm" action="/order" method="POST">
+          <div class="showSeats">
+            <div id="stepper"></div>
+            <div
+              id="showName"
+              class="text-lg flex justify-center items-center"
+            ></div>
+            <div class="rounded-xl bg-base-100 shadow-xl mt-14 bg-white">
+              <div id="alertMsg"></div>
+              <div id="ticketMsg"></div>
+              <div id="chooseMsg"></div>
+              <div id="statusMsg"></div>
 
-            <div
-              id="stage"
-              class="flex justify-center items-center mt-10"
-            ></div>
-            <div
-              id="seatDataContainer"
-              class="mt-10 flex justify-center items-center"
-            ></div>
+              <div
+                id="stage"
+                class="flex justify-center items-center mt-10"
+              ></div>
+              <div
+                id="seatDataContainer"
+                class="mt-10 flex justify-center items-center"
+              ></div>
+            </div>
+
+            <div class="mt-10 flex justify-center" id="btn"></div>
           </div>
-
-          <div class="mt-10 flex justify-center" id="btn"></div>
-        </div>
-      </form>
-    </div>
-    <footer class="footer p-4 bg-gray-100 text-lg mt-36">
-      <div>
-        <p>TicketMax© 2023</p>
+        </form>
       </div>
-    </footer>
+      <footer class="footer p-4 bg-gray-100 text-lg mt-36">
+        <div>
+          <p>TicketMax© 2023</p>
+        </div>
+      </footer>
+    </div>
     <script src="/js/showSeat.js"></script>
   </body>
 </html>

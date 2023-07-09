@@ -74,13 +74,14 @@ export async function getShowInfo(id: number) {
 }
 
 const ReservedOrder = z.object({
+  time: z.date(),
   id: z.number(),
   show_id: z.number(),
 });
 
 export async function getReservedOrder(id: number) {
   const result = await pool.query(
-    `SELECT id, show_id FROM orders WHERE status='Reserved' AND user_id = ? `,
+    `SELECT time, id, show_id FROM orders WHERE status='Reserved' AND user_id = ? `,
     [id]
   );
   const order = z.array(ReservedOrder).parse(result[0]);
@@ -165,4 +166,11 @@ export async function getPaidOrder(id: number) {
   );
   const order = z.array(ReservedOrder).parse(result[0]);
   return order;
+}
+
+export async function getOrderTime(orderId: number) {
+  const result = await pool.query(`SELECT time FROM orders WHERE id = ? `, [
+    orderId,
+  ]);
+  return result[0];
 }

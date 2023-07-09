@@ -63,34 +63,32 @@ async function getPaymentData() {
 }
 getPaymentData();
 
-async function countDown() {
+async function countdown() {
   const time = await axios.get("http://13.115.196.55/api/v1/ticket/countDown");
-  const expirationTime = Date.now() + time.data.data * 1000;
-  console.log(expirationTime);
-  const currentTime = Date.now();
-
-  const remainingTime = Math.max(0, expirationTime - currentTime);
-
-  console.log(remainingTime);
-
-  const minutes = Math.floor(remainingTime / 60000);
-  const seconds = Math.floor((remainingTime % 60000) / 1000);
-
-  document.getElementById("minutes").textContent = minutes
-    .toString()
-    .padStart(2, "0");
-  document.getElementById("seconds").textContent = seconds
-    .toString()
-    .padStart(2, "0");
-
-  if (remainingTime <= 0) {
-    clearInterval(interval);
-    document.getElementById("minutes").textContent = "00";
-    document.getElementById("seconds").textContent = "00";
-  }
+  return time;
 }
-// setInterval(countDown, 1000);
-// countDown();
+
+const x = setInterval(async function () {
+  const now = new Date().getTime();
+
+  const date = await countdown();
+  const countDownDate = date.data.time;
+
+  const distance = countDownDate - now;
+
+  const minute = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const second = Math.floor((distance % (1000 * 60)) / 1000);
+
+  minutes.textContent = minute.toString().padStart(2, "0");
+  seconds.textContent = second.toString().padStart(2, "0");
+
+  if (distance < 0) {
+    clearInterval(x);
+    minutes.textContent = "0";
+    seconds.textContent = "0";
+    window.location.assign("/");
+  }
+}, 1000);
 
 deleteBtn.addEventListener("click", async function (e) {
   e.preventDefault();

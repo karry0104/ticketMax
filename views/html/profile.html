@@ -9,37 +9,50 @@
     <title>Profile</title>
   </head>
   <body>
-    <div class="navbar shadow-md bg-white">
-      <div class="flex-1">
-        <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
-          >TicketMax</a
-        >
+    <div class="bg-white">
+      <div class="navbar shadow-md bg-white">
+        <div class="flex-1">
+          <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
+            >TicketMax</a
+          >
+        </div>
+        <div class="flex-none">
+          <ul
+            class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+          >
+            <li><a href="/user/profile">PROFILE</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="flex-none">
-        <ul
-          class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
-        >
-          <li><a href="/user/profile">PROFILE</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="flex flex-col w-6/12 m-auto mt-20">
-      <div class="title text-3xl mb-8">會員資料</div>
       <div
-        class="card bg-base-100 border rounded-md flex flex-col w-full m-auto font-sans"
+        class="flex flex-col w-6/12 m-auto mt-20 bg-white"
+        style="margin-bottom: 600px"
       >
-        <div class="profile ml-8 my-8">
-          <div class="name-title text-xl text-slate-500" id="name-title">
-            姓名
+        <div class="title text-3xl mb-8">會員資料</div>
+        <div
+          class="card bg-base-100 border rounded-md flex flex-col w-full m-auto font-sans bg-white mb-36"
+        >
+          <div class="profile ml-8 my-8">
+            <div class="name-title text-xl text-slate-500" id="name-title">
+              姓名
+            </div>
+            <div class="name text-2xl mt-2" id="name"></div>
+            <div
+              class="email-title mt-8 text-xl text-slate-500"
+              id="email.title"
+            >
+              信箱
+            </div>
+            <div class="email text-2xl mt-2" id="email"></div>
           </div>
-          <div class="name text-2xl mt-2" id="name"></div>
-          <div class="email-title mt-8 text-xl text-slate-500" id="email.title">
-            信箱
-          </div>
-          <div class="email text-2xl mt-2" id="email"></div>
         </div>
       </div>
     </div>
+    <footer class="footer p-4 bg-gray-100 text-lg mt-80">
+      <div>
+        <p>TicketMax© 2023</p>
+      </div>
+    </footer>
   </body>
   <script src="/js/profile.js"></script>
 </html>

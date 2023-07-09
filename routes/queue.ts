@@ -4,6 +4,6 @@ import { waitPayment } from "../controllers/queue.js";
 
 const router = Router();
 
-router.route("/queue").post(waitPayment);
+router.route("/api/v1/queue").post(waitPayment);
 
 export default router;

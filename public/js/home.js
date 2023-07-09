@@ -10,7 +10,7 @@ const campaign = axios.get("http://13.115.196.55/show/campaign").then((res) => {
 
   // image.innerHTML = `<a href="/show/detail?id=${id}"><img src="http://localhost:3000/uploads/${campaignImage}"  >`;
 
-  bgimage.innerHTML = `<a href="/show?id=${id}"><div
+  bgimage.innerHTML = `<div
         class="bg-cover"
         style="background-image: url('http://13.115.196.55/uploads/${campaignImage}'); height: 430px"
       ></div>`;
@@ -55,16 +55,11 @@ function createShowElement(show) {
   infoDiv.classList.add("py-5", "text-center");
 
   const nameHeading = document.createElement("h1");
-  nameHeading.classList.add("name");
+  nameHeading.classList.add("name", "text-gray-700");
   nameHeading.innerText = show.name;
 
   const startTimeSpan = document.createElement("span");
-  startTimeSpan.classList.add(
-    "startTime",
-    "text-sm",
-    "text-gray-700",
-    "dark:text-gray-200"
-  );
+  startTimeSpan.classList.add("startTime", "text-sm", "text-gray-500");
   startTimeSpan.innerText = `開賣時間：${show.start_time}`;
 
   infoDiv.appendChild(nameHeading);

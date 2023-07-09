@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>Document</title>
   </head>
-  <body>
+  <body style="background-color: #ffffff">
     <div class="navbar shadow-md bg-white">
       <div class="flex-1">
         <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
@@ -26,7 +26,7 @@
     </div>
     <div>
       <div
-        class="after:mt-4 after:block after:h-1 after:w-full after:rounded-lg after:bg-gray-200 w-1/2 mx-auto mt-16"
+        class="after:mt-4 after:block after:h-1 after:w-full after:rounded-lg after:bg-gray-200 w-1/2 mx-auto mt-16 bg-white"
       >
         <ol class="grid grid-cols-3 text-lg font-medium text-gray-500">
           <li class="relative flex justify-start text-blue-700">
@@ -148,9 +148,9 @@
       請於5分鐘內付款完畢
     </h2>
     <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
-      <div class="container flex justify-between mx-auto mt-20">
-        <div class="order card w-7/12 bg-base-100" id="orders">
-          <div class="card bg-base-100 shadow-xl">
+      <div class="container flex justify-between mx-auto mt-20 bg-white">
+        <div class="order card w-7/12 bg-base-100 bg-white" id="orders">
+          <div class="card bg-base-100 shadow-xl bg-white">
             <figure class="h-48" id="imgFigure">
               <img id="image" alt="image" />
             </figure>
@@ -206,13 +206,13 @@
             <div class="w-auto flex">
               <div>
                 <span id="minutes" class="countdown font-mono text-4xl">
-                  <span style="--value: 5"></span>
+                  <span></span>
                 </span>
                 min
               </div>
               <div>
                 <span id="seconds" class="countdown font-mono text-4xl">
-                  <span style="--value: 00"></span>
+                  <span></span>
                 </span>
                 sec
               </div>
@@ -229,7 +229,7 @@
               type="text"
               name="address"
               value
-              class="border border-slate-500 text-sm rounded block p-2 outline-none w-[490px] h-[40px]"
+              class="border border-slate-500 text-sm rounded block p-2 outline-none w-[490px] h-[40px] bg-white"
               required
             />
           </div>
@@ -243,7 +243,7 @@
               type="text"
               name="phone"
               value
-              class="border border-slate-500 text-sm rounded block p-2 outline-none w-[490px] h-[40px]"
+              class="border border-slate-500 text-sm rounded block p-2 outline-none w-[490px] h-[40px] bg-white"
               required
             />
           </div>

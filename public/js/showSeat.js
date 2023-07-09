@@ -1,11 +1,13 @@
 const path = window.location.pathname;
 const parts = path.split("/");
 const id = parts[parts.length - 2];
+const queueCard = document.getElementById("queue");
 const stepper = document.getElementById("stepper");
 const queueMsg = document.getElementById("queue");
 const message = document.getElementById("response");
 const waitCount = document.getElementById("waitCount");
 const word = document.getElementById("word");
+const alert = document.getElementById("alert");
 
 function generateRandomString(length) {
   const charset =
@@ -39,108 +41,108 @@ const sendMessage = axios
       response.data.SendMessageResponse.SendMessageResult.MessageId;
     message.textContent = `排隊序號： ${MessageId}`;
 
-    const sqs = axios
-      .post(
-        `https://8tqvd2l76i.execute-api.ap-northeast-1.amazonaws.com/prod/queue/${id}`
-      )
-      .then((response) => {
-        console.log(response.data.messages);
-        if (response.data.messages > 0) {
-          waitCount.textContent = `${response.data.messages}`;
-          word.textContent = `位用戶在您前面`;
-        } else {
-          queueMsg.remove();
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+    function countTotal() {
+      const countSqs = axios
+        .post(
+          ` https://8tqvd2l76i.execute-api.ap-northeast-1.amazonaws.com/prod/queue/${id}`
+        )
+        .then((response) => {
+          console.log(response.data.messages);
+          if (response.data.messages > 0) {
+            waitCount.textContent = `${response.data.messages}`;
+            queueCard.style.display = "block";
+            word.textContent = `位用戶在您前面`;
+          } else {
+            queueMsg.remove();
+          }
+        });
+    }
 
-function fetchData() {
-  const getSeatData = axios
-    .post(
-      `https://18jihetbil.execute-api.ap-northeast-1.amazonaws.com/prod/seat/${id}`,
-      data
-    )
-    .then((response) => {
-      console.log(response.data);
-      console.log(response.data.data.checkKey);
-      if (response.data.data.checkKey === 1) {
-        const data = JSON.parse(response.data.showSeat);
-        myForm.className = "w-full flex flex-col justify-center";
-        const seatDataContainer = document.getElementById("seatDataContainer");
-        const showName = document.getElementById("showName");
-        const stage = document.getElementById("stage");
-        const alertMsg = document.getElementById("alertMsg");
-        const ticketMsg = document.getElementById("ticketMsg");
-        const chooseMsg = document.getElementById("chooseMsg");
-        const statusMsg = document.getElementById("statusMsg");
-        alertMsg.innerHTML = `<div class="text-center text-base text-gray-500">購票過程請勿重新整理，否則須重新排隊</div>`;
-        ticketMsg.innerHTML = `<div class="text-center text-base text-gray-500 mt-4">每次限購4張票</div>`;
-        chooseMsg.innerHTML = `<div class="text-center text-2xl mt-16">請選擇座位</div>`;
-        statusMsg.innerHTML = `<div class="statusInfo flex justify-center mt-4">
-        <div
-          class="h-8 w-8 border border-gray-300 rounded-md bg-white"
-        ></div>
-        <div class="ml-4 mr-8 my-auto">空位</div>
+    countTotal();
 
-        <div
-          class="h-8 w-8 border border-yellow-500 rounded-md bg-yellow-500"
-        ></div>
-        <div class="ml-4 mr-8 my-auto">目前選位</div>
-        <div
-          class="h-8 w-8 border border-gray-300 rounded-md bg-gray-300"
-        ></div>
-        <div class="ml-4 my-auto">已售出</div>
-      </div>`;
-        showName.textContent = `${data[0].name}`;
-        stage.innerHTML = `<div class="bg-gray-100 w-1/2 text-center text-lg h-20 font-mono py-6">Stage</div>`;
+    function fetchData() {
+      const getSeatData = axios
+        .post(
+          `https://18jihetbil.execute-api.ap-northeast-1.amazonaws.com/prod/seat/${id}`,
+          data
+        )
+        .then((response) => {
+          console.log(response.data);
+          console.log(response.data.data.checkKey);
+          if (response.data.data.checkKey === 1) {
+            const data = JSON.parse(response.data.showSeat);
+            myForm.className = "w-full flex flex-col justify-center";
+            const seatDataContainer =
+              document.getElementById("seatDataContainer");
+            const showName = document.getElementById("showName");
+            const stage = document.getElementById("stage");
+            const alertMsg = document.getElementById("alertMsg");
+            const ticketMsg = document.getElementById("ticketMsg");
+            const chooseMsg = document.getElementById("chooseMsg");
+            const statusMsg = document.getElementById("statusMsg");
+            alertMsg.innerHTML = `<div class="text-center text-base text-gray-500">購票過程請勿重新整理，否則須重新排隊</div>`;
+            ticketMsg.innerHTML = `<div class="text-center text-base text-gray-500 mt-4">每次限購4張票</div>`;
+            chooseMsg.innerHTML = `<div class="text-center text-2xl mt-16">請選擇座位</div>`;
+            statusMsg.innerHTML = `<div class="statusInfo flex justify-center mt-4">
+              <div
+                class="h-8 w-8 border border-gray-300 rounded-md bg-white"
+              ></div>
+              <div class="ml-4 mr-8 my-auto">空位</div>
+      
+              <div
+                class="h-8 w-8 border border-yellow-500 rounded-md bg-yellow-500"
+              ></div>
+              <div class="ml-4 mr-8 my-auto">目前選位</div>
+              <div
+                class="h-8 w-8 border border-gray-300 rounded-md bg-gray-300"
+              ></div>
+              <div class="ml-4 my-auto">已售出</div>
+            </div>`;
+            showName.textContent = `${data[0].name}`;
+            stage.innerHTML = `<div class="bg-gray-100 w-1/2 text-center text-lg h-20 font-mono py-6">Stage</div>`;
 
-        const seatArr = data.forEach((seat) => {
-          const seatDiv = document.createElement("div");
-          seatDiv.id = seat.id;
-          seatDiv.className =
-            "seat w-12 h-12 ml-2 mb-8 border border-gray-300 rounded-md text-center";
-          seatDiv.textContent = seat.seat_row + seat.seat_number;
+            const seatArr = data.forEach((seat) => {
+              const seatDiv = document.createElement("div");
+              seatDiv.id = seat.id;
+              seatDiv.className =
+                "seat w-12 h-12 ml-2 mb-8 border border-gray-300 rounded-md text-center";
+              seatDiv.textContent = seat.seat_row + seat.seat_number;
 
-          if (seat.status === "NotReserved") {
-            seatDiv.classList.add("bg-white");
-            seatDiv.addEventListener("click", () => {
-              seatDiv.classList.toggle("showSeatId");
-              seatDiv.setAttribute("value", seat.id);
-              seatDiv.classList.toggle("bg-yellow-500");
-              seatDiv.classList.toggle("border-yellow-500");
+              if (seat.status === "NotReserved") {
+                seatDiv.classList.add("bg-white");
+                seatDiv.addEventListener("click", () => {
+                  seatDiv.classList.toggle("showSeatId");
+                  seatDiv.setAttribute("value", seat.id);
+                  seatDiv.classList.toggle("bg-yellow-500");
+                  seatDiv.classList.toggle("border-yellow-500");
+                });
+
+                //seat data
+              } else if (seat.status === "Reserved" || seat.status === "Paid") {
+                seatDiv.classList.add("bg-gray-300");
+                seatDiv.classList.add("text-gray-500");
+
+                seatDiv.setAttribute("disabled", true);
+              }
+
+              seatDataContainer.appendChild(seatDiv);
             });
 
-            //seat data
-          } else if (seat.status === "Reserved" || seat.status === "Paid") {
-            seatDiv.classList.add("bg-gray-300");
-            seatDiv.classList.add("text-gray-500");
+            document.getElementById(
+              "btn"
+            ).innerHTML = `<button class="bg-yellow-500 rounded-md h-12 w-28 text-lg" type="submit">確認座位</button>`;
 
-            seatDiv.setAttribute("disabled", true);
+            queueMsg.remove();
+          } else {
+            setTimeout(fetchData, 1000);
           }
-
-          seatDataContainer.appendChild(seatDiv);
+        })
+        .catch((error) => {
+          console.error(error);
         });
-
-        document.getElementById(
-          "btn"
-        ).innerHTML = `<button class="bg-yellow-500 rounded-md h-12 w-28 text-lg" type="submit">確認座位</button>`;
-
-        queueMsg.remove();
-      } else {
-        setTimeout(fetchData, 1000);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}
-fetchData();
+    }
+    fetchData();
+  });
 
 const form = document.getElementById("myForm");
 
@@ -154,7 +156,17 @@ form.addEventListener("submit", async function (e) {
   if (selectedSeatIds.length > 4) {
     console.log(selectedSeatIds);
     console.log(selectedSeatIds.length);
-    alert("一次只能選購4張票");
+    const alertDiv = async function () {
+      alert.style.display = "flex";
+      alert.innerHTML = `<div class="massage bg-red-100 flex w-full relative">一次最多選購4個座位
+      <div><button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
+    </div>
+    </div>`;
+      setTimeout(function () {
+        alert.style.display = "none";
+      }, 5000);
+    };
+    alertDiv();
     return;
   }
 
@@ -172,17 +184,32 @@ form.addEventListener("submit", async function (e) {
         Authorization: `Bearer ${jwtToken}`,
       },
     });
-    console.log(res);
-    if (res.data === "sorry, no ticket") {
-      alert("座位已被選購");
-      location.reload();
-    } else {
-      window.location.assign("/checkout");
-    }
-  } catch (err) {
-    if (err.response.status === 401) {
-      console.log(err);
-      alert("請登入後再購票");
+    window.location.assign("/checkout");
+  } catch (error) {
+    if (error.response.status === 400) {
+      const alertDiv = async function () {
+        alert.style.display = "flex";
+        alert.innerHTML = `<div class="massage bg-red-100 flex w-full relative">${error.response.data.errors}
+        <div><button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
+      </div>
+      </div>`;
+        setTimeout(function () {
+          alert.style.display = "none";
+        }, 5000);
+      };
+      alertDiv();
+    } else if (error.response.status === 401) {
+      const alertDiv = async function () {
+        alert.style.display = "flex";
+        alert.innerHTML = `<div class="massage bg-red-100 flex w-full relative">請先登入
+        <div><button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
+      </div>
+      </div>`;
+        setTimeout(function () {
+          alert.style.display = "none";
+        }, 5000);
+      };
+      alertDiv();
       window.location.assign("/user");
     }
   }
