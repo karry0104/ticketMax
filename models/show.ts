@@ -66,6 +66,7 @@ export async function createShow(showData: {
   startTime: string;
   endTime: string;
   introduction: string;
+  singerIntroduction: string;
   image: string;
   seatChart: string;
   hallId: number;
@@ -77,18 +78,20 @@ export async function createShow(showData: {
       startTime,
       endTime,
       introduction,
+      singerIntroduction,
       image,
       seatChart,
       hallId,
       showTime,
     } = showData;
     const results = await pool.query(
-      `INSERT INTO shows (name, start_time, end_time, introduction, image, seat_chart, hall_id, show_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO shows (name, start_time, end_time, introduction,singer_introduction, image, seat_chart, hall_id, show_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         name,
         startTime,
         endTime,
         introduction,
+        singerIntroduction,
         image,
         seatChart,
         hallId,

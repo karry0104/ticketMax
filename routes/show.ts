@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { param, query } from "express-validator";
-import { uploadToDisk } from "../middleware/multer.js";
+import { uploadToDisk, uploadToBuffer } from "../middleware/multer.js";
 import {
   createShow,
   showForm,
@@ -28,7 +28,7 @@ router.route("/api/v1/shows").get(getShows);
 router.route("/api/v1/show").get(query("id").not().isEmpty().trim(), getShow);
 
 router.route("/admin/show").post(
-  uploadToDisk.fields([
+  uploadToBuffer.fields([
     { name: "image", maxCount: 1 },
     { name: "seatChart", maxCount: 1 },
   ]),

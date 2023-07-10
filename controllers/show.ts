@@ -8,7 +8,7 @@ import { fileTypeFromBuffer } from "file-type";
 import * as showModel from "../models/show.js";
 import * as cache from "../utils/cache.js";
 import { prepare } from "../utils/cache.js";
-import { deflate } from "zlib";
+import { uplaodShowDetailToS3 } from "../models/s3.js";
 
 const __dirname = path.resolve();
 
@@ -54,32 +54,35 @@ export async function createShow(req: Request, res: Response) {
     });
 
     const showId = await showModel.createShow(createImages[0]);
+    console.log("show" + showId);
 
-    if (Array.isArray(ShowSeatIds) && ShowSeatIds.length > 0) {
-      const showSeat = ShowSeatIds.map((seat) => {
-        return {
-          status: "NotReserved",
-          price: req.body.price,
-          showId: showId as number,
-          hallSeatId: seat,
-        };
-      });
-      await showModel.createShowSeat(showSeat);
-    }
+    await uplaodShowDetailToS3(createImages[0], images, showId as number);
+
+    // if (Array.isArray(ShowSeatIds) && ShowSeatIds.length > 0) {
+    //   const showSeat = ShowSeatIds.map((seat) => {
+    //     return {
+    //       status: "NotReserved",
+    //       price: req.body.price,
+    //       showId: showId as number,
+    //       hallSeatId: seat,
+    //     };
+    //   });
+    //   await showModel.createShowSeat(showSeat);
+    // }
 
     //put new seat to cache
-    if (showId) {
-      const seatData = await showModel.getShowSeat(showId);
+    // if (showId) {
+    //   const seatData = await showModel.getShowSeat(showId);
 
-      await cache.set(`showSeat:${showId}`, JSON.stringify(seatData));
-      const showSeat = await showModel.getShowSeatByShowId(showId);
-      if (showSeat) {
-        showSeat.map(async (seat) => {
-          await prepare(seat.id);
-          return;
-        });
-      }
-    }
+    //   await cache.set(`showSeat:${showId}`, JSON.stringify(seatData));
+    //   const showSeat = await showModel.getShowSeatByShowId(showId);
+    //   if (showSeat) {
+    //     showSeat.map(async (seat) => {
+    //       await prepare(seat.id);
+    //       return;
+    //     });
+    //   }
+    // }
 
     res.send("sucess to create show");
   } catch (err) {
