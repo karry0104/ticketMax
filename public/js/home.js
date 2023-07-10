@@ -48,7 +48,7 @@ function createShowElement(show) {
 
   const image = document.createElement("img");
   image.classList.add("object-cover", "w-full", "h-56");
-  image.src = `http://13.115.196.55/uploads/${show.image}`;
+  image.src = `/upload/main/${show.id}_main.jpeg`;
   image.alt = show.id;
 
   const infoDiv = document.createElement("div");

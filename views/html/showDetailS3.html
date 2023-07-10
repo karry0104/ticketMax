@@ -1,35 +1,4 @@
-import fs from "fs";
-import path from "path";
-import * as dotenv from "dotenv";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-
-dotenv.config();
-
-const bucketName = process.env.AWS_BUCKET_NAME;
-const bucketRegion = process.env.AWS_BUCKET_REGION;
-const accessKey = process.env.AWS_ACCESS_KEY;
-const secretAccessKey = process.env.AWS_SECRET_KEY;
-
-const __dirname = path.resolve();
-const filePath = path.join(__dirname, "/views/html/showDetailS3.html");
-
-const client = new S3Client({
-  region: bucketRegion,
-});
-
-export async function uplaodShowDetailToS3(
-  showDetail: any,
-  images: any,
-  showId: number
-) {
-  try {
-    const { name, introduction, singerIntroduction, showTime, hall } =
-      showDetail;
-
-    const date = showTime.split("T")[0];
-    const time = showTime.split("T")[1];
-
-    const file = `<!DOCTYPE html>
+<!DOCTYPE html>
       <html lang="en">
         <head>
           <meta charset="UTF-8" />
@@ -68,13 +37,13 @@ export async function uplaodShowDetailToS3(
                 <div
                   class="bg-cover blur"
                   style="
-                    background-image: url('/upload/main/${showId}_main.jpeg');
+                    background-image: url('/upload/main/98_main.jpeg');
                     height: 430px;
                   "
                 ></div>
               </div>
               <div class="image bg-white" id="image">
-                <img src="/upload/main/${showId}_main.jpeg" alt="main" />
+                <img src="/upload/main/98_main.jpeg" alt="main" />
               </div>
             </div>
       
@@ -96,7 +65,7 @@ export async function uplaodShowDetailToS3(
               <div
                 class="singerIntro w-7/12 text-lg font-mono"
                 id="singerIntro"
-              >${singerIntroduction}</div>
+              >www</div>
       
               <div class="mt-6 w-7/12 font-mono">
                 <div class="flex items-center py-4">
@@ -111,7 +80,7 @@ export async function uplaodShowDetailToS3(
               </div>
       
               <div class="showIntro w-7/12 text-lg font-mono" id="showIntro">
-              ${introduction}
+              www
               </div>
       
               <!-- <h1
@@ -146,11 +115,11 @@ export async function uplaodShowDetailToS3(
                     <tr class="text-base">
                       <td>
                         <h3 class="showTime hidden"></h3>
-                        <h3 class="date">${date}</h3>
-                        <h3 class="time mt-3 ml-6">${time}</h3>
+                        <h3 class="date">2023-06-28</h3>
+                        <h3 class="time mt-3 ml-6">10:44</h3>
                       </td>
-                      <td><h3 class="showName">${name}</h3></td>
-                      <td><h3 class="showHall">${hall}</h3></td>
+                      <td><h3 class="showName">www</h3></td>
+                      <td><h3 class="showHall">A</h3></td>
                       <th>
                         <div id="seatForm">
                           <button
@@ -173,7 +142,7 @@ export async function uplaodShowDetailToS3(
                   id="seatChart"
                 >
                   <img
-                    src="/upload/chart/${showId}_chart.jpeg"
+                    src="/upload/chart/98_chart.jpeg"
                     alt="seatChart"
                     class="chart-size"
                   />
@@ -189,75 +158,4 @@ export async function uplaodShowDetailToS3(
           <script src="/js/showDetail.js"></script>
         </body>
       </html>
-      `;
-    await fs.promises.writeFile(filePath, file, "utf8");
-
-    fs.readFile(filePath, "utf8", async function (err, html) {
-      if (err) {
-        console.log(err);
-        throw err;
-      }
-
-      const showDetailPath = `show/${showId}/index.html`;
-
-      const uploadShow = async () => {
-        const command = new PutObjectCommand({
-          Bucket: bucketName,
-          Key: showDetailPath,
-          Body: html,
-          ContentType: "text/html",
-        });
-
-        try {
-          const res = await client.send(command);
-          console.log(res);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-
-      uploadShow();
-    });
-
-    const imagePath = `upload/main/${showId}_main.jpeg`;
-    const chartPath = `upload/chart/${showId}_chart.jpeg`;
-
-    const uploadImage = async () => {
-      const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: imagePath,
-        Body: images.image[0].buffer,
-        ContentType: images.image[0].mimetype,
-      });
-
-      try {
-        await client.send(command);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    const uploadChart = async () => {
-      const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: chartPath,
-        Body: images.seatChart[0].buffer,
-        ContentType: images.seatChart[0].mimetype,
-      });
-
-      try {
-        await client.send(command);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    uploadImage();
-    uploadChart();
-
-    console.log("success");
-    return file;
-  } catch (err) {
-    console.log(err);
-  }
-}
+      
