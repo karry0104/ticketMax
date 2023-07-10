@@ -12,8 +12,6 @@ const __dirname = path.resolve();
 
 dotenv.config();
 
-const ORDER_EXPIRATION_TIME = 5 * 60 * 1000;
-
 export async function checkoutPage(req: Request, res: Response) {
   res.sendFile(path.join(__dirname, "/views/html/checkout.html"));
 }
@@ -30,7 +28,7 @@ export async function getShowSeat(req: Request, res: Response) {
       const seatData = JSON.parse(cachedShowSeat);
       return res.render("test", { seatData, id });
     }
-    // res.render("showSeat");
+    //res.render("test");
     // res.sendFile(path.join(__dirname, "/views/html/showSeat.html"));
   } catch (err) {
     if (err instanceof Error) {
@@ -48,6 +46,20 @@ export async function createOrders(req: Request, res: Response) {
     const showId = req.body.showId;
 
     const userId = res.locals.userId;
+
+    const reservedOrderByUser = await ticketModel.getReservedOrder(userId);
+
+    if (reservedOrderByUser[0] !== undefined) {
+      if (Array.isArray(showSeatId) && showSeatId.length > 0) {
+        showSeatId.map(async (seat) => {
+          await prepare(seat);
+        });
+        return res.status(400).json({
+          errors: "請先支付原訂單",
+          orderId: reservedOrderByUser[0].id,
+        });
+      }
+    }
 
     const orderId = await ticketModel.createOrders(showId, userId);
 
@@ -75,12 +87,13 @@ export async function createOrders(req: Request, res: Response) {
 
     await checkOrderPaymentStatus(orderId, showId);
 
-    res.json({ showId });
+    res.status(200).json({ orderId });
   } catch (err) {
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
       return;
     }
+    res.status(500).json({ errors: "failed" });
   }
 }
 
@@ -93,8 +106,6 @@ export async function getPayment(req: Request, res: Response) {
     };
 
     const orderIdAndShowId = await ticketModel.getReservedOrder(user.userId);
-
-    console.log(orderIdAndShowId);
 
     const orderId = orderIdAndShowId[0].id;
     const showId = orderIdAndShowId[0].show_id;

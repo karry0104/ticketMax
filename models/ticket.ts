@@ -88,13 +88,6 @@ export async function getReservedOrder(id: number) {
   return order;
 }
 
-export async function createPayment(orderId: number, total: number) {
-  await pool.query(`INSERT INTO payment (order_id, total) VALUES (?, ?)`, [
-    orderId,
-    total,
-  ]);
-}
-
 export async function updateOrderStatus(orderId: number) {
   await pool.query(`UPDATE orders SET status = 'Paid' WHERE id = ?`, [orderId]);
 }
@@ -166,11 +159,4 @@ export async function getPaidOrder(id: number) {
   );
   const order = z.array(ReservedOrder).parse(result[0]);
   return order;
-}
-
-export async function getOrderTime(orderId: number) {
-  const result = await pool.query(`SELECT time FROM orders WHERE id = ? `, [
-    orderId,
-  ]);
-  return result[0];
 }

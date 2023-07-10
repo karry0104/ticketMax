@@ -4,8 +4,10 @@ import verifyJWT from "../utils/verifyJWT.js";
 async function authenticate(req: Request, res: Response, next: NextFunction) {
   try {
     const tokenInHeaders = req.get("Authorization");
-    console.log(tokenInHeaders);
-    const token = tokenInHeaders?.replace("Bearer ", "");
+
+    const token =
+      tokenInHeaders?.replace("Bearer ", "") || req.cookies.jwtToken;
+
     if (!token) {
       res.status(401).json({ errors: "invalid token" });
       return;

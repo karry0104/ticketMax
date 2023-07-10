@@ -178,7 +178,7 @@ form.addEventListener("submit", async function (e) {
   console.log(data);
   const jwtToken = localStorage.getItem("jwtToken");
   try {
-    const res = await axios.post("http://13.115.196.55/api/v1/order", data, {
+    const res = await axios.post("https://yzuhyu.com/api/v1/order", data, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwtToken}`,
@@ -186,30 +186,32 @@ form.addEventListener("submit", async function (e) {
     });
     window.location.assign("/checkout");
   } catch (error) {
+    const handleErrorResponse = (errorMessage) => {
+      const alertDiv = async () => {
+        alert.style.display = "flex";
+        alert.innerHTML = `
+          <div class="massage bg-red-100 flex w-full relative">${errorMessage}
+            <div>
+              <button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          alert.style.display = "none";
+        }, 5000);
+      };
+      alertDiv();
+    };
+
     if (error.response.status === 400) {
-      const alertDiv = async function () {
-        alert.style.display = "flex";
-        alert.innerHTML = `<div class="massage bg-red-100 flex w-full relative">${error.response.data.errors}
-        <div><button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
-      </div>
-      </div>`;
-        setTimeout(function () {
-          alert.style.display = "none";
-        }, 5000);
-      };
-      alertDiv();
+      if (error.response.data.errors === "請先支付原訂單") {
+        handleErrorResponse(error.response.data.errors);
+        window.location.assign("/checkout");
+      } else {
+        handleErrorResponse(error.response.data.errors);
+      }
     } else if (error.response.status === 401) {
-      const alertDiv = async function () {
-        alert.style.display = "flex";
-        alert.innerHTML = `<div class="massage bg-red-100 flex w-full relative">請先登入
-        <div><button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
-      </div>
-      </div>`;
-        setTimeout(function () {
-          alert.style.display = "none";
-        }, 5000);
-      };
-      alertDiv();
+      handleErrorResponse("請先登入");
       window.location.assign("/user");
     }
   }

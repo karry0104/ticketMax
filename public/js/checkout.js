@@ -21,7 +21,7 @@ const jwtToken = localStorage.getItem("jwtToken");
 
 async function getPaymentData() {
   const paymentData = await axios.get(
-    "http://13.115.196.55/api/v1/ticket/checkout",
+    "http://localhost:3000/api/v1/ticket/checkout",
     {
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +31,7 @@ async function getPaymentData() {
   );
   const data = paymentData.data;
   console.log(data);
-  image.src = `http://13.115.196.55/uploads/${data.orderData.showInfo[0].image}`;
+  image.src = `http://localhost:3000/uploads/${data.orderData.showInfo[0].image}`;
   showName.textContent = `${data.orderData.showInfo[0].name}`;
   showTime.textContent = `${data.date} ${data.time}`;
   showHall.textContent = `${data.orderData.showInfo[0].hall_name}`;
@@ -64,7 +64,7 @@ async function getPaymentData() {
 getPaymentData();
 
 async function countdown() {
-  const time = await axios.get("http://13.115.196.55/api/v1/ticket/countDown");
+  const time = await axios.get("http://localhost:3000/api/v1/ticket/countDown");
   return time;
 }
 
@@ -86,7 +86,7 @@ const x = setInterval(async function () {
     clearInterval(x);
     minutes.textContent = "0";
     seconds.textContent = "0";
-    window.location.assign("/");
+    //window.location.assign("/");
   }
 }, 1000);
 
@@ -95,7 +95,7 @@ deleteBtn.addEventListener("click", async function (e) {
 
   try {
     const res = await axios.delete(
-      `http://13.115.196.55/api/v1/order?id=${hiddenOrderId.value}`
+      `http://localhost:3000/api/v1/order?id=${hiddenOrderId.value}`
     );
     if (res.data.message === "Order is canceled") {
       alert("已超過時間，訂單已取消");
@@ -163,7 +163,7 @@ function onClick() {
       };
 
       const goQueue = await axios.post(
-        "http://13.115.196.55/api/v1/queue",
+        "http://localhost:3000/api/v1/queue",
         data
       );
       console.log(goQueue.status);
@@ -174,7 +174,7 @@ function onClick() {
 
       async function checkPaid() {
         const result = await axios.post(
-          "http://13.115.196.55/api/v1/checkPaid",
+          "http://localhost:3000/api/v1/checkPaid",
           data
         );
         if (result.data.checkOrder === "Paid") {
