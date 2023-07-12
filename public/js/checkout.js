@@ -21,7 +21,7 @@ const jwtToken = localStorage.getItem("jwtToken");
 
 async function getPaymentData() {
   const paymentData = await axios.get(
-    "http://localhost:3000/api/v1/ticket/checkout",
+    "https://yzuhyu.com/api/v1/ticket/checkout",
     {
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +31,7 @@ async function getPaymentData() {
   );
   const data = paymentData.data;
   console.log(data);
-  image.src = `http://localhost:3000/uploads/${data.orderData.showInfo[0].image}`;
+  image.src = `/upload/main/${data.showId}_main.jpeg`;
   showName.textContent = `${data.orderData.showInfo[0].name}`;
   showTime.textContent = `${data.date} ${data.time}`;
   showHall.textContent = `${data.orderData.showInfo[0].hall_name}`;
@@ -64,7 +64,7 @@ async function getPaymentData() {
 getPaymentData();
 
 async function countdown() {
-  const time = await axios.get("http://localhost:3000/api/v1/ticket/countDown");
+  const time = await axios.get("https://yzuhyu.com/api/v1/ticket/countDown");
   return time;
 }
 
@@ -95,7 +95,7 @@ deleteBtn.addEventListener("click", async function (e) {
 
   try {
     const res = await axios.delete(
-      `http://localhost:3000/api/v1/order?id=${hiddenOrderId.value}`
+      `https://yzuhyu.com/api/v1/order?id=${hiddenOrderId.value}`
     );
     if (res.data.message === "Order is canceled") {
       alert("已超過時間，訂單已取消");
@@ -162,10 +162,7 @@ function onClick() {
         order: entFormData,
       };
 
-      const goQueue = await axios.post(
-        "http://localhost:3000/api/v1/queue",
-        data
-      );
+      const goQueue = await axios.post("https://yzuhyu.com/api/v1/queue", data);
       console.log(goQueue.status);
       if (goQueue.data.message === "Order is canceled") {
         alert("已超過付款時間，請重新購票");
@@ -174,11 +171,12 @@ function onClick() {
 
       async function checkPaid() {
         const result = await axios.post(
-          "http://localhost:3000/api/v1/checkPaid",
+          "https://yzuhyu.com/api/v1/checkPaid",
           data
         );
         if (result.data.checkOrder === "Paid") {
           localStorage.setItem("orderId", `${hiddenOrderId.value}`);
+
           window.location.assign(`/order?id=${hiddenOrderId.value}`);
         }
       }

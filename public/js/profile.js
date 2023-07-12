@@ -5,7 +5,7 @@ const jwtToken = localStorage.getItem("jwtToken");
 console.log(jwtToken);
 
 axios
-  .get("http://13.115.196.55/api/v1/user/profile", {
+  .get("https://yzuhyu.com/api/v1/user/profile", {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${jwtToken}`,

@@ -8,7 +8,7 @@ form.addEventListener("submit", async function (e) {
   console.log([...formData]);
 
   try {
-    const res = await axios.post("/admin/show", formData);
+    const res = await axios.post("https://yzuhyu.com/admin/show", formData);
     console.log(res);
     showSuccessMessage();
   } catch (err) {

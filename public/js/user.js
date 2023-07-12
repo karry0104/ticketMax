@@ -27,10 +27,7 @@ signinForm.addEventListener("submit", async function (e) {
   console.log([...formData]);
 
   try {
-    const res = await axios.post(
-      "http://localhost:3000/user/signin",
-      entFormData
-    );
+    const res = await axios.post("https://yzuhyu.com/user/signin", entFormData);
     console.log(res.data.data);
     localStorage.setItem("jwtToken", res.data.data.token);
     window.location.href = "/user/profile";

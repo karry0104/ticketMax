@@ -8,9 +8,9 @@ const orderTable = document.getElementById("orderTable");
 const id = localStorage.getItem("orderId");
 
 async function getpaidOrder() {
-  const data = await axios.get(`http://13.115.196.55/api/v1/order?id=${id}`);
+  const data = await axios.get(`https://yzuhyu.com/api/v1/order?id=${id}`);
   console.log(data.data);
-  image.src = `http://13.115.196.55/uploads/${data.data.showInfo[0].image}`;
+  image.src = `/upload/main/${data.data.orders[0].show_id}_main.jpeg`;
   showName.textContent = `${data.data.showInfo[0].name}`;
   showTime.textContent = `${data.data.date} ${data.data.time}`;
   showHall.textContent = `${data.data.showInfo[0].hall_name}`;

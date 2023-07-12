@@ -8,7 +8,10 @@ form.addEventListener("submit", async function (e) {
   console.log([...formData]);
 
   try {
-    const res = await axios.post("/admin/show/campaign", formData);
+    const res = await axios.post(
+      "https://yzuhyu.com/admin/show/campaign",
+      formData
+    );
     console.log(res);
     showSuccessMessage();
   } catch (err) {

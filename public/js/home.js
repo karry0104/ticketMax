@@ -2,22 +2,18 @@ const bgimage = document.querySelector(".bgimage");
 const image = document.querySelector(".image");
 const show = document.getElementById(".show");
 
-const campaign = axios.get("http://13.115.196.55/show/campaign").then((res) => {
-  console.log(res);
+const campaign = axios.get("https://yzuhyu.com/show/campaign").then((res) => {
   const campaignImage = res.data.campaign[0].image;
   const id = res.data.campaign[0].show_id;
-  console.log(id);
-
-  // image.innerHTML = `<a href="/show/detail?id=${id}"><img src="http://localhost:3000/uploads/${campaignImage}"  >`;
 
   bgimage.innerHTML = `<div
         class="bg-cover"
-        style="background-image: url('http://13.115.196.55/uploads/${campaignImage}'); height: 430px"
+        style="background-image: url('https://yzuhyu.com/uploads/${campaignImage}'); height: 430px"
       ></div>`;
 });
 
 const shows = axios
-  .get("http://13.115.196.55/api/v1/shows")
+  .get("https://yzuhyu.com/api/v1/shows")
   .then((response) => {
     const shows = response.data.shows;
 

@@ -50,7 +50,7 @@ const sendMessage = axios
           console.log(response.data.messages);
           if (response.data.messages > 0) {
             waitCount.textContent = `${response.data.messages}`;
-            queueCard.style.display = "block";
+            queueCard.style.display = "flex";
             word.textContent = `位用戶在您前面`;
           } else {
             queueMsg.remove();

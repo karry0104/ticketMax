@@ -107,6 +107,10 @@ export async function getPayment(req: Request, res: Response) {
 
     const orderIdAndShowId = await ticketModel.getReservedOrder(user.userId);
 
+    if (orderIdAndShowId[0] === undefined) {
+      return res.redirect("/");
+    }
+
     const orderId = orderIdAndShowId[0].id;
     const showId = orderIdAndShowId[0].show_id;
 
@@ -124,8 +128,7 @@ export async function getPayment(req: Request, res: Response) {
       orders,
     };
 
-    res.status(200).json({ user, orderData, date, time });
-    //res.render("checkout", { user, orderData, date, time });
+    res.status(200).json({ user, orderData, date, time, showId });
   } catch (err) {
     if (err instanceof Error) {
       res.status(500).json({ errors: err.message });
@@ -151,8 +154,6 @@ export async function getPaidOrders(req: Request, res: Response) {
     const time = showInfo[0].show_time.split("T")[1];
 
     res.status(200).json({ id, orders, showInfo, date, time });
-
-    //res.render("thank", { id, orders, showInfo, date, time });
   } catch (err) {
     if (err instanceof Error) {
       res.status(500).json({ errors: err.message });
@@ -210,7 +211,13 @@ const limitTime = 5 * 60 * 1000;
 export async function countDown(req: Request, res: Response) {
   const userId = 2;
   const orderDate = await ticketModel.getReservedOrder(userId);
+  console.log(orderDate[0]);
+
+  if (orderDate[0] === undefined) {
+    return res.status(200).json({ time: 0 });
+  }
+
   const time = orderDate[0].time.getTime() + limitTime;
 
-  res.send({ time });
+  res.status(200).json({ time });
 }
