@@ -5,9 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/src/output.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/src/favicon.png" />
     <script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <title>Document</title>
+    <title>TicketMax</title>
   </head>
   <body style="background-color: #ffffff">
     <div class="navbar shadow-md bg-white">
@@ -24,6 +25,16 @@
         </ul>
       </div>
     </div>
+    <div
+      class="alert absolute left-1/2 justify-center -translate-x-1/2"
+      id="alert"
+      style="
+        display: none;
+        width: 30%;
+        top: 100px;
+        background-color: rgb(252 211 77);
+      "
+    ></div>
     <div>
       <div
         class="after:mt-4 after:block after:h-1 after:w-full after:rounded-lg after:bg-gray-200 w-1/2 mx-auto mt-16 bg-white"

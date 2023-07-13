@@ -2,15 +2,10 @@ const bgimage = document.querySelector(".bgimage");
 const image = document.querySelector(".image");
 const show = document.getElementById(".show");
 
-const campaign = axios.get("https://yzuhyu.com/show/campaign").then((res) => {
-  const campaignImage = res.data.campaign[0].image;
-  const id = res.data.campaign[0].show_id;
-
-  bgimage.innerHTML = `<div
+bgimage.innerHTML = `<div
         class="bg-cover"
-        style="background-image: url('https://yzuhyu.com/uploads/${campaignImage}'); height: 430px"
+        style="background-image: url('/upload/campaign/campaign.jpeg'); height: 430px"
       ></div>`;
-});
 
 const shows = axios
   .get("https://yzuhyu.com/api/v1/shows")

@@ -108,7 +108,7 @@ export async function getPayment(req: Request, res: Response) {
     const orderIdAndShowId = await ticketModel.getReservedOrder(user.userId);
 
     if (orderIdAndShowId[0] === undefined) {
-      return res.redirect("/");
+      throw new Error("no order");
     }
 
     const orderId = orderIdAndShowId[0].id;
@@ -131,7 +131,7 @@ export async function getPayment(req: Request, res: Response) {
     res.status(200).json({ user, orderData, date, time, showId });
   } catch (err) {
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
       return;
     }
   }

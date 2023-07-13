@@ -19,47 +19,74 @@ const hiddenTotal = document.getElementById("hiddenTotal");
 
 const jwtToken = localStorage.getItem("jwtToken");
 
+const handleErrorResponse = (errorMessage) => {
+  const alertDiv = async () => {
+    alert.style.display = "flex";
+    alert.innerHTML = `
+      <div class="massage bg-red-100 flex w-full relative">${errorMessage}
+        <div>
+          <button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
+        </div>
+      </div>
+    `;
+    setTimeout(() => {
+      alert.style.display = "none";
+    }, 5000);
+  };
+  alertDiv();
+};
+
 async function getPaymentData() {
-  const paymentData = await axios.get(
-    "https://yzuhyu.com/api/v1/ticket/checkout",
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwtToken}`,
-      },
+  try {
+    const paymentData = await axios.get(
+      "https://yzuhyu.com/api/v1/ticket/checkout",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      }
+    );
+
+    const data = paymentData.data;
+    console.log(data);
+    image.src = `/upload/main/${data.showId}_main.jpeg`;
+    showName.textContent = `${data.orderData.showInfo[0].name}`;
+    showTime.textContent = `${data.date} ${data.time}`;
+    showHall.textContent = `${data.orderData.showInfo[0].hall_name}`;
+    orderId.textContent = `${data.orderData.orderId}`;
+    total.textContent = `${data.orderData.totalPrice}`;
+    username.value = `${data.user.username}`;
+    email.value = `${data.user.email}`;
+    hiddenOrderId.value = `${data.orderData.orderId}`;
+    hiddenTotal.value = `${data.orderData.totalPrice}`;
+    imgFigure.appendChild(image);
+
+    data.orderData.orders.forEach((order) => {
+      const tr = document.createElement("tr");
+
+      const sectionTd = document.createElement("td");
+      sectionTd.textContent = order.section;
+      tr.appendChild(sectionTd);
+
+      const seatTd = document.createElement("td");
+      seatTd.textContent = order.seat_row + order.seat_number;
+      tr.appendChild(seatTd);
+
+      const priceTd = document.createElement("td");
+      priceTd.textContent = order.price;
+      tr.appendChild(priceTd);
+
+      orderTable.appendChild(tr);
+    });
+  } catch (error) {
+    if (error.response.status === 401) {
+      handleErrorResponse(error.response.data.errors);
+      window.location.assign("/user");
+    } else if (error.response.status === 400) {
+      window.location.assign("/");
     }
-  );
-  const data = paymentData.data;
-  console.log(data);
-  image.src = `/upload/main/${data.showId}_main.jpeg`;
-  showName.textContent = `${data.orderData.showInfo[0].name}`;
-  showTime.textContent = `${data.date} ${data.time}`;
-  showHall.textContent = `${data.orderData.showInfo[0].hall_name}`;
-  orderId.textContent = `${data.orderData.orderId}`;
-  total.textContent = `${data.orderData.totalPrice}`;
-  username.value = `${data.user.username}`;
-  email.value = `${data.user.email}`;
-  hiddenOrderId.value = `${data.orderData.orderId}`;
-  hiddenTotal.value = `${data.orderData.totalPrice}`;
-  imgFigure.appendChild(image);
-
-  data.orderData.orders.forEach((order) => {
-    const tr = document.createElement("tr");
-
-    const sectionTd = document.createElement("td");
-    sectionTd.textContent = order.section;
-    tr.appendChild(sectionTd);
-
-    const seatTd = document.createElement("td");
-    seatTd.textContent = order.seat_row + order.seat_number;
-    tr.appendChild(seatTd);
-
-    const priceTd = document.createElement("td");
-    priceTd.textContent = order.price;
-    tr.appendChild(priceTd);
-
-    orderTable.appendChild(tr);
-  });
+  }
 }
 getPaymentData();
 

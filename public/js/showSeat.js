@@ -146,27 +146,38 @@ const sendMessage = axios
 
 const form = document.getElementById("myForm");
 
+const handleErrorResponse = (errorMessage) => {
+  const alertDiv = async () => {
+    alert.style.display = "flex";
+    alert.innerHTML = `
+      <div class="massage bg-red-100 flex w-full relative">${errorMessage}
+        <div>
+          <button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
+        </div>
+      </div>
+    `;
+    setTimeout(() => {
+      alert.style.display = "none";
+    }, 5000);
+  };
+  alertDiv();
+};
+
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
 
   const selectedSeat = document.querySelectorAll(".showSeatId");
 
   const selectedSeatIds = Array.from(selectedSeat).map((seat) => seat.id);
+  console.log(selectedSeatIds);
+
+  if (selectedSeatIds.length === 0) {
+    handleErrorResponse("請先選購座位");
+    return;
+  }
 
   if (selectedSeatIds.length > 4) {
-    console.log(selectedSeatIds);
-    console.log(selectedSeatIds.length);
-    const alertDiv = async function () {
-      alert.style.display = "flex";
-      alert.innerHTML = `<div class="massage bg-red-100 flex w-full relative">一次最多選購4個座位
-      <div><button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
-    </div>
-    </div>`;
-      setTimeout(function () {
-        alert.style.display = "none";
-      }, 5000);
-    };
-    alertDiv();
+    handleErrorResponse("一次最多選購4個座位");
     return;
   }
 
@@ -178,31 +189,14 @@ form.addEventListener("submit", async function (e) {
   console.log(data);
   const jwtToken = localStorage.getItem("jwtToken");
   try {
-    const res = await axios.post("https://yzuhyu.com/api/v1/order", data, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
-    window.location.assign("/checkout");
+    // const res = await axios.post("https://yzuhyu.com/api/v1/order", data, {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${jwtToken}`,
+    //   },
+    // });
+    // window.location.assign("/checkout");
   } catch (error) {
-    const handleErrorResponse = (errorMessage) => {
-      const alertDiv = async () => {
-        alert.style.display = "flex";
-        alert.innerHTML = `
-          <div class="massage bg-red-100 flex w-full relative">${errorMessage}
-            <div>
-              <button type="button" class="absolute" onclick="alert.style.display='none';" style="right:0;">X</button>
-            </div>
-          </div>
-        `;
-        setTimeout(() => {
-          alert.style.display = "none";
-        }, 5000);
-      };
-      alertDiv();
-    };
-
     if (error.response.status === 400) {
       if (error.response.data.errors === "請先支付原訂單") {
         handleErrorResponse(error.response.data.errors);
