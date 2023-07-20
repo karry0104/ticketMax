@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>TicketMax</title>
   </head>
+  <style></style>
   <body style="background-color: #ffffff">
     <div class="navbar shadow-md bg-white">
       <div class="flex-1">
@@ -155,7 +156,7 @@
         </ol>
       </div>
     </div>
-    <h2 class="mt-20 text-4xl flex justify-center gap-5 text-center">
+    <h2 class="mt-20 text-4xl flex justify-center gap-5 text-center text-black">
       請於5分鐘內付款完畢
     </h2>
     <form id="payment-form" onsubmit="event.preventDefault(); onClick();">
@@ -165,7 +166,7 @@
             <figure class="h-48" id="imgFigure">
               <img id="image" alt="image" />
             </figure>
-            <div class="card-body">
+            <div class="card-body text-black">
               <div>
                 <div class="text-xl">活動</div>
                 <h2 class="showName text-2xl" id="showName"></h2>
@@ -213,8 +214,8 @@
         </div>
         <div class="checkout w-3/5 ml-20 flex flex-col">
           <div class="mt-8 flex justify-between gap-5 w-[490px]">
-            <h3 class="text-3xl mb-8">付款資訊</h3>
-            <div class="w-auto flex">
+            <h3 class="text-3xl mb-8 text-black">付款資訊</h3>
+            <div class="w-auto flex text-black">
               <div>
                 <span id="minutes" class="countdown font-mono text-4xl">
                   <span></span>
@@ -230,10 +231,10 @@
             </div>
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 text-slate-500">
             <label
               for="address"
-              class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+              class="block mb-2 text-m font-medium text-gray-900 text-lg text-slate-500"
               >地址</label
             >
             <input
@@ -247,7 +248,7 @@
           <div class="mb-6">
             <label
               for="phone"
-              class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+              class="block mb-2 text-m font-medium text-gray-900 text-lg text-slate-500"
               >手機</label
             >
             <input
@@ -262,7 +263,7 @@
           <div class="card-number-group">
             <label
               for="card-number"
-              class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+              class="block mb-2 text-m font-medium text-gray-900 text-lg text-slate-500"
               >信用卡號碼</label
             >
             <div
@@ -274,7 +275,7 @@
             <div class="expiration-date-group">
               <label
                 for="expiration-date"
-                class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+                class="block mb-2 text-m font-medium text-gray-900 text-lg text-slate-500"
                 >有效期限</label
               >
               <div
@@ -285,7 +286,7 @@
             <div class="ccv-group ml-10">
               <label
                 for="card-ccv"
-                class="block mb-2 text-m font-medium text-gray-900 dark:text-white text-lg text-slate-500"
+                class="block mb-2 text-m font-medium text-gray-900 text-lg text-slate-500"
                 >安全碼</label
               >
               <div
@@ -297,7 +298,7 @@
 
           <button
             type="submit"
-            class="bg-amber-300 p-3 w-[490px] rounded-md mt-20"
+            class="bg-amber-300 p-3 w-[490px] rounded-md mt-20 text-black"
             id="submit-button"
           >
             確認付款

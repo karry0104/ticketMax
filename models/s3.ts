@@ -7,8 +7,6 @@ dotenv.config();
 
 const bucketName = process.env.AWS_BUCKET_NAME;
 const bucketRegion = process.env.AWS_BUCKET_REGION;
-const accessKey = process.env.AWS_ACCESS_KEY;
-const secretAccessKey = process.env.AWS_SECRET_KEY;
 
 const __dirname = path.resolve();
 const filePath = path.join(__dirname, "/views/html/showDetailS3.html");
@@ -95,7 +93,7 @@ export async function uplaodShowDetailToS3(
               </div>
       
               <div
-                class="singerIntro w-7/12 text-lg font-mono"
+                class="singerIntro w-7/12 text-lg font-mono text-black"
                 id="singerIntro"
               >${singerIntroduction}</div>
       
@@ -111,7 +109,7 @@ export async function uplaodShowDetailToS3(
                 </div>
               </div>
       
-              <div class="showIntro w-7/12 text-lg font-mono" id="showIntro">
+              <div class="showIntro w-7/12 text-lg font-mono text-black" id="showIntro">
               ${introduction}
               </div>
       
@@ -133,9 +131,9 @@ export async function uplaodShowDetailToS3(
               </div>
               <div class="overflow-x-auto w-7/12 flex justify-between">
                 <table class="table font-mono">
-                  <!-- head -->
+             
                   <thead class="text-xl">
-                    <tr class="bg-base-200 bg-white">
+                    <tr class="text-gray-500">
                       <th>演出時間</th>
                       <th>活動名稱</th>
                       <th>場地</th>
@@ -143,8 +141,8 @@ export async function uplaodShowDetailToS3(
                     </tr>
                   </thead>
                   <tbody>
-                    <!-- row 1 -->
-                    <tr class="text-base">
+                   
+                    <tr class="text-black">
                       <td>
                         <h3 class="showTime hidden"></h3>
                         <h3 class="date">${date}</h3>
@@ -170,7 +168,7 @@ export async function uplaodShowDetailToS3(
               <div class="mt-6 w-7/12 font-mono">
                 <h3 class="text-xl text-gray-500">座位圖僅供參考</h3>
                 <div
-                  class="seatChart w-7/12 mt-8 hover:scale-150 hover:translate-x-28 hover:translate-y-40"
+                  class="seatChart w-7/12 mt-8"
                   id="seatChart"
                 >
                   <img

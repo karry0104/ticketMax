@@ -9,8 +9,13 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>TicketMax</title>
   </head>
+  <style>
+    .screen {
+      height: 1080px;
+    }
+  </style>
   <body>
-    <div class="bg-white">
+    <div class="screen bg-white">
       <div class="navbar shadow-md bg-white">
         <div class="flex-1">
           <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
@@ -29,7 +34,7 @@
         class="flex flex-col w-6/12 m-auto mt-20 bg-white"
         style="margin-bottom: 600px"
       >
-        <div class="title text-3xl mb-8">會員資料</div>
+        <div class="title text-3xl text-black mb-8">會員資料</div>
         <div
           class="card bg-base-100 border rounded-md flex flex-col w-full m-auto font-sans bg-white mb-36"
         >
@@ -37,14 +42,14 @@
             <div class="name-title text-xl text-slate-500" id="name-title">
               姓名
             </div>
-            <div class="name text-2xl mt-2" id="name"></div>
+            <div class="name text-2xl mt-2 text-black" id="name"></div>
             <div
               class="email-title mt-8 text-xl text-slate-500"
               id="email.title"
             >
               信箱
             </div>
-            <div class="email text-2xl mt-2" id="email"></div>
+            <div class="email text-2xl mt-2 text-black" id="email"></div>
           </div>
         </div>
       </div>

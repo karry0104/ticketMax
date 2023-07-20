@@ -61,16 +61,6 @@ export async function secKill(showSeatId: number, userId: number) {
     userId
   );
 
-  // const data = (await cache.brpop("orderList", 0)) as [string, string] | null;
-  // if (data !== null) {
-  //   const values = data[1].split(":");
-  //   const value1 = values[0];
-  //   const value2 = values[1];
-
-  //   // console.log(`showSeatId: ${value1}`);
-  //   // console.log(`userId: ${value2}`);
-  // }
-
   const results = { showSeatId, result };
 
   return results;

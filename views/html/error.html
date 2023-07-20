@@ -4,40 +4,59 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/src/favicon.png" />
     <link href="/src/output.css" rel="stylesheet" />
-    <title>404</title>
+    <title>TicketMax</title>
   </head>
+  <style>
+    .screen {
+      height: 1080px;
+    }
+  </style>
   <body>
-    <div class="navbar shadow-md bg-white">
-      <div class="flex-1">
-        <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
-          >TicketMax</a
-        >
+    <div class="screen bg-white">
+      <div class="navbar shadow-md bg-white">
+        <div class="flex-1">
+          <a href="/" class="font-bold pl-4 normal-case text-4xl text-amber-300"
+            >TicketMax</a
+          >
+        </div>
+        <div class="flex-none">
+          <ul
+            class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+          >
+            <li><a href="/user/profile">PROFILE</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="flex-none">
-        <ul
-          class="menu menu-horizontal px-1 text-2xl font-bold text-indigo-800"
+      <div>
+        <div
+          class="card bg-base-100 shadow-xl mt-20 w-1/2 flex flex-col justify-center items-center font-mono mx-auto bg-white"
         >
-          <li><a href="/user/profile">PROFILE</a></li>
-        </ul>
-      </div>
-    </div>
-    <div>
-      <div
-        class="card bg-base-100 shadow-xl mt-20 w-1/2 flex flex-col justify-center items-center font-mono mx-auto"
-      >
-        <div class="card-body flex flex-col justify-center items-center">
-          <h1 class="card-title text-4xl text-indigo-800 mb-10 mt-6">404</h1>
-          <p class="text-xl">
-            Sorry, the page you are looking for doesn't exist or has been moved.
-          </p>
-          <div class="card-actions justify-center mt-10">
-            <a href="/"
-              ><button class="btn btn-primary">Back to homepage</button></a
-            >
+          <div class="card-body flex flex-col justify-center items-center">
+            <h1 class="card-title text-4xl text-indigo-800 mb-10 mt-6">404</h1>
+            <p class="text-xl text-black">
+              Sorry, the page you are looking for doesn't exist or has been
+              moved.
+            </p>
+            <div class="card-actions justify-center mt-10">
+              <a href="/"
+                ><button
+                  class="btn btn-primary border-0 text-black"
+                  style="background-color: #e5e7eb"
+                >
+                  Back to homepage
+                </button></a
+              >
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <footer class="footer p-4 bg-gray-100 text-lg">
+      <div>
+        <p>TicketMax© 2023</p>
+      </div>
+    </footer>
   </body>
 </html>

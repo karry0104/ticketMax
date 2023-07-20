@@ -95,10 +95,11 @@ async function countdown() {
   return time;
 }
 
+const date = await countdown();
+
 const x = setInterval(async function () {
   const now = new Date().getTime();
 
-  const date = await countdown();
   const countDownDate = date.data.time;
 
   const distance = countDownDate - now;

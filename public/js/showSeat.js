@@ -82,8 +82,8 @@ const sendMessage = axios
             const statusMsg = document.getElementById("statusMsg");
             alertMsg.innerHTML = `<div class="text-center text-base text-gray-500">購票過程請勿重新整理，否則須重新排隊</div>`;
             ticketMsg.innerHTML = `<div class="text-center text-base text-gray-500 mt-4">每次限購4張票</div>`;
-            chooseMsg.innerHTML = `<div class="text-center text-2xl mt-16">請選擇座位</div>`;
-            statusMsg.innerHTML = `<div class="statusInfo flex justify-center mt-4">
+            chooseMsg.innerHTML = `<div class="text-center text-2xl mt-16 text-black">請選擇座位</div>`;
+            statusMsg.innerHTML = `<div class="statusInfo flex justify-center mt-4 text-black">
               <div
                 class="h-8 w-8 border border-gray-300 rounded-md bg-white"
               ></div>
@@ -130,7 +130,7 @@ const sendMessage = axios
 
             document.getElementById(
               "btn"
-            ).innerHTML = `<button class="bg-yellow-500 rounded-md h-12 w-28 text-lg" type="submit">確認座位</button>`;
+            ).innerHTML = `<button class="bg-yellow-500 rounded-md h-12 w-28 text-lg text-black" type="submit">確認座位</button>`;
 
             queueMsg.remove();
           } else {
@@ -189,13 +189,13 @@ form.addEventListener("submit", async function (e) {
   console.log(data);
   const jwtToken = localStorage.getItem("jwtToken");
   try {
-    // const res = await axios.post("https://yzuhyu.com/api/v1/order", data, {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${jwtToken}`,
-    //   },
-    // });
-    // window.location.assign("/checkout");
+    const res = await axios.post("https://yzuhyu.com/api/v1/order", data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+    window.location.assign("/checkout");
   } catch (error) {
     if (error.response.status === 400) {
       if (error.response.data.errors === "請先支付原訂單") {
