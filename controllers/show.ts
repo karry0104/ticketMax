@@ -1,10 +1,5 @@
-import fs from "fs";
 import path from "path";
-
-import { fileURLToPath } from "url";
-import { nanoid } from "nanoid";
-import { NextFunction, Request, Response } from "express";
-import { fileTypeFromBuffer } from "file-type";
+import { Request, Response } from "express";
 import * as showModel from "../models/show.js";
 import * as cache from "../utils/cache.js";
 import { prepare } from "../utils/cache.js";
@@ -94,33 +89,6 @@ export async function createShow(req: Request, res: Response) {
   }
 }
 
-// export async function updateShowToS3() {
-//   try {
-//     const showDetailFile = fs.readFile(
-//       "showDetail.html",
-//       "utf8",
-//       (err, data) => {
-//         if (err) {
-//           console.error(err);
-//           return;
-//         }
-//       }
-//     );
-//     const modified = showDetailFile.replace(
-//       `<div
-//         class="singerIntro w-7/12 text-lg font-mono"
-//         id="singerIntro"
-//       ></div>`,
-//       `${1}`
-//     );
-//   } catch (err) {
-//     if (err instanceof Error) {
-//       console.log(err.message);
-//       return;
-//     }
-//   }
-// }
-
 export async function createShowCampaign(req: Request, res: Response) {
   const { id } = req.body;
   const image = req.files;
@@ -187,18 +155,3 @@ export async function getShow(req: Request, res: Response) {
     res.status(500).json({ errors: "get show failed" });
   }
 }
-
-// async function red() {
-//   const seatData = await showModel.getShowSeat(69);
-
-//   await cache.set(`showSeat:${69}`, JSON.stringify(seatData));
-//   const showSeat = await showModel.getShowSeatByShowId(69);
-//   if (showSeat) {
-//     showSeat.map(async (seat) => {
-//       await prepare(seat.id);
-//       return;
-//     });
-//   }
-// }
-
-// red();

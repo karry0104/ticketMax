@@ -1,12 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import AWS from "aws-sdk";
+import path from "path";
+import { Request, Response } from "express";
 import * as cache from "../utils/cache.js";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
 import * as showModel from "../models/show.js";
 import { prepare } from "../utils/cache.js";
 import { checkOrderPaymentStatus } from "../controllers/queue.js";
-import path from "path";
 
 const __dirname = path.resolve();
 
@@ -111,6 +110,10 @@ export async function getPayment(req: Request, res: Response) {
       throw new Error("no order");
     }
 
+    const limitTime = 5 * 60 * 1000;
+
+    const countDownTime = orderIdAndShowId[0].time.getTime() + limitTime;
+
     const orderId = orderIdAndShowId[0].id;
     const showId = orderIdAndShowId[0].show_id;
 
@@ -126,6 +129,7 @@ export async function getPayment(req: Request, res: Response) {
       orderId,
       totalPrice,
       orders,
+      countDownTime,
     };
 
     res.status(200).json({ user, orderData, date, time, showId });
@@ -205,19 +209,4 @@ export async function checkPaid(req: Request, res: Response) {
       return;
     }
   }
-}
-
-const limitTime = 5 * 60 * 1000;
-export async function countDown(req: Request, res: Response) {
-  const userId = 2;
-  const orderDate = await ticketModel.getReservedOrder(userId);
-  console.log(orderDate[0]);
-
-  if (orderDate[0] === undefined) {
-    return res.status(200).json({ time: 0 });
-  }
-
-  const time = orderDate[0].time.getTime() + limitTime;
-
-  res.status(200).json({ time });
 }

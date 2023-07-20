@@ -8,7 +8,6 @@ import {
   deleteOrder,
   checkPaid,
   thankPage,
-  countDown,
   checkoutPage,
 } from "../controllers/ticket.js";
 import authenticate from "../middleware/authenticate.js";
@@ -38,7 +37,5 @@ router.route("/api/v1/order").post([authenticate, killTicket, createOrders]);
 router.route("/api/v1/checkPaid").post(checkPaid);
 
 router.route("/api/v1/ticket/checkout").get([authenticate, getPayment]);
-
-router.route("/api/v1/ticket/countDown").get(countDown);
 
 export default router;

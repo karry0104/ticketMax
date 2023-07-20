@@ -78,6 +78,27 @@ async function getPaymentData() {
       tr.appendChild(priceTd);
 
       orderTable.appendChild(tr);
+
+      const x = setInterval(async function () {
+        const now = new Date().getTime();
+
+        const countDownDate = data.orderData.countDownTime;
+
+        const distance = countDownDate - now;
+
+        const minute = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const second = Math.floor((distance % (1000 * 60)) / 1000);
+
+        minutes.textContent = minute.toString().padStart(2, "0");
+        seconds.textContent = second.toString().padStart(2, "0");
+
+        if (distance < 0) {
+          clearInterval(x);
+          minutes.textContent = "0";
+          seconds.textContent = "0";
+          window.location.assign("/");
+        }
+      }, 1000);
     });
   } catch (error) {
     if (error.response.status === 401) {
@@ -89,34 +110,6 @@ async function getPaymentData() {
   }
 }
 getPaymentData();
-
-async function countdown() {
-  const time = await axios.get("https://yzuhyu.com/api/v1/ticket/countDown");
-  return time;
-}
-
-const date = await countdown();
-
-const x = setInterval(async function () {
-  const now = new Date().getTime();
-
-  const countDownDate = date.data.time;
-
-  const distance = countDownDate - now;
-
-  const minute = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const second = Math.floor((distance % (1000 * 60)) / 1000);
-
-  minutes.textContent = minute.toString().padStart(2, "0");
-  seconds.textContent = second.toString().padStart(2, "0");
-
-  if (distance < 0) {
-    clearInterval(x);
-    minutes.textContent = "0";
-    seconds.textContent = "0";
-    //window.location.assign("/");
-  }
-}, 1000);
 
 deleteBtn.addEventListener("click", async function (e) {
   e.preventDefault();

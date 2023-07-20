@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import amqp from "amqplib";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";

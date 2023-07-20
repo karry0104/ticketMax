@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import * as userModel from "../models/user.js";
-import signJWT, { EXPIRE_TIME } from "../utils/signJWT.js";
+import signJWT from "../utils/signJWT.js";
 import path from "path";
 
 const __dirname = path.resolve();
