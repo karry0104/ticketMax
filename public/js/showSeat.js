@@ -32,7 +32,7 @@ console.log(id);
 
 const sendMessage = axios
   .post(
-    `https://llibq3igv0.execute-api.ap-northeast-1.amazonaws.com/v1/mes${id}`,
+    ` https://ssub96p2v2.execute-api.ap-northeast-1.amazonaws.com/v1/mes${id}`,
     data
   )
   .then((response) => {

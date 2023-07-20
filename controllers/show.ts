@@ -81,10 +81,6 @@ export async function createShow(req: Request, res: Response) {
 
     res.send("sucess to create show");
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
     res.status(500).json({ errors: "create product failed" });
   }
 }
@@ -141,10 +137,6 @@ export async function getShow(req: Request, res: Response) {
 
     res.status(200).json({ show });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
     res.status(500).json({ errors: "get show failed" });
   }
 }

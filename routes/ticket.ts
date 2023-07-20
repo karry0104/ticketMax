@@ -3,6 +3,7 @@ import { check, param, query } from "express-validator";
 import {
   createOrders,
   getPayment,
+  getPaidOrders,
   deleteOrder,
   checkPaid,
   thankPage,
@@ -19,13 +20,9 @@ router.route("/order").get(query("id").not().isEmpty().trim(), thankPage);
 
 router.route("/checkout").get(checkoutPage);
 
-router
-  .route("/api/v1/order")
-  .delete(
-    query("id").not().isEmpty().trim(),
-    validator.handleResult,
-    deleteOrder
-  );
+router.route("/api/v1/order").delete(query("id"), deleteOrder);
+
+router.route("/api/v1/order").get(query("id"), getPaidOrders);
 
 router.route("/api/v1/order").post([authenticate, killTicket, createOrders]);
 

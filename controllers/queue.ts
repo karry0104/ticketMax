@@ -15,7 +15,7 @@ export async function waitPayment(req: Request, res: Response) {
 
   const orderStatus = await ticketModel.checkReserved(order.orderId);
   if (orderStatus && orderStatus === "Canceled") {
-    return res.status(200).json({ message: "Order is canceled" });
+    throw new Error("Order is canceled");
   }
 
   const data = {
@@ -41,7 +41,11 @@ export async function waitPayment(req: Request, res: Response) {
     await channel.close();
     res.send("put to queue");
   } catch (err) {
-    console.warn(err);
+    if (err instanceof Error) {
+      res.status(400).json({ errors: err.message });
+      return;
+    }
+    res.status(500).json({ errors: "something went wrong" });
   } finally {
     if (connection) await connection.close();
   }

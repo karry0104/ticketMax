@@ -128,6 +128,22 @@ export async function updateSeatInCache(id: number) {
   await cache.get(`showSeat:${id}`);
 }
 
+export async function getPaidOrders(req: Request, res: Response) {
+  const { id } = req.query;
+  try {
+    const orders = await ticketModel.getOrders(Number(id));
+
+    const showInfo = await ticketModel.getShowInfo(orders[0].show_id);
+
+    const date = showInfo[0].show_time.split("T")[0];
+    const time = showInfo[0].show_time.split("T")[1];
+
+    res.status(200).json({ id, orders, showInfo, date, time });
+  } catch (err) {
+    res.status(500).json({ errors: "get order failed" });
+  }
+}
+
 //delete order, update redis seat and prepare seat
 export async function deleteOrder(req: Request, res: Response) {
   const { id } = req.query;
