@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { param, query } from "express-validator";
+import { query } from "express-validator";
+import * as validator from "../middleware/validator.js";
 import { uploadToDisk, uploadToBuffer } from "../middleware/multer.js";
 import {
   createShow,
@@ -25,7 +26,9 @@ router.route("/show").get(query("id").not().isEmpty().trim(), showDetailPage);
 
 router.route("/api/v1/shows").get(getShows);
 
-router.route("/api/v1/show").get(query("id").not().isEmpty().trim(), getShow);
+router
+  .route("/api/v1/show")
+  .get(query("id").not().isEmpty().trim(), validator.handleResult, getShow);
 
 router.route("/admin/show").post(
   uploadToBuffer.fields([

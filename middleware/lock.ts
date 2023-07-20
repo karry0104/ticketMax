@@ -7,7 +7,7 @@ export async function killTicket(
   res: Response,
   next: NextFunction
 ) {
-  const { showSeatId, showId } = req.body;
+  const { showSeatId } = req.body;
 
   console.log(typeof showSeatId);
   if (showSeatId.length > 4) {
@@ -16,13 +16,13 @@ export async function killTicket(
   const userId = res.locals.userId;
 
   try {
-    if (Array.isArray(showSeatId)) {
+    if (Array.isArray(showSeatId) && showSeatId.length > 1) {
       const showSeats = showSeatId.map(async (showSeat) => {
         const result = await secKill(showSeat, userId);
         return result;
       });
       const results = await Promise.all(showSeats);
-      console.log("arr" + results);
+
       if (results.every((i) => i.result === 1)) {
         next();
       } else {
@@ -34,7 +34,6 @@ export async function killTicket(
       }
     } else {
       const result = await secKill(showSeatId, userId);
-      console.log("single" + result);
 
       if (result.result === 1) {
         next();

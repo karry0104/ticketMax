@@ -19,37 +19,17 @@ export async function thankPage(req: Request, res: Response) {
   res.sendFile(path.join(__dirname, "/views/html/thank.html"));
 }
 
-export async function getShowSeat(req: Request, res: Response) {
-  try {
-    const id = Number(req.query.id);
-    const cachedShowSeat = await cache.get(`showSeat:${id}`);
-    if (cachedShowSeat) {
-      const seatData = JSON.parse(cachedShowSeat);
-      return res.render("test", { seatData, id });
-    }
-    //res.render("test");
-    // res.sendFile(path.join(__dirname, "/views/html/showSeat.html"));
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-  }
-}
-
 //create order, updateSeatStatus , update redis seat
 export async function createOrders(req: Request, res: Response) {
   try {
-    const showSeatId = req.body.showSeatId;
-
-    const showId = req.body.showId;
+    const { showSeatId, showId } = req.body;
 
     const userId = res.locals.userId;
 
     const reservedOrderByUser = await ticketModel.getReservedOrder(userId);
 
-    if (reservedOrderByUser[0] !== undefined) {
-      if (Array.isArray(showSeatId) && showSeatId.length > 0) {
+    if (reservedOrderByUser[0]) {
+      if (Array.isArray(showSeatId)) {
         showSeatId.map(async (seat) => {
           await prepare(seat);
         });
@@ -66,7 +46,7 @@ export async function createOrders(req: Request, res: Response) {
       return;
     }
 
-    if (Array.isArray(showSeatId) && showSeatId.length > 0) {
+    if (Array.isArray(showSeatId) && showSeatId.length > 1) {
       const reservedSeats = showSeatId.map((seats) => {
         return {
           orderId,
@@ -92,7 +72,7 @@ export async function createOrders(req: Request, res: Response) {
       res.status(400).json({ errors: err.message });
       return;
     }
-    res.status(500).json({ errors: "failed" });
+    res.status(500).json({ errors: "create order failed" });
   }
 }
 
@@ -106,7 +86,7 @@ export async function getPayment(req: Request, res: Response) {
 
     const orderIdAndShowId = await ticketModel.getReservedOrder(user.userId);
 
-    if (orderIdAndShowId[0] === undefined) {
+    if (!orderIdAndShowId[0]) {
       throw new Error("no order");
     }
 
@@ -138,32 +118,14 @@ export async function getPayment(req: Request, res: Response) {
       res.status(400).json({ errors: err.message });
       return;
     }
+    res.status(500).json({ errors: "get payment data failed" });
   }
 }
 
 export async function updateSeatInCache(id: number) {
   const seatData = await showModel.getShowSeat(id);
   await cache.set(`showSeat:${id}`, JSON.stringify(seatData));
-  const updateSeat = await cache.get(`showSeat:${id}`);
-}
-
-export async function getPaidOrders(req: Request, res: Response) {
-  const { id } = req.query;
-  try {
-    const orders = await ticketModel.getOrders(Number(id));
-
-    const showInfo = await ticketModel.getShowInfo(orders[0].show_id);
-
-    const date = showInfo[0].show_time.split("T")[0];
-    const time = showInfo[0].show_time.split("T")[1];
-
-    res.status(200).json({ id, orders, showInfo, date, time });
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-  }
+  await cache.get(`showSeat:${id}`);
 }
 
 //delete order, update redis seat and prepare seat
@@ -174,12 +136,12 @@ export async function deleteOrder(req: Request, res: Response) {
   try {
     const orderStatus = await ticketModel.checkReserved(orderId);
     if (orderStatus && orderStatus === "Canceled") {
-      return res.status(200).json({ message: "Order is canceled" });
+      throw new Error("訂單已被取消");
     }
 
     const showIdAndShowSeatId = await ticketModel.getShowIdByOrder(orderId);
 
-    if (Array.isArray(showIdAndShowSeatId) && showIdAndShowSeatId.length > 0) {
+    if (Array.isArray(showIdAndShowSeatId)) {
       const idValues = showIdAndShowSeatId.map((obj) => obj.id);
       idValues.map(async (id) => {
         await prepare(id);
@@ -188,12 +150,13 @@ export async function deleteOrder(req: Request, res: Response) {
     await ticketModel.deleteOrder(orderId);
     await updateSeatInCache(showIdAndShowSeatId[0].show_id);
 
-    res.status(200).json(id);
+    res.status(200).json({ id });
   } catch (err) {
     if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
+      res.status(400).json({ errors: err.message });
       return;
     }
+    res.status(500).json({ errors: "delete order failed" });
   }
 }
 
@@ -201,12 +164,9 @@ export async function checkPaid(req: Request, res: Response) {
   const orderId = req.body.order.orderId;
   try {
     const checkOrder = await ticketModel.checkPaid(orderId);
-    console.log(checkOrder);
+
     res.status(200).json({ checkOrder });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
+    res.status(500).json({ errors: "check paid order failed" });
   }
 }

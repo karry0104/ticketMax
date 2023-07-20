@@ -1,9 +1,7 @@
 import { Router } from "express";
 import { check, param, query } from "express-validator";
 import {
-  getShowSeat,
   createOrders,
-  getPaidOrders,
   getPayment,
   deleteOrder,
   checkPaid,
@@ -11,6 +9,7 @@ import {
   checkoutPage,
 } from "../controllers/ticket.js";
 import authenticate from "../middleware/authenticate.js";
+import * as validator from "../middleware/validator.js";
 
 import { killTicket } from "../middleware/lock.js";
 
@@ -20,17 +19,13 @@ router.route("/order").get(query("id").not().isEmpty().trim(), thankPage);
 
 router.route("/checkout").get(checkoutPage);
 
-router.route("/ticket").post(query("id").not().isEmpty().trim(), getShowSeat);
-
-router.route("/ticket").get(query("id").not().isEmpty().trim(), getShowSeat);
-
 router
   .route("/api/v1/order")
-  .delete(query("id").not().isEmpty().trim(), deleteOrder);
-
-router
-  .route("/api/v1/order")
-  .get(query("id").not().isEmpty().trim(), getPaidOrders);
+  .delete(
+    query("id").not().isEmpty().trim(),
+    validator.handleResult,
+    deleteOrder
+  );
 
 router.route("/api/v1/order").post([authenticate, killTicket, createOrders]);
 

@@ -53,7 +53,7 @@ export async function createShow(req: Request, res: Response) {
 
     await uplaodShowDetailToS3(createImages[0], images, showId as number);
 
-    if (Array.isArray(ShowSeatIds) && ShowSeatIds.length > 0) {
+    if (Array.isArray(ShowSeatIds)) {
       const showSeat = ShowSeatIds.map((seat) => {
         return {
           status: "NotReserved",
@@ -105,10 +105,6 @@ export async function createShowCampaign(req: Request, res: Response) {
     }
     res.send("sucess to create campaign");
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
     res.status(500).json({ errors: "create campaign failed" });
   }
 }
@@ -119,10 +115,7 @@ export async function getShowCampagin(req: Request, res: Response) {
 
     res.status(200).json({ campaign });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
+    res.status(500).json({ errors: "get campaign failed" });
   }
 }
 

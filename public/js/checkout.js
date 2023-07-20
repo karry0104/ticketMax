@@ -118,13 +118,13 @@ deleteBtn.addEventListener("click", async function (e) {
     const res = await axios.delete(
       `https://yzuhyu.com/api/v1/order?id=${hiddenOrderId.value}`
     );
-    if (res.data.message === "Order is canceled") {
-      alert("已超過時間，訂單已取消");
-    }
 
     window.location.assign("/");
   } catch (err) {
-    console.log(err);
+    if (error.response.status === 400) {
+      handleErrorResponse(error.response.data.errors);
+      window.location.assign("/");
+    }
   }
 });
 
