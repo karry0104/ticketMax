@@ -1,5 +1,5 @@
 import path from "path";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as showModel from "../models/show.js";
 import * as cache from "../utils/cache.js";
 import { prepare } from "../utils/cache.js";
@@ -15,15 +15,11 @@ export async function campaignForm(req: Request, res: Response) {
   res.sendFile(path.join(__dirname, "/views/html/createCampaign.html"));
 }
 
-export async function showDetailPage(req: Request, res: Response) {
-  res.sendFile(path.join(__dirname, "/views/html/showDetail.html"));
-}
-
-export async function homePage(req: Request, res: Response) {
-  res.sendFile(path.join(__dirname, "/views/html/index.html"));
-}
-
-export async function createShow(req: Request, res: Response) {
+export async function createShow(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const images = req.files;
     const getHallId = Number(await showModel.getHallIdByName(req.body.hall));
@@ -81,11 +77,15 @@ export async function createShow(req: Request, res: Response) {
 
     res.send("sucess to create show");
   } catch (err) {
-    res.status(500).json({ errors: "create product failed" });
+    next(err);
   }
 }
 
-export async function createShowCampaign(req: Request, res: Response) {
+export async function createShowCampaign(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const { id } = req.body;
   const image = req.files;
 
@@ -101,42 +101,34 @@ export async function createShowCampaign(req: Request, res: Response) {
     }
     res.send("sucess to create campaign");
   } catch (err) {
-    res.status(500).json({ errors: "create campaign failed" });
+    next(err);
   }
 }
 
-export async function getShowCampagin(req: Request, res: Response) {
+export async function getShowCampagin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const campaign = await showModel.getShowCampaign();
 
     res.status(200).json({ campaign });
   } catch (err) {
-    res.status(500).json({ errors: "get campaign failed" });
+    next(err);
   }
 }
 
-export async function getShows(req: Request, res: Response) {
+export async function getShows(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const shows = await showModel.getShows();
 
     res.status(200).json({ shows });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: "get shows failed" });
-  }
-}
-
-export async function getShow(req: Request, res: Response) {
-  try {
-    const id = Number(req.query.id);
-
-    const show = await showModel.getShow(id);
-
-    res.status(200).json({ show });
-  } catch (err) {
-    res.status(500).json({ errors: "get show failed" });
+    next(err);
   }
 }

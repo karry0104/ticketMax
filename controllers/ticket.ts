@@ -1,5 +1,5 @@
 import path from "path";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as cache from "../utils/cache.js";
 import * as dotenv from "dotenv";
 import * as ticketModel from "../models/ticket.js";
@@ -20,7 +20,11 @@ export async function thankPage(req: Request, res: Response) {
 }
 
 //create order, updateSeatStatus , update redis seat
-export async function createOrders(req: Request, res: Response) {
+export async function createOrders(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { showSeatId, showId } = req.body;
 
@@ -68,15 +72,15 @@ export async function createOrders(req: Request, res: Response) {
 
     res.status(200).json({ orderId });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: "create order failed" });
+    next(err);
   }
 }
 
-export async function getPayment(req: Request, res: Response) {
+export async function getPayment(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const user = {
       userId: res.locals.userId,
@@ -87,7 +91,7 @@ export async function getPayment(req: Request, res: Response) {
     const orderIdAndShowId = await ticketModel.getReservedOrder(user.userId);
 
     if (!orderIdAndShowId[0]) {
-      throw new Error("no order");
+      throw new Error("無尚未付款訂單");
     }
 
     const limitTime = 5 * 60 * 1000;
@@ -114,11 +118,7 @@ export async function getPayment(req: Request, res: Response) {
 
     res.status(200).json({ user, orderData, date, time, showId });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: "get payment data failed" });
+    next(err);
   }
 }
 
@@ -128,7 +128,11 @@ export async function updateSeatInCache(id: number) {
   await cache.get(`showSeat:${id}`);
 }
 
-export async function getPaidOrders(req: Request, res: Response) {
+export async function getPaidOrders(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const { id } = req.query;
   try {
     const orders = await ticketModel.getOrders(Number(id));
@@ -140,12 +144,16 @@ export async function getPaidOrders(req: Request, res: Response) {
 
     res.status(200).json({ id, orders, showInfo, date, time });
   } catch (err) {
-    res.status(500).json({ errors: "get order failed" });
+    next(err);
   }
 }
 
 //delete order, update redis seat and prepare seat
-export async function deleteOrder(req: Request, res: Response) {
+export async function deleteOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const { id } = req.query;
   const orderId = Number(id);
 
@@ -168,21 +176,21 @@ export async function deleteOrder(req: Request, res: Response) {
 
     res.status(200).json({ id });
   } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).json({ errors: err.message });
-      return;
-    }
-    res.status(500).json({ errors: "delete order failed" });
+    next(err);
   }
 }
 
-export async function checkPaid(req: Request, res: Response) {
+export async function checkPaid(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const orderId = req.body.order.orderId;
   try {
     const checkOrder = await ticketModel.checkPaid(orderId);
 
     res.status(200).json({ checkOrder });
   } catch (err) {
-    res.status(500).json({ errors: "check paid order failed" });
+    next(err);
   }
 }

@@ -1,5 +1,4 @@
 import express, { Router } from "express";
-import bodyParser from "body-parser";
 import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -24,7 +23,7 @@ router.use(function (req, res, next) {
   next();
 });
 
-//app.use(rateLimiter);
+app.use(rateLimiter);
 
 app.use(cors());
 
@@ -32,17 +31,12 @@ app.enable("trust proxy");
 
 app.use(showRouter, ticketRouter, userRouter, queueRouter);
 
-app.set("view engine", "ejs");
-
-app.get("/", (req, res) => {
-  res.send({ hi: "there" });
-});
-
 app.use(errorHandler);
 
 app.use("/uploads", express.static("./uploads"));
 
 const __dirname = path.resolve();
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "/views/html/error.html"));
 });

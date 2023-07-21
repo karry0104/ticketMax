@@ -1,6 +1,5 @@
 import { Redis } from "ioredis";
 import fs from "fs";
-
 import path from "path";
 
 const __dirname = path.resolve();
@@ -10,7 +9,7 @@ const secKillScript = fs.readFileSync(luaScriptPath, "utf8");
 
 export const cache = new Redis({
   port: 6379,
-  host: "ticket-2.f8lhxs.ng.0001.apne1.cache.amazonaws.com", // Redis host',
+  host: "ticket-2.f8lhxs.ng.0001.apne1.cache.amazonaws.com", 
 });
 
 export async function get(key: string) {
@@ -25,24 +24,6 @@ export async function get(key: string) {
 export async function set(key: string, value: string) {
   try {
     const result = await cache.set(key, value);
-    return result;
-  } catch (err) {
-    return null;
-  }
-}
-
-export async function del(key: string) {
-  try {
-    const result = await cache.del(key);
-    return result;
-  } catch (err) {
-    return null;
-  }
-}
-
-export async function rpush(key: string, value: string) {
-  try {
-    const result = await cache.rpush(key, value);
     return result;
   } catch (err) {
     return null;

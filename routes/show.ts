@@ -1,17 +1,12 @@
 import { Router } from "express";
-import { query } from "express-validator";
-import * as validator from "../middleware/validator.js";
 import { uploadToDisk, uploadToBuffer } from "../middleware/multer.js";
 import {
   createShow,
   showForm,
   getShows,
-  getShow,
-  showDetailPage,
   getShowCampagin,
   campaignForm,
   createShowCampaign,
-  homePage,
 } from "../controllers/show.js";
 
 const router = Router();
@@ -19,16 +14,6 @@ const router = Router();
 router.route("/admin/show").get(showForm);
 
 router.route("/admin/show/campaign").get(campaignForm);
-
-router.route("/").get(homePage);
-
-router.route("/show").get(query("id").not().isEmpty().trim(), showDetailPage);
-
-router.route("/api/v1/shows").get(getShows);
-
-router
-  .route("/api/v1/show")
-  .get(query("id").not().isEmpty().trim(), validator.handleResult, getShow);
 
 router.route("/admin/show").post(
   uploadToBuffer.fields([
@@ -46,5 +31,7 @@ router
   );
 
 router.route("/show/campaign").get(getShowCampagin);
+
+router.route("/api/v1/shows").get(getShows);
 
 export default router;
