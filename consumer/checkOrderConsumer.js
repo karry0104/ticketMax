@@ -1,15 +1,23 @@
 import amqp from "amqplib";
+import * as dotenv from "dotenv";
 import * as ticketModel from "../dist/models/ticket.js";
 import { prepare } from "../dist/utils/cache.js";
 import { updateSeatInCache } from "../dist/controllers/ticket.js";
 
+dotenv.config();
+
 const orderQueue = "order";
 
 const ORDER_EXPIRATION_TIME = 5 * 60 * 1000;
+const rabbitMQ_name = process.env.RABBITMQ_NAME;
+const rabbitMQ_password = process.env.RABBITMQ_PASSWORD;
+const rabbitMQ_ip = process.env.RABBITMQ_IP;
 
 (async () => {
   try {
-    const connection = await amqp.connect("amqp://127.0.0.1:5672");
+    const connection = await amqp.connect(
+      `amqp://${rabbitMQ_name}:${rabbitMQ_password}@${rabbitMQ_ip}:5672`
+    );
     const channel = await connection.createChannel();
 
     process.once("SIGINT", async () => {

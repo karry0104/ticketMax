@@ -5,6 +5,10 @@ import * as ticketModel from "../models/ticket.js";
 
 dotenv.config();
 
+const rabbitMQ_name = process.env.RABBITMQ_NAME;
+const rabbitMQ_password = process.env.RABBITMQ_PASSWORD;
+const rabbitMQ_ip = process.env.RABBITMQ_IP;
+
 const queue = "queue";
 
 const orderQueue = "order";
@@ -32,7 +36,9 @@ export async function waitPayment(req: Request, res: Response) {
 
   let connection;
   try {
-    connection = await amqp.connect("amqp://127.0.0.1:5672");
+    connection = await amqp.connect(
+      `amqp://${rabbitMQ_name}:${rabbitMQ_password}@${rabbitMQ_ip}:5672`
+    );
     const channel = await connection.createChannel();
 
     await channel.assertQueue(queue, { durable: false });
@@ -59,7 +65,9 @@ export async function checkOrderPaymentStatus(orderId: number, showId: number) {
 
   let connection;
   try {
-    connection = await amqp.connect("amqp://127.0.0.1:5672");
+    connection = await amqp.connect(
+      `amqp://${rabbitMQ_name}:${rabbitMQ_password}@${rabbitMQ_ip}:5672`
+    );
     const channel = await connection.createChannel();
 
     await channel.assertQueue(orderQueue, { durable: false });

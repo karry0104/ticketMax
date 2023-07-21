@@ -7,12 +7,17 @@ dotenv.config();
 
 const TAPPAY_PARTNER_KEY = process.env.TAPPAY_PARTNER_KEY;
 const TAPPAY_MERCHANT_ID = process.env.TAPPAY_MERCHANT_ID;
+const rabbitMQ_name = process.env.RABBITMQ_NAME;
+const rabbitMQ_password = process.env.RABBITMQ_PASSWORD;
+const rabbitMQ_ip = process.env.RABBITMQ_IP;
 
 const queue = "queue";
 
 (async () => {
   try {
-    const connection = await amqp.connect("amqp://127.0.0.1:5672");
+    const connection = await amqp.connect(
+      `amqp://${rabbitMQ_name}:${rabbitMQ_password}@${rabbitMQ_ip}:5672`
+    );
     const channel = await connection.createChannel();
 
     process.once("SIGINT", async () => {
