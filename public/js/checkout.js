@@ -94,8 +94,8 @@ async function getPaymentData() {
 
         if (distance < 0) {
           clearInterval(x);
-          minutes.textContent = "0";
-          seconds.textContent = "0";
+          minutes.textContent = "00";
+          seconds.textContent = "00";
           window.location.assign("/");
         }
       }, 1000);
