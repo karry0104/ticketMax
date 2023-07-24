@@ -137,6 +137,10 @@ export async function getPaidOrders(
   try {
     const orders = await ticketModel.getOrders(Number(id));
 
+    if (!orders[0]) {
+      throw new Error("查無此訂單");
+    }
+
     const showInfo = await ticketModel.getShowInfo(orders[0].show_id);
 
     const date = showInfo[0].show_time.split("T")[0];
