@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "./dist/index.js";
+import app from "../dist/index.js";
 
 describe("get orderData", () => {
   it("should return orderData", async () => {
