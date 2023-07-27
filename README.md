@@ -35,4 +35,4 @@ TicketMax is a ticket selling web application with queueing system.
 **Tool:** RabbitMQ
 
 ## Architecture Diagram
-![Architecture Diagram](https://github.com/karry0104/ticketMax/assets/112867897/debf208c-7486-4f3c-aec6-3c7e9e28c392)
+<img width="60%" alt="architecture-diagram" src="[./public/readme/architecture-diagram.png](https://github.com/karry0104/ticketMax/assets/112867897/debf208c-7486-4f3c-aec6-3c7e9e28c392)https://github.com/karry0104/ticketMax/assets/112867897/debf208c-7486-4f3c-aec6-3c7e9e28c392">
