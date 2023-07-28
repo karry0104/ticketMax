@@ -44,8 +44,6 @@ describe("check order status", () => {
     const expectMsg = { checkOrder: "Paid" };
     const response = await request(app).post(`/api/v1/checkPaid`).send(data);
 
-    console.log(response.body);
-
     expect(response.status).toBe(200);
     expect(response.body).toEqual(expectMsg);
   });
@@ -54,7 +52,7 @@ describe("check order status", () => {
     const data = {
       order: {
         address: "taipei",
-        email: "XXXXXXXXXXXXXX",
+        email: "aa@gmail.com",
         orderId: 230,
         phone: "0912345678",
         total: 200,
@@ -69,9 +67,17 @@ describe("check order status", () => {
   });
 });
 
+let token;
 describe("create order", () => {
-  const token =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJuYW1lIjoiYWEiLCJlbWFpbCI6ImFhQGdtYWlsLmNvbSIsImlhdCI6MTY5MDAxMzY3MCwiZXhwIjoxNjkwMjI5NjcwfQ.lurTbCoibeB7hSGNdpN4wFmuxjQbhOEXf4SUYrc3quE";
+  beforeAll(async () => {
+    const user = {
+      email: "aa@gmail.com",
+      password: "aa",
+    };
+    const response = await request(app).post(`/user/signin`).send(user);
+    token = response.body.data.token;
+  });
+
   it("return 401 if user is not login", async () => {
     const data = {
       showId: 100,
@@ -97,7 +103,7 @@ describe("create order", () => {
     const response = await request(app)
       .post(`/api/v1/order`)
       .set({
-        Authorization: `${token}`,
+        Authorization: `Bearer ${token}`,
       })
       .send(data);
 
