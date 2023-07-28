@@ -72,13 +72,13 @@ Utilized K6 spike test to simulate sudden and very high load when a event start 
 
 The testing cover three APIs.
 
-**Enter the queue:** users are allowed to join the SQS FIFO queues with a unique token.
+**Enter the queue:** users are allowed to join the SQS FIFO queues with a unique token, which Lambda places it into ElastiCache.
   
 <img width="55%" alt="api1" src="https://github.com/karry0104/ticketMax/assets/112867897/995d7a79-e78f-4dc5-bff5-8ad18353e2f3">
 
 </br></br>
 
-**Check unique token:** Lambda will check if unique token exists by short polling and return seat map.
+**Check unique token:** Lambda will check if unique token exists in ElastiCache by short polling and return seat map.
 
   
 <img width="40%" alt="api2" src="https://github.com/karry0104/ticketMax/assets/112867897/bb6bd632-625c-461f-a655-61248cf3c0df">
