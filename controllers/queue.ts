@@ -15,7 +15,6 @@ const orderQueue = "order";
 
 export async function waitPayment(req: Request, res: Response) {
   const { prime, order, token } = req.body;
-  console.log(req.body);
 
   const orderStatus = await ticketModel.checkReserved(order.orderId);
   if (orderStatus && orderStatus === "Canceled") {
@@ -43,7 +42,7 @@ export async function waitPayment(req: Request, res: Response) {
 
     await channel.assertQueue(queue, { durable: false });
     channel.sendToQueue(queue, Buffer.from(JSON.stringify(data)));
-    console.log(" [x] Sent '%s'", data);
+
     await channel.close();
     res.send("put to queue");
   } catch (err) {
@@ -72,7 +71,7 @@ export async function checkOrderPaymentStatus(orderId: number, showId: number) {
 
     await channel.assertQueue(orderQueue, { durable: false });
     channel.sendToQueue(orderQueue, Buffer.from(JSON.stringify(data)));
-    console.log(" [x] Sent '%s'", data);
+
     await channel.close();
   } catch (err) {
     console.warn(err);

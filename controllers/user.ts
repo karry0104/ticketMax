@@ -16,7 +16,6 @@ export async function profilePage(req: Request, res: Response) {
 
 export async function signUp(req: Request, res: Response) {
   const { name, email, password } = req.body;
-  console.log(req.body);
 
   try {
     const user = await userModel.checkUser(email);

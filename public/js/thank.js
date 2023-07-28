@@ -9,7 +9,7 @@ const id = localStorage.getItem("orderId");
 
 async function getpaidOrder() {
   const data = await axios.get(`https://yzuhyu.com/api/v1/order?id=${id}`);
-  console.log(data.data);
+
   image.src = `/upload/main/${data.data.orders[0].show_id}_main.jpeg`;
   showName.textContent = `${data.data.showInfo[0].name}`;
   showTime.textContent = `${data.data.date} ${data.data.time}`;

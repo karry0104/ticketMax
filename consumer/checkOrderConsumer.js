@@ -62,14 +62,10 @@ const rabbitMQ_ip = process.env.RABBITMQ_IP;
               await updateSeatInCache(data.showId);
             }
           }, ORDER_EXPIRATION_TIME);
-
-          console.log(" [x] Received '%s'", message.content);
         }
       },
       { noAck: true }
     );
-
-    console.log(" [*] Waiting for messages. To exit press CTRL+C");
   } catch (err) {
     console.warn(err);
   }

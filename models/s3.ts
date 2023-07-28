@@ -209,7 +209,6 @@ export async function uplaodShowDetailToS3(
 
         try {
           const res = await client.send(command);
-          console.log(res);
         } catch (err) {
           console.error(err);
         }
@@ -254,7 +253,6 @@ export async function uplaodShowDetailToS3(
     uploadImage();
     uploadChart();
 
-    console.log("success");
     return file;
   } catch (err) {
     console.log(err);

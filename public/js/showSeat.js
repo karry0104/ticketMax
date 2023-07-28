@@ -113,7 +113,6 @@ function countTotal() {
       ` https://8tqvd2l76i.execute-api.ap-northeast-1.amazonaws.com/prod/queue/${id}`
     )
     .then((response) => {
-      console.log(response.data.messages);
       if (response.data.messages > 0) {
         waitCount.textContent = `${response.data.messages}`;
         queueCard.style.display = "flex";
@@ -130,7 +129,6 @@ const sendMessage = axios
     data
   )
   .then((response) => {
-    console.log(response);
     const MessageId =
       response.data.SendMessageResponse.SendMessageResult.MessageId;
     message.textContent = `排隊序號： ${MessageId}`;
@@ -165,7 +163,6 @@ form.addEventListener("submit", async function (e) {
   const selectedSeat = document.querySelectorAll(".showSeatId");
 
   const selectedSeatIds = Array.from(selectedSeat).map((seat) => seat.id);
-  console.log(selectedSeatIds);
 
   if (selectedSeatIds.length === 0) {
     handleErrorResponse("請先選購座位");
@@ -182,7 +179,6 @@ form.addEventListener("submit", async function (e) {
     showId: id,
   };
 
-  console.log(data);
   const jwtToken = localStorage.getItem("jwtToken");
   try {
     const res = await axios.post("https://yzuhyu.com/api/v1/order", data, {

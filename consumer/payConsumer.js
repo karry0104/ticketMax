@@ -66,14 +66,10 @@ const queue = "queue";
           await ticketModel.updateOrderStatus(data.order_number);
 
           await ticketModel.updateShowSeatStatus(data.order_number);
-
-          console.log(" [x] Received '%s'", message.content);
         }
       },
       { noAck: true }
     );
-
-    console.log(" [*] Waiting for messages. To exit press CTRL+C");
   } catch (err) {
     console.warn(err);
   }

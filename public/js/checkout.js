@@ -49,7 +49,6 @@ async function getPaymentData() {
     );
 
     const data = paymentData.data;
-    console.log(data);
     image.src = `/upload/main/${data.showId}_main.jpeg`;
     showName.textContent = `${data.orderData.showInfo[0].name}`;
     showTime.textContent = `${data.date} ${data.time}`;
@@ -165,7 +164,6 @@ const cardViewContainer = document.querySelector("#container");
 function onClick() {
   const formData = new FormData(form);
   const entFormData = Object.fromEntries(formData);
-  console.log(entFormData);
 
   const token = localStorage.getItem("jwtToken");
 
@@ -184,7 +182,6 @@ function onClick() {
       };
 
       const goQueue = await axios.post("https://yzuhyu.com/api/v1/queue", data);
-      console.log(goQueue.status);
       if (goQueue.data.message === "Order is canceled") {
         alert("已超過付款時間，請重新購票");
         window.location.assign(`/`);

@@ -45,7 +45,6 @@ export async function createShow(
     });
 
     const showId = await showModel.createShow(createImages[0]);
-    console.log("show" + showId);
 
     await uplaodShowDetailToS3(createImages[0], images, showId as number);
 
@@ -92,7 +91,6 @@ export async function createShowCampaign(
   try {
     if (image && typeof image === "object") {
       if (Array.isArray(image)) {
-        console.log(image[0].filename);
       } else if (image.image && Array.isArray(image.image)) {
         const imageName = image.image[0].filename;
 

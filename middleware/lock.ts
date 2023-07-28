@@ -9,7 +9,6 @@ export async function killTicket(
 ) {
   const { showSeatId } = req.body;
 
-  console.log(typeof showSeatId);
   if (showSeatId.length > 4) {
     throw new Error("一次最多選擇４個位置");
   }

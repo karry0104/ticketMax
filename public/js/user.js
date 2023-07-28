@@ -24,11 +24,10 @@ signinForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   const formData = new FormData(signinForm);
   const entFormData = Object.fromEntries(formData);
-  console.log([...formData]);
 
   try {
     const res = await axios.post("https://yzuhyu.com/user/signin", entFormData);
-    console.log(res.data.data);
+
     localStorage.setItem("jwtToken", res.data.data.token);
     window.location.href = "/user/profile";
   } catch (error) {
@@ -52,11 +51,9 @@ signupForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   const formData = new FormData(signupForm);
   const entFormData = Object.fromEntries(formData);
-  console.log([...formData]);
 
   try {
     const res = await axios.post("https://yzuhyu.com/user/signup", entFormData);
-    console.log(res.data);
     localStorage.setItem("jwtToken", res.data.data.token);
     window.location.href = "/user/profile";
   } catch (error) {

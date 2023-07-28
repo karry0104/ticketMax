@@ -5,14 +5,12 @@ form.addEventListener("submit", async function (e) {
   e.preventDefault();
 
   const formData = new FormData(form);
-  console.log([...formData]);
 
   try {
     const res = await axios.post(
       "https://yzuhyu.com/admin/show/campaign",
       formData
     );
-    console.log(res);
     showSuccessMessage();
   } catch (err) {
     console.log(err);
