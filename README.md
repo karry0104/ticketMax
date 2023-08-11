@@ -12,6 +12,7 @@ TicketMax is a ticket selling web application with queueing system.
 - [SignIn](#signin)
 - [Tech Stack](#tech-stack)
 - [Architecture Diagram](#architecture-diagram)
+- [Database Schema](#database-schema)
 - [Features](#features)
 - [Queueing System](#queueing-system)
 - [Lock the Seat](#lock-the-seat)
@@ -38,6 +39,11 @@ TicketMax is a ticket selling web application with queueing system.
 
 ## Architecture Diagram
 <img width="60%" alt="architecture-diagram" src="https://github.com/karry0104/ticketMax/assets/112867897/debf208c-7486-4f3c-aec6-3c7e9e28c392">
+
+## Database Schema
+<img width="60%" alt="database-schema" src="https://github.com/karry0104/ticketMax/assets/112867897/3054fd84-72f0-4019-ab2b-afa822cab678">
+
+
 
 ## Features
 
