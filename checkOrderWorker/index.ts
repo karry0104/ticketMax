@@ -1,4 +1,3 @@
-import express from "express";
 import amqp from "amqplib";
 
 import * as dotenv from "dotenv";
@@ -10,9 +9,6 @@ import {
 } from "./model/database.js";
 
 import { prepare, set } from "./model/redis.js";
-
-const app = express();
-const port = process.env.PORT || 3001;
 
 dotenv.config();
 
@@ -83,9 +79,3 @@ export async function updateSeatInCache(id: number) {
     console.warn(err);
   }
 })();
-
-app.listen(port, () => {
-  console.log(`listening on port ${port}`);
-});
-
-export default app;

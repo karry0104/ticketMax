@@ -1,12 +1,8 @@
-import express from "express";
 import amqp from "amqplib";
 import axios from "axios";
 import { updateOrderStatus, updateShowSeatStatus } from "./model/database.js";
 
 import * as dotenv from "dotenv";
-
-const app = express();
-const port = process.env.PORT || 3002;
 
 dotenv.config();
 
@@ -81,9 +77,3 @@ const queue = "queue";
     console.warn(err);
   }
 })();
-
-app.listen(port, () => {
-  console.log(`listening on port ${port}`);
-});
-
-export default app;
