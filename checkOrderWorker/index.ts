@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express from "express";
 import amqp from "amqplib";
 
 import * as dotenv from "dotenv";
