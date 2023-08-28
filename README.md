@@ -42,7 +42,8 @@ TicketMax is a ticket selling web application with queueing system.
 
 
 ## Database Schema
-<img width="60%" alt="database-schema" src="https://github.com/karry0104/ticketMax/assets/112867897/3054fd84-72f0-4019-ab2b-afa822cab678">
+<img width="60%" alt="database-schema" src="https://github.com/karry0104/ticketMax/assets/112867897/f7b6dc28-f8a5-4b25-936f-e3a7693cfff4">
+
 
 
 
