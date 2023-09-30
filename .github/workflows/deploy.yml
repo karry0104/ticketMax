@@ -1,0 +1,40 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v3
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: "${{ secrets.HOST_DNS }}"
+          username: "${{ secrets.EC2_USERNAME }}"
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/ticketMax
+
+
+            # clean up
+            docker compose down
+            docker system prune -a -f
+            docker volume prune -f
+
+
+            #pull change
+            git fetch origin master
+            git reset --hard origin/master
+
+
+            #compose
+            docker compose build --no-cache
+            docker compose up -d
